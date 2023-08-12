@@ -167,6 +167,20 @@ app.post('/api/registermastercard', (req, res) => {
   });
 });
 
+app.get('/api/getmastercard', (req, res) => {
+  const query = 'SELECT * FROM mastercard';
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching messages');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

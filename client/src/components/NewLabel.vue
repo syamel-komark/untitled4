@@ -4,7 +4,8 @@
     <h2>New Label</h2>
     <form @submit.prevent="registerNewMastercard" novalidate>
       <div>
-        <label for="Mastercard">Mastercard Number:</label>
+        <label for="Mastercard">Mastercard Number: <button @click="redirectTo('/mastercardsearch')">Search</button>
+        </label>
         <input type="text" id="Mastercard" v-model="masterCard" required />
       </div>
       <div>
@@ -12,8 +13,7 @@
         <input type="text" id="labelName" v-model="labelName" required />
       </div>
       <div>
-        <label for="Material">Material:</label>
-        <button @click="openMaterialSearch">Search Material</button>
+        <label for="Material">Material: <button @click="openMaterialSearch">Search Material</button></label>
         <input type="text" id="material" v-model="material" required />
       </div>
       <div>
@@ -36,36 +36,36 @@
         <button @click="successRegisterMastercard=false">Close</button>
       </div>
   </div>
+  </div>
   <div class="success-modal" v-if="searchMaterial">
-      <div class="table-container">
-        <h2>User List</h2>
-        <div class="searchmaterial-menu">
-          <input
-              type="text"
-              v-model="searchQuery"
-              @input="filterMaterials"
-              placeholder="Search by Material Name"
-          />
-        </div>
-        <table>
-          <thead>
-          <tr>
-            <th>Material Name</th>
-            <th>Supplier</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="material in filteredMaterials" :key="material.materialid">
-            <td>{{ material.materialname }}</td>
-            <td>{{ material.materialsupplier }}</td>
-            <td>
-              <button @click="pickMaterial(material)">Use</button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div><button @click=closeMaterialSearch>Close</button>
-    </div>
+    <div class="table-container">
+      <h2>User List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="searchQuery"
+            @input="filterMaterials"
+            placeholder="Search by Material Name"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Material Name</th>
+          <th>Supplier</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="material in filteredMaterials" :key="material.materialid">
+          <td>{{ material.materialname }}</td>
+          <td>{{ material.materialsupplier }}</td>
+          <td>
+            <button @click="pickMaterial(material)">Use</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=closeMaterialSearch>Close</button>
   </div>
 </template>
 
@@ -188,26 +188,6 @@ export default {
     },
     redirectTo(path) {
       this.$router.push(path);
-    },
-
-    async submitLabel() {
-      try {
-        const response = await axios.post('/api/submitLabel', {
-          labelNumber: this.labelNumber,
-          labelName: this.labelName,
-          pitch: this.pitch,
-          width: this.width,
-        });
-
-        if (response.status === 200) {
-          console.log('Label submitted successfully');
-          // Optionally, you can navigate back to the dashboard or show a success message
-        } else {
-          console.error('Label submission failed');
-        }
-      } catch (error) {
-        console.error('Error submitting label:', error);
-      }
     },
 
   },
