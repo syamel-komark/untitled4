@@ -153,6 +153,20 @@ app.get('/api/getmaterials', (req, res) => {
   });
 });
 
+app.post('/api/registermastercard', (req, res) => {
+  const { mastercard, labelname, material, width, pitch} = req.body;
+  const query = 'INSERT INTO mastercard (mastercard, labelname, material, width, pitch) VALUES (?, ?, ?,?,?)';
+
+  db.query(query, [mastercard, labelname, material, width, pitch], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error registering mastercard' });
+    } else {
+      res.status(200).json({ message: 'mastercard registered successfully' });
+    }
+  });
+});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

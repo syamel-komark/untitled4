@@ -2,7 +2,7 @@
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <h2>New Label</h2>
-    <form @submit.prevent="submitLabel" novalidate>
+    <form @submit.prevent="registerNewMastercard" novalidate>
       <div>
         <label for="Mastercard">Mastercard Number:</label>
         <input type="text" id="Mastercard" v-model="masterCard" required />
@@ -18,18 +18,25 @@
       </div>
       <div>
         <label for="width">Width:</label>
-        <input type="text" id="width" v-model="width" required />
+        <input type="number" id="width" v-model="width" required />
       </div>
       <div>
         <label for="pitch">Pitch:</label>
-        <input type="text" id="pitch" v-model="pitch" required />
+        <input type="number" id="pitch" v-model="pitch" required />
       </div>
       <div>
         <button type="submit">Submit</button>
       </div>
     </form>
   </div>
-    <div class="success-modal" v-if="searchMaterial">
+  <div class="success-modal" v-if="successRegisterMastercard">
+    <div class="table-container">
+      <div class="success-content">
+        <p>{{ successMessageMastercard }}</p>
+        <button @click="successRegisterMastercard=false">Close</button>
+      </div>
+  </div>
+  <div class="success-modal" v-if="searchMaterial">
       <div class="table-container">
         <h2>User List</h2>
         <div class="searchmaterial-menu">
@@ -59,6 +66,7 @@
         </table>
       </div><button @click=closeMaterialSearch>Close</button>
     </div>
+  </div>
 </template>
 
 <script>
@@ -82,6 +90,8 @@ export default {
       searchMaterial: false,
       materialPick: [],
       searchQuery:'',
+      successRegisterMastercard: false,
+      successMessageMastercard:'',
     };
   },
 
@@ -121,6 +131,33 @@ export default {
   },
 
   methods: {
+
+    async registerNewMastercard() {
+      try {
+        const response = await axios.post('/api/registermastercard', {
+          mastercard: this.masterCard,
+          labelname: this.labelName,
+          material: this.material,
+          width: this.width,
+          pitch: this.pitch,
+        });
+        if (response.status === 200) {
+          this.successRegisterMastercard = true;
+          this.successMessageMastercard = 'mastercard has been successfully registered.';
+          this.masterCard = ''; // Clear the registration form
+          this.labelName = '';
+          this.material = '';
+          this.width = '';
+          this.pitch = '';
+          console.log('Registration successful');
+        } else {
+          console.error('Registration failed');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
+    },
+
 
     pickMaterial(selectedMaterial) {
       this.material = selectedMaterial.materialname; // Set the selected material
