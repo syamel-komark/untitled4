@@ -145,8 +145,11 @@ button {
   color: #fff;
   border: none;
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 3px 5px;
   cursor: pointer;
+  margin-right: 5px;
+  left: 5px;
+
 }
 
 button:hover {

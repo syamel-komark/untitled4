@@ -6,6 +6,8 @@ import Dashboard from './components/DashboardForm.vue';
 import NewLabel from  './components/NewLabel.vue';
 import RegisterUser from "@/components/RegisterUser";
 import MastercardSearch from "@/components/MastercardSearch";
+import CostingPage from "@/components/CostingPage";
+import NewCosting from "@/components/NewCosting";
 
 
 const routes = [
@@ -14,6 +16,8 @@ const routes = [
   { path: '/newlabel', component: NewLabel },
   { path: '/register', component: RegisterUser},
   { path: '/mastercardsearch', component: MastercardSearch},
+  { path: '/costingpage', component: CostingPage},
+  { path: '/newcosting', component: NewCosting},
 ];
 
 const router = createRouter({
