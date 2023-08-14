@@ -34,19 +34,19 @@
       <input type="number" id="around" v-model="formModel.around" required /><label for="Gear">Gear:</label><input type="text" id="gear" v-model="formModel.gear" required />
     </div>
     <div class="form-group">
-      <button @click="showPrintingProcess" for="Process">Process:</button>
-      <input type="text" id="process" v-model="printingProcess" required />
+      <button @click="openPrintingProcess">Process:</button>
+      <input type="text" id="process" v-model="selectedProcess" required />
     </div>
     <div class="form-group">
-      <button for="finishing">Finishing:</button>
-      <input type="text" id="finishing" v-model="finishing" required />
+      <button @click="openFinishing">Finishing:</button>
+      <input type="text" id="finishing" v-model="selectedFinishing" required />
     </div>
   </div>
   <div class="form-container">
     <div class="form-group">
     </div>
     <div class="form-group">
-    <button @click="closeNewCosting">next</button>
+      <button @click="registerNewLabel">Close</button>
   </div>
   </div>
   <div class="success-modal" v-if="searchMaterial">
@@ -109,6 +109,99 @@
       </table>
     </div><button @click=closeSearchMastercard>Close</button>
   </div>
+  <div class="success-modal" v-if="isPrintingProcess">
+    <div class="dashboard">
+      <h1>Printing Process</h1>
+      <div class="form-group">
+        <label for="">ECS340</label>
+        <input type="number" class="form-control" v-model="printingProcess.ECS340" />
+        <label for="">AVTInspection</label>
+        <input type="number" class="form-control" v-model="printingProcess.AVTInspection" />
+        <label for="">Packing</label>
+        <input type="number" class="form-control" v-model="printingProcess.packing" />
+        <label for="">AutoCut</label>
+        <input type="number" class="form-control" v-model="printingProcess.AutoCut" />
+        </div>
+      <button @click=showMoreProcess>More Process</button>
+      <div class="success-modal" v-if="isMoreProcess">
+        <div class="dashboard">
+          <div class="form-group">
+        <label for="">numberingMachine</label>
+        <input type="number" class="form-control" v-model="printingProcess.numberingMachine" />
+        <label for="">kopack13</label>
+        <input type="number" class="form-control" v-model="printingProcess.kopack13" />
+        <label for="">sonata</label>
+        <input type="number" class="form-control" v-model="printingProcess.sonata" />
+        <label for="">iwasaki</label>
+        <input type="number" class="form-control" v-model="printingProcess.iwasaki" />
+        </div>
+          <div class="form-group">
+        <label for="">gallus4</label>
+        <input type="number" class="form-control" v-model="printingProcess.gallus4" />
+        <label for="">bagMaking</label>
+        <input type="number" class="form-control" v-model="printingProcess.bagMaking" />
+        <label for="">gravureSlitting</label>
+        <input type="number" class="form-control" v-model="printingProcess.gravureSlitting" />
+        <label for="">gravurePrinting</label>
+        <input type="number" class="form-control" v-model="printingProcess.gravurePrinting" />
+        </div>
+          <div class="form-group">
+        <label for="">lamination</label>
+        <input type="number" class="form-control" v-model="printingProcess.lamination" />
+        <label for="">utecoPrinting</label>
+        <input type="number" class="form-control" v-model="printingProcess.utecoPrinting" />
+        <label for="">utecoSlitting</label>
+        <input type="number" class="form-control" v-model="printingProcess.utecoSlitting" />
+        <label for="">EM280</label>
+        <input type="number" class="form-control" v-model="printingProcess.EM280" />
+      </div>
+          <div class="form-group">
+        <label for="">rhyguan</label>
+        <input type="number" class="form-control" v-model="printingProcess.rhyguan" />
+        <label for="">digital</label>
+        <input type="number" class="form-control" v-model="printingProcess.digital" />
+        <label for="">k1slitting</label>
+        <input type="number" class="form-control" v-model="printingProcess.k1Slitting" />
+        <label for="">k1printing</label>
+        <input type="number" class="form-control" v-model="printingProcess.k1Printing" />
+      </div>
+      </div>
+          <button @click=closeMoreProcess>Close More Process</button>
+      </div>
+    <button @click=closePrintingProcess>Close</button>
+    </div>
+  </div>
+  <div class="success-modal" v-if="isFinishing">
+    <div class="dashboard">
+      <h1>Finishing</h1>
+      <div class="form-group">
+        <label for="">Diecut</label>
+        <input type="number" class="form-control" v-model="finishing.Diecut" />
+        <label for="">Varnish</label>
+        <input type="number" class="form-control" v-model="finishing.Varnish" />
+        <label for="">Laminate</label>
+        <input type="number" class="form-control" v-model="finishing.Laminate" />
+        </div>
+      <div class="form-group">
+      <label for="">Killglue</label>
+        <input type="number" class="form-control" v-model="finishing.Killglue" />
+        <label for="">Backprint</label>
+        <input type="number" class="form-control" v-model="finishing.Backprint" />
+      </div>
+      <button @click=closeFinishing>Close</button>
+    </div>
+  </div>
+  <div class="success-modal" v-if="successRegisterLabel">
+    <div class="table-container">
+      <div class="success-content">
+        <p>{{ successMessageLabel }}</p>
+        <button @click="successRegisterLabel=false">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+
 
 </template>
 
@@ -135,6 +228,8 @@ export default {
         463.55, 231.775, 154.5166667, 115.8875, 92.71, 77.25833333, 66.22142857, 57.94375, 51.50555556, 46.355,
         508, 254, 169.3333333, 127, 101.6, 84.66666667, 72.57142857, 63.5, 56.44444444, 50.8
       ],
+      successRegisterLabel: false,
+      successMessageLabel:'',
       searchMastercardQuery:'',
       searchMastercard:false,
       materialPick:[],
@@ -154,34 +249,41 @@ export default {
         width:'',
         gear:'',
       },
+      selectedFinishing:[],
+      isFinishing: false,
       finishing:{
-        isVarnish:false,
-        isDiecut: true,
-        isColdfoil: false,
-        isLaminate: false,
-        isBackprint:false,
-        isKillglue: false,
+        Varnish:1,
+        Diecut: 1,
+        Coldfoil: 0,
+        Laminate: 0,
+        Backprint:0,
+        Killglue: 0,
 
       },
+      isMoreProcess: false,
+      selectedProcess:[],
+      isPrintingProcess: false,
       printingProcess:{
-        ECS340: '',
-        AVTInspection: '',
-        AutoCut: '',
-        numberingMachine:'',
-        kopack13: '',
-        sonata:'',
-        iwasaki:'',
-        gallus4:'',
-        bagMaking:'',
-        gravureSlitting:'',
-        gravurePrinting:'',
-        lamination:'',
-        utecoPrinting:'',
-        utecoSlitting:'',
-        packing:'',
-        EM280:'',
-        rhyguan:'',
-        digital:'',
+        ECS340: 1,
+        AVTInspection: 1,
+        AutoCut: 0,
+        numberingMachine:0,
+        kopack13: 0,
+        sonata:0,
+        iwasaki:0,
+        gallus4:0,
+        bagMaking:0,
+        gravureSlitting:0,
+        gravurePrinting:0,
+        lamination:0,
+        utecoPrinting:0,
+        utecoSlitting:0,
+        packing:1,
+        EM280:0,
+        rhyguan:0,
+        digital:0,
+        k1Printing:0,
+        k1Slitting:0,
 
 
       },
@@ -189,6 +291,14 @@ export default {
   },
 
   computed: {
+
+    nonZeroFinishing() {
+      return Object.keys(this.finishing).filter(finish => this.finishing[finish] !== 0);
+    },
+
+    nonZeroProcesses() {
+      return Object.keys(this.printingProcess).filter(process => this.printingProcess[process] !== 0);
+    },
 
     pitch(){
       return parseInt(this.formModel.pitch);
@@ -256,11 +366,11 @@ export default {
 
   created() {
 
+    this.setFinishing()
 
-
+    this.setProcess()
 
     this.fetchMastercardinfo();
-
 
     this.fetchMaterials();
 
@@ -283,6 +393,71 @@ export default {
 
   methods: {
 
+    async registerNewLabel() {
+      try {
+        const combinedProcess = this.selectedProcess.join(', ');
+        const combinedFinishing = this.selectedFinishing.join(', ');
+        const response = await axios.put('/api/registerlabel', {
+          mastercard: this.formModel.mastercard,
+          labelname: this.formModel.labelName,
+          material: this.formModel.material,
+          pitch: this.formModel.width,
+          width: this.formModel.pitch,
+          color: this.formModel.color,
+          across: this.formModel.across,
+          around: this.formModel.around,
+          gear: this.formModel.gear,
+          process: combinedProcess,
+          finishing: combinedFinishing,
+        });
+        if (response.status === 200) {
+          this.successRegisterLabel = true;
+          this.successMessageLabel = 'label has been successfully registered.';
+          this.formModel.labelName='',
+          this.formModel.material='',
+          this.formModel.width='',
+          this.formModel.pitch='',
+          this.formModel.color='',
+          this.formModel.across='',
+          this.formModel.around='',
+          this.formModel.gear='',
+          this.selectedProcess='',
+          this.selectedFinishing='',
+
+          console.log('Registration successful');
+        } else {
+          this.successMessageLabel = 'Label registration failed.';
+          console.error('Registration failed');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
+    },
+
+    setFinishing(){
+      this.selectedFinishing = this.nonZeroFinishing;
+    },
+
+    closeFinishing(){
+      this.isFinishing = false;
+    },
+
+    openFinishing(){
+      this.isFinishing = true;
+    },
+
+    closeMoreProcess(){
+      this.isMoreProcess = false;
+    },
+
+    showMoreProcess(){
+      this.isMoreProcess = true;
+    },
+
+    setProcess(){
+      this.selectedProcess = this.nonZeroProcesses;
+    },
+
     calculateAround(){
       this.formModel.around = this.around;
       this.formModel.gear = this.gear;
@@ -297,7 +472,7 @@ export default {
     },
 
     pickMastercard(selectedMastercard) {
-      this.formModel.masterCard = selectedMastercard.mastercard; // Set the selected material
+      this.formModel.mastercard = selectedMastercard.mastercard; // Set the selected material
       this.formModel.labelName = selectedMastercard.labelname; // Set the selected material
       this.formModel.material = selectedMastercard.material; // Set the selected material
       this.formModel.width = selectedMastercard.width; // Set the selected material
@@ -315,6 +490,14 @@ export default {
       } catch (error) {
         console.error('Error fetching mastercard:', error);
       }
+    },
+
+    closePrintingProcess(){
+      this.isPrintingProcess=false;
+    },
+
+    openPrintingProcess(){
+      this.isPrintingProcess=true;
     },
 
 
