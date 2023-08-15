@@ -180,11 +180,26 @@ app.get('/api/getmastercard', (req, res) => {
   });
 });
 
-app.put('/api/registerlabel', (req, res) => {
+app.put('/api/updatemastercard', (req, res) => {
   const { labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard} = req.body;
   const query = 'UPDATE mastercard SET labelname = ?, material = ?, pitch = ?, width = ?, color = ?, across = ?, around = ?, gear = ?, process = ?, finishing = ? WHERE mastercard = ?';
 
   db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error registering mastercard' });
+    } else {
+      res.status(200).json({ message: 'mastercard registered successfully' });
+    }
+  });
+});
+
+app.post('/api/registercosting', (req, res) => {
+  const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard} = req.body;
+  const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard) VALUES (?,?, ?, ?,?,?,?,?,?,?,?,?)';
+
+  db.query(query, [
+    labelname, material, pitch, width, color, across, around, gear, process, finishing,machine, mastercard], (err, result) => {
     if (err) {
       console.error(err);
       res.status(500).json({ error: 'Error registering mastercard' });

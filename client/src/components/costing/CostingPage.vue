@@ -5,8 +5,8 @@
       <h2>Costing Page</h2>
       <div class="dashboard-item">
         <button @click="showNewCosting('/newcosting')">New Costing</button>
-        <button @click="showNewQuotation('/newquotation')">New Quotation</button>
-        <button @click="showNewReport('/costingreport')">Costing Report</button>
+        <button @click="showNewQuotation('/newquotation')">Quotation Page</button>
+        <button @click="showNewReport('/costingreport')">Report Page</button>
       </div>
       <div v-if="isCosting" class="admin-menu">
         <NewCosting/>
@@ -22,7 +22,8 @@
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
-import NewCosting from "@/components/NewCosting.vue";
+import NewCosting from "@/components/costing/NewCosting.vue";
+
 export default {
 
   components: {
@@ -31,6 +32,7 @@ export default {
 
   data() {
     return {
+      isQuotation: false,
       isCosting: false,
       username: null,
       currentTime: null,
@@ -59,8 +61,17 @@ export default {
 
   methods: {
 
+    closeNewQuotation(){
+      this.isQuotation = false;
+    },
+
+    showNewQuotation(){
+      this.$router.push('/newquotation');
+    },
+
     showNewCosting(){
       this.isCosting = true;
+      this.isQuotation= false;
     },
 
     closeNewCosting(){

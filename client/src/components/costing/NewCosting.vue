@@ -18,7 +18,7 @@
 <script>
 //import axios from "axios";
 //import HeaderBar from "@/components/AppHeader.vue";
-import ECS from  "@/components/NewCostingECS.vue";
+import ECS from "@/components/costing/NewCostingECS.vue";
 export default {
 
   components: {

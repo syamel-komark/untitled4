@@ -46,7 +46,7 @@
     <div class="form-group">
     </div>
     <div class="form-group">
-      <button @click="registerNewLabel">Close</button>
+      <button @click="runAsyncFunctions" id="registercosting">Next</button>
   </div>
   </div>
   <div class="success-modal" v-if="searchMaterial">
@@ -297,7 +297,15 @@ export default {
     },
 
     nonZeroProcesses() {
-      return Object.keys(this.printingProcess).filter(process => this.printingProcess[process] !== 0);
+      const nonZero = [];
+      for (const process in this.printingProcess) {
+        if (this.printingProcess[process] > 0) {
+          for (let i = 0; i < this.printingProcess[process]; i++) {
+            nonZero.push(process);
+          }
+        }
+      }
+      return nonZero;
     },
 
     pitch(){
@@ -393,11 +401,54 @@ export default {
 
   methods: {
 
-    async registerNewLabel() {
+    async runAsyncFunctions() {
+      try {
+        await this.registerCosting();
+        await this.updateMastercard();
+        console.log('Both functions executed successfully');
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    },
+
+
+    async registerCosting() {
       try {
         const combinedProcess = this.selectedProcess.join(', ');
         const combinedFinishing = this.selectedFinishing.join(', ');
-        const response = await axios.put('/api/registerlabel', {
+        const response = await axios.post('/api/registercosting', {
+          mastercard: this.formModel.mastercard,
+          labelname: this.formModel.labelName,
+          material: this.formModel.material,
+          pitch: this.formModel.width,
+          width: this.formModel.pitch,
+          color: this.formModel.color,
+          across: this.formModel.across,
+          around: this.formModel.around,
+          gear: this.formModel.gear,
+          process: combinedProcess,
+          finishing: combinedFinishing,
+          machine: this.machine,
+        });
+        if (response.status === 200) {
+          this.successRegisterLabel = true;
+          this.successMessageLabel = 'label has been successfully updated.';
+              console.log('Registration successful');
+        } else {
+          this.successMessageLabel = 'Label registration failed.';
+          console.error('Registration failed');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
+    },
+
+
+    async updateMastercard() {
+      try {
+        const combinedProcess = this.selectedProcess.join(', ');
+        const combinedFinishing = this.selectedFinishing.join(', ');
+        const response = await axios.put('/api/updatemastercard', {
           mastercard: this.formModel.mastercard,
           labelname: this.formModel.labelName,
           material: this.formModel.material,
@@ -412,7 +463,8 @@ export default {
         });
         if (response.status === 200) {
           this.successRegisterLabel = true;
-          this.successMessageLabel = 'label has been successfully registered.';
+          this.successMessageLabel = 'label has been successfully updated.';
+          this.formModel.mastercard=''
           this.formModel.labelName='',
           this.formModel.material='',
           this.formModel.width='',
@@ -423,6 +475,7 @@ export default {
           this.formModel.gear='',
           this.selectedProcess='',
           this.selectedFinishing='',
+
 
           console.log('Registration successful');
         } else {
@@ -440,6 +493,8 @@ export default {
 
     closeFinishing(){
       this.isFinishing = false;
+      this.setFinishing();
+
     },
 
     openFinishing(){
@@ -493,6 +548,7 @@ export default {
     },
 
     closePrintingProcess(){
+      this.setProcess();
       this.isPrintingProcess=false;
     },
 
