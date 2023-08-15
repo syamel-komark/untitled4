@@ -209,6 +209,49 @@ app.post('/api/registercosting', (req, res) => {
   });
 });
 
+app.post('/api/registercustomer', (req, res) => {
+  const { customername, customeraddress, customercontactnumber, customeremail, customerpic} = req.body;
+  const query = 'INSERT INTO customers (customername, customeraddress, customercontactnumber, customeremail, customerpic) VALUES (?, ?, ?,?,?)';
+
+  db.query(query, [customername, customeraddress, customercontactnumber, customeremail, customerpic], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error registering customer' });
+    } else {
+      res.status(200).json({ message: 'Customer registered successfully' });
+    }
+  });
+});
+
+app.get('/api/getcustomer', (req, res) => {
+  const query = 'SELECT * FROM customers';
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching customers');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
+app.get('/api/getcosting', (req, res) => {
+  const query = 'SELECT * FROM costing';
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching costing');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
+
+
+
 
 
 

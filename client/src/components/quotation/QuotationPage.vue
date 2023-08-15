@@ -5,7 +5,7 @@
       <h2>Quotation Page</h2>
       <div class="dashboard-item">
         <button @click="showNewCosting('/newcosting')">Costing Page</button>
-        <button @click="showNewQuotation('/newquotation')">New Quotation</button>
+        <currentbutton @click="showNewQuotation('/newquotation')">New Quotation</currentbutton>
         <button @click="showNewReport('/costingreport')">Report Page</button>
       </div>
       <div v-if="isQuotation" class="admin-menu">
@@ -35,7 +35,7 @@ export default {
 
   data() {
     return {
-      isQuotation: false,
+      isQuotation: true,
       isCosting: false,
       username: null,
       currentTime: null,
@@ -109,6 +109,15 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-button{}
+currentbutton {
+  background-color: #34c0d9;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8.5px 10px;
+  cursor: pointer;
+  margin-right: 5px;
+  left: 5px;
 
+}
 </style>

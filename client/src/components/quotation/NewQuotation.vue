@@ -1,41 +1,72 @@
 <template>
-  <h2>Customer Info<button @click="generateQuotation">View Costing Number</button>
+  <h2>Customer Info<button @click="showCostingTable">View Costing Number</button>
 
   </h2>
   <div class="quotation-generator">
     <div class="form-group">
       <button @click="showCustomer">Customer Name</button>
-      <input type="text" id="customerName" v-model="customerName" required />
+      <input type="text" id="customerName" v-model="emitCustomer.customerName" required />
       <label for="productName">Product Name:</label>
-      <input type="text" id="productName" v-model="productName" required />
+      <input type="text" id="productName" v-model="labelName" required />
     </div>
     <div class="form-group">
       <label for="customerAddress">Customer Address:</label>
-      <input type="text" id="customerAddress" v-model="customerName" required />
+      <input type="text" id="customerAddress" v-model="emitCustomer.customerAddress" required />
     </div>
     <div class="form-group">
       <label for="Costing Number">Costing Number:</label>
       <input type="number" id="Costing Number" v-model="costingNumber" required />
     </div>
     <div class="form-group">
-      <label for="unitPrice">Unit Price:</label>
-      <input type="number" id="unitPrice" v-model="unitPrice" required />
-    </div>
-    <button @click="generateQuotation">Generate Quotation</button>
-    <div v-if="quotationGenerated">
-      <h3>Quotation:</h3>
-      <p><strong>Customer:</strong> {{ customerName }}</p>
-      <p><strong>Product:</strong> {{ productName }}</p>
-      <p><strong>Quantity:</strong> {{ quantity }}</p>
-      <p><strong>Unit Price:</strong> ${{ unitPrice }}</p>
-      <p><strong>Total Price:</strong> ${{ total }}</p>
+      <label for="quantity">Order Quantity:</label>
+      <input type="number" id="quantity" v-model="quantity" required />
     </div>
   </div>
   <div class="success-modal" v-if="isShowCustomer">
-    <RegisterCustomer/>
-    <button @click="closeCustomer">View Costing Number</button>
+    <RegisterCustomer @customer-registered="handleEmitCustomer" />
+    <button @click="closeCustomer">Finish</button>
 
   </div>
+  <div class="success-modal" v-if="costingTable">
+    <div class="table-container">
+      <h2>Costing List</h2>
+      <div class="searchcustomer-menu">
+        <input
+            type="text"
+            v-model="searchCostingQuery"
+            @input="filterlabelname"
+            placeholder="Search by Label Name"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Costing Number</th>
+          <th>Mastercard</th>
+          <th>Label Name</th>
+          <th>Material</th>
+          <th>Width</th>
+          <th>Pitch</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="costing in filterCosting" :key="costing.id">
+          <td>{{costing.id}}</td>
+          <td>{{ costing.mastercard }}</td>
+          <td>{{ costing.labelname }}</td>
+          <td>{{ costing.material }}</td>
+          <td>{{ costing.width }}</td>
+          <td>{{ costing.pitch }}</td>
+
+          <td>
+            <button @click="pickCosting(costing)">Use</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=closeCostingTable>Close</button>
+  </div>
+
 
 </template>
 
@@ -43,6 +74,7 @@
 //import axios from "axios";
 //import HeaderBar from "@/components/AppHeader.vue";
 import RegisterCustomer from "@/components/Customer/RegisterCustomer";
+import axios from "axios";
 
 export default {
 
@@ -53,6 +85,12 @@ export default {
 
   data() {
     return {
+      labelName:'',
+      costingNumber:'',
+      searchCostingQuery:'',
+      costingList:[],
+      costingTable: false,
+      emitCustomer:[],
       isShowCustomer: false,
       isCosting: true,
       username: null,
@@ -63,6 +101,8 @@ export default {
 
 
   created() {
+
+    this.fetchCosting();
 
 
     // Retrieve username from session storage
@@ -82,7 +122,55 @@ export default {
     clearInterval(this.currentTimeInterval);
   },
 
+  computed:{
+
+    filterCosting() {
+      if (this.searchCostingQuery === '') {
+        return this.costingList;
+      } else {
+        const query = this.searchCostingQuery.toLowerCase();
+        return this.costingList.filter((costing) => {
+          return costing.mastercard.toLowerCase().includes(query);
+        });
+      }
+    },
+
+  },
+
   methods: {
+    //handleCostingFilter(){},
+
+    async fetchCosting() {
+      try {
+        const response = await axios.get('/api/getcosting');
+        this.costingList = response.data;
+        console.log(this.customerList);
+      } catch (error) {
+        console.error('Error fetching Costing:', error);
+      }
+    },
+
+
+    pickCosting(costing) {
+      this.costingNumber = costing.id; // Set the selected material
+      this.labelName = costing.labelname; // Set the selected material
+      this.costingTable= false;
+    },
+
+
+    closeCostingTable(){
+      this.costingTable = false;
+    },
+
+    showCostingTable(){
+      this.costingTable = true;
+    },
+
+    handleEmitCustomer(data) {
+      // Handle the emitted event data (registered customer info)
+      this.emitCustomer = data;
+    },
+
     closeCustomer(){
       this.isShowCustomer = false;
     },
