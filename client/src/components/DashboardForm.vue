@@ -22,7 +22,7 @@
 <script>
 
 import HeaderBar from "@/components/AppHeader.vue";
-import AdminMenu from "@/components/AdminMenu.vue";
+import AdminMenu from "@/components/admin/AdminMenu.vue";
 
 // import { mapGetters } from "vuex";
 

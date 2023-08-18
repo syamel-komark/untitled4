@@ -180,7 +180,7 @@ app.get('/api/getmastercard', (req, res) => {
   });
 });
 
-app.put('/api/registerlabel', (req, res) => {
+app.put('/api/updatemastercard', (req, res) => {
   const { labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard} = req.body;
   const query = 'UPDATE mastercard SET labelname = ?, material = ?, pitch = ?, width = ?, color = ?, across = ?, around = ?, gear = ?, process = ?, finishing = ? WHERE mastercard = ?';
 
@@ -193,6 +193,50 @@ app.put('/api/registerlabel', (req, res) => {
     }
   });
 });
+
+app.post('/api/registercosting', (req, res) => {
+  const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard} = req.body;
+  const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard) VALUES (?,?, ?, ?,?,?,?,?,?,?,?,?)';
+
+  db.query(query, [
+    labelname, material, pitch, width, color, across, around, gear, process, finishing,machine, mastercard], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error registering costing' });
+    } else {
+      const registeredCostingNumber = result.insertId;
+      res.status(200).json({ id: registeredCostingNumber }); // Send the ID in the response
+    }
+  });
+
+  app.get('/api/getcosting', (req, res) => {
+    const query = 'SELECT * FROM costing';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching costing');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+});
+
+app.get('/api/getcosting', (req, res) => {
+  const query = 'SELECT * FROM costing  ORDER BY entry_datetime DESC;';
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching costing');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
 
 
 
