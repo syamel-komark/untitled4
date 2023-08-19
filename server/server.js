@@ -498,6 +498,65 @@ db.connect(err => {
 }
 //////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////FIXEDCOST//////////////////////////////////////////
+{
+  app.get('/api/getfixedcost', (req, res) => {
+    const query = 'SELECT * FROM fixedcost';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching fixedcost');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.post('/api/registerfixedcost', (req, res) => {
+    const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm} = req.body;
+    const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm) VALUES (?, ?, ?,?,?,?,?,?)';
+
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering fixedcost' });
+      } else {
+        res.status(200).json({ message: 'fixedcost registered successfully' });
+      }
+    });
+  });
+
+  app.put('/api/updatefixedcost', (req, res) => {
+    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id} = req.body;
+    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=? WHERE id = ?';
+
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating fixedcost' });
+      } else {
+        res.status(200).json({ message: 'fixedcost updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletefixedcost', (req, res) => {
+    const { id } = req.body;
+    const query = 'DELETE FROM fixedcost WHERE id = ?';
+
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting fixedcost' });
+      } else {
+        res.status(200).json({ message: 'fixedcost deleted' });
+      }
+    });
+  });
+
+}
+////////////////////////////////////////////////////////////////////////////////////
 
 
 

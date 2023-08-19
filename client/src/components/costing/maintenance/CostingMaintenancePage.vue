@@ -16,7 +16,7 @@
 
 
         <button  @click="this.$router.push('/foilmaintenance')">Foil Maintenance</button>
-        <button  @click="this.$router.push('/materialmaintenance')">Fixedcost Maintenance</button>
+        <button  @click="this.$router.push('/fixedcostmaintenance')">Fixedcost Maintenance</button>
         <button  @click="this.$router.push('/hpclickmaintenance')">Hp Click Cost Maintenance</button>
 
       </div>

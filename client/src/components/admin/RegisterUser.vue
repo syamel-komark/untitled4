@@ -258,6 +258,8 @@ export default {
   width: 500px;
   overflow-y: auto; /* Add vertical scroll if necessary */
   background-color: white;
+  display: inline-block;
+  justify-self: center;
 }
 
 table {
