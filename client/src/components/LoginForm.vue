@@ -1,7 +1,13 @@
 <template>
   <div id="app" :class="{ authenticated: authenticated }">
     <div class="login-form" v-if="!authenticated">
-      <h2>Komark ONC2.0 Login</h2>
+      <div>
+        <img src="C:\Users\marion\untitled4\Screenshot 2023-08-14 142604.png" alt="Description of the image" width="300" height="200" style="border: 1px solid black;" />
+      </div>
+
+      <div class="header">
+        <h2>ONC2.0 Login</h2>
+      </div>
       <form @submit.prevent="login">
         <div>
           <label for="loginUsername">Username:</label>
@@ -97,6 +103,14 @@ export default {
   margin-top: 60px;
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+}
 .authenticated {
   background-color: #f0f0f0;
 }

@@ -1,14 +1,19 @@
 <template>
   <div class="header">
     <div class="welcome">
+      <div class="navigate-container">
+        <div class="navigateback">
+        <backbutton @click=$router.go(-1)>Back</backbutton>
+      </div>
+      <div class="navigatehome">
+        <homebutton @click="home">Home</homebutton>
+      </div>
+      <div class="navigatelogout">
+        <logoutbutton @click="logout">Logout</logoutbutton>
+      </div>
+      </div>
       <h2>Welcome, {{ username }}</h2>
       <l>Time: {{ currentTime }}</l>
-    </div>
-    <div class="navigate">
-      <homebutton @click="home">Home</homebutton>
-      <div class="navigate">
-        <button @click="logout">Logout</button>
-      </div>
     </div>
   </div>
 </template>
@@ -37,27 +42,69 @@ export default {
 </script>
 
 <style scoped>
+
+.logout {
+  display: grid;
+  vertical-align: middle;
+  justify-content: space-between;
+  align-items: end;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+}
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 10px;
   background-color: #3498db;
   color: #fff;
 }
 
-.navigate {
-  display: table-cell;
-  vertical-align: middle;
+.navigate-container {
+  display: flex; /* Use flex display for side-by-side layout */
+  justify-content: space-between; /* Spacing between children */
+  vertical-align: center;
+  align-items: self-start;
+  background-color: #3498db;
+  color: #fff;
+}
+.navigatehome {
+  display: table;
+  width: 100px;
+  height: 10px;
+  vertical-align: center;
   justify-content: space-between;
-  align-items: start;
+  align-items: center;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+}.navigateback {
+   display: table;
+   width: 100px;
+   height: 10px;
+   vertical-align: center;
+   justify-content: space-between;
+   align-items: start;
+   padding: 10px;
+   background-color: #3498db;
+   color: #fff;
+ }
+.navigatelogout {
+  display: table;
+  width: 30%;
+  height: 10px;
+  vertical-align: center;
+  justify-content: space-between;
+  align-items: end;
   padding: 10px;
   background-color: #3498db;
   color: #fff;
 }
 
 .welcome {
-  text-align: left;
+  display: grid;
+  text-align: center;
 }
 
 button {
@@ -71,6 +118,28 @@ button {
 
 homebutton {
   background-color: #34c1da;
+  width: 20px;
+  height: 5px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+backbutton {
+  background-color: #0e90a8;
+  width: 20px;
+  height: 5px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+logoutbutton {
+  background-color: #a80e37;
+  width: 20px;
+  height: 5px;
   color: #fff;
   border: none;
   border-radius: 5px;

@@ -11,6 +11,8 @@ import NewCosting from "@/components/costing/NewCosting";
 import NewQuotation from "@/components/quotation/QuotationPage";
 import RegisterCustomer from "@/components/Customer/RegisterCustomer";
 import ECSCalculator from "@/components/costing/ECSCalculator";
+import MaterialMaintenance from "@/components/costing/maintenance/MaterialMaintenance";
+import CostingMaintenancePage from "@/components/costing/maintenance/CostingMaintenancePage";
 
 
 const routes = [
@@ -24,6 +26,8 @@ const routes = [
   { path: '/newquotation', component: NewQuotation},
   { path: '/registercustomer', component: RegisterCustomer},
   { path: '/ecscalculator', component: ECSCalculator},
+  { path: '/materialmaintenance', component: MaterialMaintenance},
+  { path: '/costingmaintenancepage', component: CostingMaintenancePage},
 ];
 
 const router = createRouter({

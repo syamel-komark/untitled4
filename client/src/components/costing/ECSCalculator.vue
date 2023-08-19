@@ -227,8 +227,9 @@ export default {
         const toolingCost = this.totalToolingCost;
         const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
         sum.push(total/this.moq[i]/this.margin);
+
       }
-      return sum;
+      return sum.map((value) => parseFloat(value.toFixed(4)));
     },
 
 
@@ -243,7 +244,7 @@ export default {
         const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
         sum.push(total/this.moq[i]);
       }
-      return sum;
+      return sum.map((value) => parseFloat(value.toFixed(4)));
     },
 
     sumCost(){
@@ -257,7 +258,7 @@ export default {
         const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
         sum.push(total);
       }
-      return sum;
+      return sum.map((value) => parseFloat(value.toFixed(4)));
     },
 
     sumMaterial(){
@@ -270,12 +271,12 @@ export default {
         const total = paperCost+varnishCost+inkCost+fixedCost;
         sum.push(total);
       }
-      return sum;
+      return sum.map((value) => parseFloat(value.toFixed(4)));
     },
 
     totalToolingCost(){
       const sum = this.calculatePlatePrice + this.calculateDieCut;
-      return sum;
+      return parseFloat(sum.toFixed(3));
     },
 
 
@@ -320,7 +321,7 @@ export default {
         totalFixedCosts.push(lengthFixedCosts); //push each fixed cost to respective length
       }
 
-      return totalFixedCosts;
+      return totalFixedCosts.map((value) => parseFloat(value.toFixed(4)));
 
 
 
@@ -372,7 +373,7 @@ export default {
       printLength=this.moq.map(moq => moq *
           (((parseInt(this.formModel.pitch)+parseInt(this.calculateGap))/this.formModel.across)/1000)
           );
-      return printLength;
+      return printLength.map((value) => parseFloat(value.toFixed(4)));
     },
 
     calculateSettingLengthColor(){
@@ -409,7 +410,7 @@ export default {
       let inkCost = 0.15; //rm/g
       let color = this.formModel.color;
       let coatingWeight = 0.4; //g/m2
-      let inkUse = printLength.map(length=> length*materialWidth*inkCost*color*coatingWeight);
+      let inkUse = printLength.map(length=> ((length)*materialWidth*inkCost*color*coatingWeight)*1.05);
       return inkUse.map((value) => parseFloat(value.toFixed(2)));
 
     },

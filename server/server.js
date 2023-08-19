@@ -153,6 +153,50 @@ app.get('/api/getmaterials', (req, res) => {
   });
 });
 
+app.post('/api/registermaterial', (req, res) => {
+  const { materialname, materialsupplier, materialprice} = req.body;
+  const query = 'INSERT INTO materials (materialname, materialsupplier, materialprice) VALUES (?, ?, ?)';
+
+  db.query(query, [materialname, materialsupplier, materialprice], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error registering material' });
+    } else {
+      res.status(200).json({ message: 'material registered successfully' });
+    }
+  });
+});
+
+app.put('/api/updatematerial/:materialname', (req, res) => {
+  const materialname = req.params.materialname;
+  const { materialsupplier, materialprice } = req.body;
+
+  const query = 'UPDATE materials SET materialsupplier = ?, materialprice = ? WHERE materialname = ?';
+  db.query(query, [materialsupplier, materialprice, materialname], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error updating material' });
+    } else {
+      res.status(200).json({ message: 'Material updated successfully' });
+    }
+  });
+});
+
+app.delete('/api/deletematerial', (req, res) => {
+  const { materialname } = req.body;
+  const query = 'DELETE FROM materials WHERE materialname = ?';
+
+  db.query(query, [materialname], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error deleting material');
+    } else {
+      res.status(200).send('Material deleted');
+    }
+  });
+});
+
+
 app.post('/api/registermastercard', (req, res) => {
   const { mastercard, labelname, material, width, pitch} = req.body;
   const query = 'INSERT INTO mastercard (mastercard, labelname, material, width, pitch) VALUES (?, ?, ?,?,?)';
