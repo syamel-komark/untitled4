@@ -6,8 +6,21 @@
       <div class="dashboard-item">
 
         <button  @click="this.$router.push('/materialmaintenance')">Material Maintenance</button>
+        <button  @click="this.$router.push('/inkmaintenance')">Ink Maintenance</button>
+        <button  @click="this.$router.push('/laminatemaintenance')">Laminate Maintenance</button>
+
+
 
       </div>
+      <div class="dashboard-item">
+
+
+        <button  @click="this.$router.push('/foilmaintenance')">Foil Maintenance</button>
+        <button  @click="this.$router.push('/materialmaintenance')">Fixedcost Maintenance</button>
+        <button  @click="this.$router.push('/hpclickmaintenance')">Hp Click Cost Maintenance</button>
+
+      </div>
+
     </div>
   </div>
 

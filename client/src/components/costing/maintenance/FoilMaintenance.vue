@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <h2>Material Maintenance</h2>
+    <h2>Foil Maintenance</h2>
     <div class="table-container">
-      <h2>Material List</h2>
+      <h2>Foil List</h2>
       <div class="searchmaterial-menu">
         <input
             type="text"
@@ -14,7 +14,7 @@
       <table>
         <thead>
         <tr>
-          <th>Material ID</th>
+          <th>Material id</th>
           <th>Material Name</th>
           <th>Supplier</th>
           <th>Material Price</th>
@@ -38,7 +38,7 @@
     </div>
     <div class="searchmaterial-menu">
       <div class="form-group">
-        <label for="labelName">Material Id:</label>
+        <label for="labelName">Material ID:</label>
         <input type="text" id="labelName" v-model="formModel.materialId" required readonly/>
       </div>
       <div class="form-group">
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+//import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
 import axios from "axios";
 export default {
@@ -142,30 +143,30 @@ export default {
 
     async deleteMaterial() {
       try {
-        const response = await axios.delete('/api/deletematerials', {
+        const response = await axios.delete('/api/deletefoil', {
           data: {
             materialid: this.formModel.materialId,
           },
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material delete success.';
+          this.successMessageLabel = 'foil delete success.';
           console.log('Deletion successful');  // Corrected log statement
           // Update the materials list after deletion
           await this.fetchMaterials();
         } else {
           this.success = true;
-          this.successMessageLabel = 'material deletion failed.';
+          this.successMessageLabel = 'foil deletion failed.';
           console.error('Deletion failed');    // Corrected log statement
         }
       } catch (error) {
-        console.error('Error deleting material:', error);
+        console.error('Error deleting foil:', error);
       }
     },
 
     async updateMaterial() {
       try {
-        const response = await axios.put('/api/updatematerials', {
+        const response = await axios.put('/api/updatefoil', {
           materialid: this.formModel.materialId,
           materialname: this.formModel.materialName,
           materialsupplier: this.formModel.materialSupplier,
@@ -173,11 +174,11 @@ export default {
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully updated.';
+          this.successMessageLabel = 'foil has been successfully updated.';
           console.log('update successful');
         } else {
           this.success = true;
-          this.successMessageLabel = 'material update failed.';
+          this.successMessageLabel = 'foil update failed.';
           console.error('update failed');
         }
       } catch (error) {
@@ -187,20 +188,20 @@ export default {
 
     async registerMaterial() {
       try {
-        const response = await axios.post('/api/registermaterials', {
+        const response = await axios.post('/api/registerfoil', {
           materialname: this.formModel.materialName,
           materialsupplier: this.formModel.materialSupplier,
           materialprice: this.formModel.materialPrice,
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully registered.';
+          this.successMessageLabel = 'foil has been successfully registered.';
           console.log('Registration successful');
           await this.fetchMaterials;
 
         } else {
           this.success = true;
-          this.successMessageLabel = 'material registration failed.';
+          this.successMessageLabel = 'foil registration failed.';
           console.error('Registration failed');
         }
       } catch (error) {
@@ -223,13 +224,14 @@ export default {
       this.formModel.materialSupplier = materials.materialsupplier;
     },
 
+
     async fetchMaterials() {
       try {
-        const response = await axios.get('/api/getmaterials');
+        const response = await axios.get('/api/getfoil');
         this.materials = response.data;
         console.log(this.materials);
       } catch (error) {
-        console.error('Error fetching materials:', error);
+        console.error('Error fetching foil:', error);
       }
     },
 

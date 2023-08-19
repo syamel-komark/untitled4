@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <h2>Material Maintenance</h2>
+    <h2>HP Click Cost Maintenance</h2>
     <div class="table-container">
-      <h2>Material List</h2>
+      <h2>HP Click Cost List</h2>
       <div class="searchmaterial-menu">
         <input
             type="text"
@@ -14,9 +14,9 @@
       <table>
         <thead>
         <tr>
-          <th>Material ID</th>
+          <th>Material id</th>
           <th>Material Name</th>
-          <th>Supplier</th>
+          <th>Machine</th>
           <th>Material Price</th>
           <th>Action</th>
 
@@ -26,7 +26,7 @@
         <tr v-for="materials in filterMaterials" :key="materials.materialid">
           <td>{{ materials.materialid }}</td>
           <td>{{ materials.materialname }}</td>
-          <td>{{ materials.materialsupplier }}</td>
+          <td>{{ materials.machine }}</td>
           <td>{{ materials.materialprice }}</td>
           <td>
             <button @click="pickMaterial(materials)">Use</button>
@@ -38,7 +38,7 @@
     </div>
     <div class="searchmaterial-menu">
       <div class="form-group">
-        <label for="labelName">Material Id:</label>
+        <label for="labelName">Material ID:</label>
         <input type="text" id="labelName" v-model="formModel.materialId" required readonly/>
       </div>
       <div class="form-group">
@@ -47,7 +47,7 @@
       </div>
       <div class="form-group">
         <label for="labelName">Material Supplier:</label>
-        <input type="text" id="labelName" v-model="formModel.materialSupplier" required />
+        <input type="text" id="labelName" v-model="formModel.machine" required />
       </div>
       <div class="form-group">
         <label for="labelName">Material Price:</label>
@@ -105,7 +105,7 @@ export default {
       formModel:{
         materialId:'',
         materialName:'',
-        materialSupplier:'',
+        machine:'',
         materialPrice: '',
       },
       materialSearchQuery:'',
@@ -142,42 +142,42 @@ export default {
 
     async deleteMaterial() {
       try {
-        const response = await axios.delete('/api/deletematerials', {
+        const response = await axios.delete('/api/deletehpclick', {
           data: {
             materialid: this.formModel.materialId,
           },
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material delete success.';
+          this.successMessageLabel = 'click delete success.';
           console.log('Deletion successful');  // Corrected log statement
           // Update the materials list after deletion
           await this.fetchMaterials();
         } else {
           this.success = true;
-          this.successMessageLabel = 'material deletion failed.';
+          this.successMessageLabel = 'click deletion failed.';
           console.error('Deletion failed');    // Corrected log statement
         }
       } catch (error) {
-        console.error('Error deleting material:', error);
+        console.error('Error deleting foil:', error);
       }
     },
 
     async updateMaterial() {
       try {
-        const response = await axios.put('/api/updatematerials', {
+        const response = await axios.put('/api/updatehpclick', {
           materialid: this.formModel.materialId,
           materialname: this.formModel.materialName,
-          materialsupplier: this.formModel.materialSupplier,
+          machine: this.formModel.machine,
           materialprice: this.formModel.materialPrice,
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully updated.';
+          this.successMessageLabel = 'click has been successfully updated.';
           console.log('update successful');
         } else {
           this.success = true;
-          this.successMessageLabel = 'material update failed.';
+          this.successMessageLabel = 'click update failed.';
           console.error('update failed');
         }
       } catch (error) {
@@ -187,20 +187,20 @@ export default {
 
     async registerMaterial() {
       try {
-        const response = await axios.post('/api/registermaterials', {
+        const response = await axios.post('/api/registerhpclick', {
           materialname: this.formModel.materialName,
-          materialsupplier: this.formModel.materialSupplier,
+          machine: this.formModel.machine,
           materialprice: this.formModel.materialPrice,
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully registered.';
+          this.successMessageLabel = 'click has been successfully registered.';
           console.log('Registration successful');
           await this.fetchMaterials;
 
         } else {
           this.success = true;
-          this.successMessageLabel = 'material registration failed.';
+          this.successMessageLabel = 'click registration failed.';
           console.error('Registration failed');
         }
       } catch (error) {
@@ -212,7 +212,7 @@ export default {
       this.formModel.materialId = '';
       this.formModel.materialPrice='';
       this.formModel.materialName = '';
-      this.formModel.materialSupplier = '';
+      this.formModel.machine = '';
       this.formModel.materialPrice = '';
     },
 
@@ -220,16 +220,17 @@ export default {
       this.formModel.materialId = materials.materialid;
       this.formModel.materialPrice = materials.materialprice; // Set the selected material
       this.formModel.materialName = materials.materialname;
-      this.formModel.materialSupplier = materials.materialsupplier;
+      this.formModel.machine = materials.machine;
     },
+
 
     async fetchMaterials() {
       try {
-        const response = await axios.get('/api/getmaterials');
+        const response = await axios.get('/api/gethpclick');
         this.materials = response.data;
         console.log(this.materials);
       } catch (error) {
-        console.error('Error fetching materials:', error);
+        console.error('Error fetching click:', error);
       }
     },
 

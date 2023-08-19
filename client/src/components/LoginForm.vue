@@ -1,10 +1,9 @@
-<template>
+<template >
   <div id="app" :class="{ authenticated: authenticated }">
     <div class="login-form" v-if="!authenticated">
       <div>
-        <img src="C:\Users\marion\untitled4\Screenshot 2023-08-14 142604.png" alt="Description of the image" width="300" height="200" style="border: 1px solid black;" />
+        <img src="output (5).png" alt="Komark" width="200" height="80" />
       </div>
-
       <div class="header">
         <h2>ONC2.0 Login</h2>
       </div>

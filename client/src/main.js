@@ -13,6 +13,10 @@ import RegisterCustomer from "@/components/Customer/RegisterCustomer";
 import ECSCalculator from "@/components/costing/ECSCalculator";
 import MaterialMaintenance from "@/components/costing/maintenance/MaterialMaintenance";
 import CostingMaintenancePage from "@/components/costing/maintenance/CostingMaintenancePage";
+import InkMaintenance from "@/components/costing/maintenance/InkMaintenance";
+import LaminateMaintenance from "@/components/costing/maintenance/LaminateMaintenance";
+import FoilMaintenance from "@/components/costing/maintenance/FoilMaintenance";
+import HPClickMaintenance from "@/components/costing/maintenance/HPClickMaintenance";
 
 
 const routes = [
@@ -28,6 +32,10 @@ const routes = [
   { path: '/ecscalculator', component: ECSCalculator},
   { path: '/materialmaintenance', component: MaterialMaintenance},
   { path: '/costingmaintenancepage', component: CostingMaintenancePage},
+  { path: '/inkmaintenance', component: InkMaintenance},
+  { path: '/laminatemaintenance', component: LaminateMaintenance},
+  { path: '/foilmaintenance', component: FoilMaintenance},
+  { path: '/hpclickmaintenance', component: HPClickMaintenance},
 ];
 
 const router = createRouter({
