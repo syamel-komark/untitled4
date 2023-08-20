@@ -36,7 +36,7 @@ db.connect(err => {
     const { username, password, level } = req.body;
     const query = 'INSERT INTO users (username, password, level) VALUES (?, ?, ?)';
 
-    db.query(query, [username, password, level], (err, result) => {
+    db.query(query, [username, password, level], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering user' });
@@ -77,7 +77,7 @@ db.connect(err => {
     const { username } = req.body;
     const query = 'DELETE FROM users WHERE username = ?';
 
-    db.query(query, [username], (err, result) => {
+    db.query(query, [username], (err) => {
       if (err) {
         console.error(err);
         res.status(500).send('Error deleting user');
@@ -123,7 +123,7 @@ db.connect(err => {
     const { materialname, materialsupplier, materialprice} = req.body;
     const query = 'INSERT INTO materials (materialname, materialsupplier, materialprice) VALUES (?, ?, ?)';
 
-    db.query(query, [materialname, materialsupplier, materialprice], (err, result) => {
+    db.query(query, [materialname, materialsupplier, materialprice], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering material' });
@@ -137,7 +137,7 @@ db.connect(err => {
     const {materialname,materialsupplier,materialprice,materialid} = req.body;
     const query = 'UPDATE materials SET materialname = ?, materialsupplier = ?, materialprice = ? WHERE materialid = ?';
 
-    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err, result) => {
+    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating material' });
@@ -151,7 +151,7 @@ db.connect(err => {
     const { materialid } = req.body;
     const query = 'DELETE FROM materials WHERE materialid = ?';
 
-    db.query(query, [materialid], (err, result) => {
+    db.query(query, [materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting material' });
@@ -183,7 +183,7 @@ db.connect(err => {
     const { materialname, machine, materialprice} = req.body;
     const query = 'INSERT INTO ink (materialname, machine, materialprice) VALUES (?, ?, ?)';
 
-    db.query(query, [materialname, machine, materialprice], (err, result) => {
+    db.query(query, [materialname, machine, materialprice], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering ink' });
@@ -197,7 +197,7 @@ db.connect(err => {
     const {materialname,machine,materialprice,materialid} = req.body;
     const query = 'UPDATE ink SET materialname = ?, machine = ?, materialprice = ? WHERE materialid = ?';
 
-    db.query(query, [materialname,machine,materialprice,materialid], (err, result) => {
+    db.query(query, [materialname,machine,materialprice,materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating ink' });
@@ -211,7 +211,7 @@ db.connect(err => {
     const { materialid } = req.body;
     const query = 'DELETE FROM ink WHERE materialid = ?';
 
-    db.query(query, [materialid], (err, result) => {
+    db.query(query, [materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting ink' });
@@ -243,7 +243,7 @@ db.connect(err => {
     const { materialname, machine, materialprice} = req.body;
     const query = 'INSERT INTO hpink (materialname, machine, materialprice) VALUES (?, ?, ?)';
 
-    db.query(query, [materialname, machine, materialprice], (err, result) => {
+    db.query(query, [materialname, machine, materialprice], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering click' });
@@ -257,7 +257,7 @@ db.connect(err => {
     const {materialname,machine,materialprice,materialid} = req.body;
     const query = 'UPDATE hpink SET materialname = ?, machine = ?, materialprice = ? WHERE materialid = ?';
 
-    db.query(query, [materialname,machine,materialprice,materialid], (err, result) => {
+    db.query(query, [materialname,machine,materialprice,materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating click' });
@@ -271,7 +271,7 @@ db.connect(err => {
     const { materialid } = req.body;
     const query = 'DELETE FROM hpink WHERE materialid = ?';
 
-    db.query(query, [materialid], (err, result) => {
+    db.query(query, [materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting click' });
@@ -303,7 +303,7 @@ db.connect(err => {
     const { materialname, materialsupplier, materialprice} = req.body;
     const query = 'INSERT INTO laminate (materialname, materialsupplier, materialprice) VALUES (?, ?, ?)';
 
-    db.query(query, [materialname, materialsupplier, materialprice], (err, result) => {
+    db.query(query, [materialname, materialsupplier, materialprice], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering laminate' });
@@ -317,7 +317,7 @@ db.connect(err => {
     const {materialname,materialsupplier,materialprice,materialid} = req.body;
     const query = 'UPDATE laminate SET materialname = ?, materialsupplier = ?, materialprice = ? WHERE materialid = ?';
 
-    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err, result) => {
+    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating laminate' });
@@ -331,7 +331,7 @@ db.connect(err => {
     const { materialid } = req.body;
     const query = 'DELETE FROM laminate WHERE materialid = ?';
 
-    db.query(query, [materialid], (err, result) => {
+    db.query(query, [materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting laminate' });
@@ -363,7 +363,7 @@ db.connect(err => {
     const { materialname, materialsupplier, materialprice} = req.body;
     const query = 'INSERT INTO foil (materialname, materialsupplier, materialprice) VALUES (?, ?, ?)';
 
-    db.query(query, [materialname, materialsupplier, materialprice], (err, result) => {
+    db.query(query, [materialname, materialsupplier, materialprice], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering foil' });
@@ -377,7 +377,7 @@ db.connect(err => {
     const {materialname,materialsupplier,materialprice,materialid} = req.body;
     const query = 'UPDATE foil SET materialname = ?, materialsupplier = ?, materialprice = ? WHERE materialid = ?';
 
-    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err, result) => {
+    db.query(query, [materialname,materialsupplier,materialprice,materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating foil' });
@@ -391,7 +391,7 @@ db.connect(err => {
     const { materialid } = req.body;
     const query = 'DELETE FROM foil WHERE materialid = ?';
 
-    db.query(query, [materialid], (err, result) => {
+    db.query(query, [materialid], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting foil' });
@@ -410,7 +410,7 @@ db.connect(err => {
     const { mastercard, labelname, material, width, pitch} = req.body;
     const query = 'INSERT INTO mastercard (mastercard, labelname, material, width, pitch) VALUES (?, ?, ?,?,?)';
 
-    db.query(query, [mastercard, labelname, material, width, pitch], (err, result) => {
+    db.query(query, [mastercard, labelname, material, width, pitch], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering mastercard' });
@@ -437,7 +437,7 @@ db.connect(err => {
     const { labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard} = req.body;
     const query = 'UPDATE mastercard SET labelname = ?, material = ?, pitch = ?, width = ?, color = ?, across = ?, around = ?, gear = ?, process = ?, finishing = ? WHERE mastercard = ?';
 
-    db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard], (err, result) => {
+    db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, mastercard], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering mastercard' });
@@ -517,7 +517,7 @@ db.connect(err => {
     const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm} = req.body;
     const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm) VALUES (?, ?, ?,?,?,?,?,?)';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm], (err, result) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering fixedcost' });
@@ -531,7 +531,7 @@ db.connect(err => {
     const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id} = req.body;
     const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=? WHERE id = ?';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id], (err, result) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating fixedcost' });
@@ -545,7 +545,7 @@ db.connect(err => {
     const { id } = req.body;
     const query = 'DELETE FROM fixedcost WHERE id = ?';
 
-    db.query(query, [id], (err, result) => {
+    db.query(query, [id], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error deleting fixedcost' });
@@ -557,6 +557,67 @@ db.connect(err => {
 
 }
 ////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////MACHINE//////////////////
+{
+  app.get('/api/getmachine', (req, res) => {
+    const query = 'SELECT * FROM machine';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching machine');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.post('/api/registermachine', (req, res) => {
+    const { machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime} = req.body;
+    const query = 'INSERT INTO machine (machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime) VALUES (?, ?, ?,?,?,?,?,?,?,?)';
+
+    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering machine' });
+      } else {
+        res.status(200).json({ message: 'machine registered successfully' });
+      }
+    });
+  });
+
+  app.put('/api/updatemachine', (req, res) => {
+    const {machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime,idmachine} = req.body;
+    const query = 'UPDATE machine SET machinename=?, maxwidth=?,maxpitch=?,minwidth=?,minpitch=?,noofstation=?,wastage=?,settinglength=?,speed=?,settingtime=? WHERE idmachine = ?';
+
+    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime,idmachine], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating machine' });
+      } else {
+        res.status(200).json({ message: 'machine updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletemachine', (req, res) => {
+    const { idmachine } = req.body;
+    const query = 'DELETE FROM machine WHERE idmachine = ?';
+
+    db.query(query, [idmachine], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting machine' });
+      } else {
+        res.status(200).json({ message: 'machine deleted' });
+      }
+    });
+  });
+
+}
+////////////////////////////////////////////////////
+
 
 
 

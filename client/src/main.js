@@ -19,6 +19,7 @@ import FoilMaintenance from "@/components/costing/maintenance/FoilMaintenance";
 import HPClickMaintenance from "@/components/costing/maintenance/HPClickMaintenance";
 import fixedcostMaintenance from "@/components/costing/maintenance/FixedcostMaintenance";
 import fixedcostCalculate from "@/components/costing/maintenance/FixedcostCalculate";
+import MachineMaintenance from "@/components/costing/maintenance/MachineMaintenance";
 
 
 const routes = [
@@ -40,6 +41,7 @@ const routes = [
   { path: '/hpclickmaintenance', component: HPClickMaintenance},
   { path: '/fixedcostmaintenance', component: fixedcostMaintenance},
   { path: '/fixedcostcalculate', component: fixedcostCalculate},
+  { path: '/machinemaintenance', component: MachineMaintenance},
 ];
 
 const router = createRouter({

@@ -20,6 +20,12 @@
         <button  @click="this.$router.push('/hpclickmaintenance')">Hp Click Cost Maintenance</button>
 
       </div>
+      <div class="dashboard-item">
+
+
+        <button  @click="this.$router.push('/machinemaintenance')">Machine Maintenance</button>
+
+      </div>
 
     </div>
   </div>

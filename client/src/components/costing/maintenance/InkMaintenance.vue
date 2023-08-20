@@ -53,9 +53,9 @@
         <label for="labelName">Material Price:</label>
         <input type="text" id="labelName" v-model="formModel.materialPrice" required />
       </div>
+      <button @click="deleteMaterial">Delete</button>
       <button @click="clearField">Clear</button>
       <button @click="updateMaterial">Update</button>
-      <button @click="deleteMaterial">Delete</button>
       <button @click="registerMaterial">Register</button>
 
 

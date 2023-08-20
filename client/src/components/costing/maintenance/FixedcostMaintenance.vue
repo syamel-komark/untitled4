@@ -92,9 +92,9 @@
       </div>
       </div>
     <div>
+      <button @click="deleteFixedCost">Delete</button>
       <button @click="clearField">Clear</button>
       <button @click="updateFixedCost">Update</button>
-      <button @click="deleteFixedCost">Delete</button>
       <button @click="registerFixedCost">Register</button>
     </div>
     <div>
