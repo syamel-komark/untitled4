@@ -14,6 +14,7 @@
       <table>
         <thead>
         <tr>
+          <th>Action</th>
           <th>Machine id</th>
           <th>Machine Name</th>
           <th>Max Width</th>
@@ -24,13 +25,21 @@
           <th>Wastage</th>
           <th>Setting Length</th>
           <th>Speed</th>
-          <th>Setting Time</th>
-          <th>Action</th>
-
+          <th>Plate Price</th>
+          <th>Gear</th>
+          <th>Gear Pitch</th>
+          <th>Trim width</th>
+          <th>Across Gap</th>
+          <th>Roll Length</th>
+          <th>Joint Wastage</th>
+          <th>Coating Weight</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="machine in filterMaterials" :key="machine.idmachine">
+          <td>
+            <button @click="pickMaterial(machine)">Use</button>
+          </td>
           <td>{{ machine.idmachine }}</td>
           <td>{{ machine.machinename }}</td>
           <td>{{ machine.maxwidth }}</td>
@@ -42,9 +51,14 @@
           <td>{{ machine.settinglength }}</td>
           <td>{{ machine.speed }}</td>
           <td>{{ machine.settingtime }}</td>
-          <td>
-            <button @click="pickMaterial(machine)">Use</button>
-          </td>
+          <td>{{ machine.plateprice }}</td>
+          <td>{{ machine.gear }}</td>
+          <td>{{ machine.gearpitch }}</td>
+          <td>{{ machine.trim }}</td>
+          <td>{{ machine.acrossgap }}</td>
+          <td>{{ machine.rolllength }}</td>
+          <td>{{ machine.jointwastage }}</td>
+          <td>{{ machine.coatingweight }}</td>
         </tr>
         </tbody>
       </table>
@@ -62,8 +76,8 @@
             <input type="text" id="labelName" v-model="formModel.machineName" required />
           </div>
           <div>
-            <label for="labelName">Max Width (mm):</label>
-            <input type="text" id="labelName" v-model="formModel.maxWidth" required />
+            <label for="labelName">Wastage:</label>
+            <input type="text" id="labelName" v-model="formModel.wastage" required />
           </div>
           <div>
             <label for="labelName">Speed (m/min):</label>
@@ -71,6 +85,10 @@
           </div>
         </div>
         <div class="form-group">
+          <div>
+            <label for="labelName">Max Width (mm):</label>
+            <input type="text" id="labelName" v-model="formModel.maxWidth" required />
+          </div>
           <div>
             <label for="labelName">Max Pitch (mm):</label>
             <input type="text" id="labelName" v-model="formModel.maxPitch" required />
@@ -90,8 +108,8 @@
             <input type="text" id="labelName" v-model="formModel.noOfStation" required />
           </div>
           <div>
-            <label for="labelName">Wastage:</label>
-            <input type="text" id="labelName" v-model="formModel.wastage" required />
+            <label for="labelName">Roll Length (m):</label>
+            <input type="text" id="labelName" v-model="formModel.rollLength" required />
           </div>
           <div>
             <label for="labelName">Setting Length / Color (m):</label>
@@ -100,6 +118,38 @@
           <div>
             <label for="labelName">Setting Time Per Color:</label>
             <input type="text" id="labelName" v-model="formModel.settingTime" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <div>
+            <label for="labelName">Plate Price (RM/m2):</label>
+            <input type="text" id="labelName" v-model="formModel.platePrice" required />
+          </div>
+          <div>
+            <label for="labelName">Gear:</label>
+            <input type="text" id="labelName" v-model="formModel.gear" required />
+          </div>
+          <div>
+            <label for="labelName">Gear Pitch(mm):</label>
+            <input type="text" id="labelName" v-model="formModel.gearPitch" required />
+          </div>
+          <div>
+            <label for="labelName">Side Trim width (mm):</label>
+            <input type="text" id="labelName" v-model="formModel.sideTrim" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <div>
+            <label for="labelName">Gap between across (mm):</label>
+            <input type="text" id="labelName" v-model="formModel.acrossGap" required />
+          </div>
+          <div>
+            <label for="labelName">Joint Wastage (m):</label>
+            <input type="text" id="labelName" v-model="formModel.jointWastage" required />
+          </div>
+          <div>
+            <label for="labelName">Coating weight (g/m2):</label>
+            <input type="text" id="labelName" v-model="formModel.coatingWeight" required />
           </div>
         </div>
       </div>
@@ -166,6 +216,14 @@ export default {
         settingLength:'',
         speed:'',
         settingTime:'',
+        platePrice:'',
+        gear:'',
+        gearPitch:'',
+        trim:'',
+        acrossGap:'',
+        rollLength:'',
+        jointWastage:'',
+        coatingWeight:'',
       },
       materialSearchQuery:'',
       machine:[],
@@ -235,6 +293,14 @@ export default {
           settinglength: this.formModel.settingLength,
           speed: this.formModel.speed,
           settingtime: this.formModel.settingTime,
+          plateprice: this.formModel.platePrice,
+          gear: this.formModel.gear,
+          gearpitch: this.formModel.gearPitch,
+          trim: this.formModel.trim,
+          acrossgap: this.formModel.acrossGap,
+          rolllength: this.formModel.rollLength,
+          joint: this.formModel.jointWastage,
+          coatingweight: this.formModel.coatingWeight,
           idmachine: this.formModel.idMachine,
 
 
@@ -266,6 +332,15 @@ export default {
           settinglength: this.formModel.settingLength,
           speed: this.formModel.speed,
           settingtime: this.formModel.settingTime,
+          plateprice: this.formModel.platePrice,
+          gear: this.formModel.gear,
+          gearpitch: this.formModel.gearPitch,
+          trim: this.formModel.trim,
+          acrossgap: this.formModel.acrossGap,
+          rolllength: this.formModel.rollLength,
+          jointwastage: this.formModel.jointWastage,
+          coatingweight: this.formModel.coatingWeight,
+          idmachine: this.formModel.idMachine,
         });
         if (response.status === 200) {
           this.success = true;
@@ -295,7 +370,14 @@ export default {
       this.formModel.settingLength = '';
       this.formModel.speed = '';
       this.formModel.settingTime = '';
-
+      this.formModel.platePrice='';
+      this.formModel.gear='';
+      this.formModel.gearPitch='';
+      this.formModel.trim='';
+      this.formModel.acrossGap='';
+      this.formModel.rollLength='';
+      this.formModel.jointWastage='';
+      this.formModel.coatingWeight='';
     },
 
     pickMaterial(machine) {
@@ -310,6 +392,15 @@ export default {
       this.formModel.settingLength = machine.settinglength;
       this.formModel.speed = machine.speed;
       this.formModel.settingTime = machine.settingtime;
+      this.formModel.platePrice=machine.plateprice;
+      this.formModel.gear=machine.gear;
+      this.formModel.gearPitch=machine.gearpitch;
+      this.formModel.trim=machine.trim;
+      this.formModel.acrossGap=machine.acrossgap;
+      this.formModel.rollLength=machine.rolllength;
+      this.formModel.jointWastage=machine.jointwastage;
+      this.formModel.coatingWeight=machine.coatingweight;
+
     },
 
 

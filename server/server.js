@@ -104,9 +104,9 @@ db.connect(err => {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////MATERIALS//////////////////////////////////////////
+/////////////////////////////////////FACESTOCK//////////////////////////////////////////
 {
-  app.get('/api/getmaterials', (req, res) => {
+  app.get('/api/getfacestock', (req, res) => {
     const query = 'SELECT * FROM materials';
 
     db.query(query, (err, result) => {
@@ -119,7 +119,7 @@ db.connect(err => {
     });
   });
 
-  app.post('/api/registermaterials', (req, res) => {
+  app.post('/api/registerfacestock', (req, res) => {
     const { materialname, materialsupplier, materialprice} = req.body;
     const query = 'INSERT INTO materials (materialname, materialsupplier, materialprice) VALUES (?, ?, ?)';
 
@@ -133,7 +133,7 @@ db.connect(err => {
     });
   });
 
-  app.put('/api/updatematerials', (req, res) => {
+  app.put('/api/updatefacestock', (req, res) => {
     const {materialname,materialsupplier,materialprice,materialid} = req.body;
     const query = 'UPDATE materials SET materialname = ?, materialsupplier = ?, materialprice = ? WHERE materialid = ?';
 
@@ -147,7 +147,7 @@ db.connect(err => {
     });
   });
 
-  app.delete('/api/deletematerials', (req, res) => {
+  app.delete('/api/deletefacestock', (req, res) => {
     const { materialid } = req.body;
     const query = 'DELETE FROM materials WHERE materialid = ?';
 
@@ -223,6 +223,67 @@ db.connect(err => {
 
 }
 ////////////////////////////////////////////////////
+
+/////////////////////VARNISH//////////////////
+{
+  app.get('/api/getvarnish', (req, res) => {
+    const query = 'SELECT * FROM varnish';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching varnish');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.post('/api/registervarnish', (req, res) => {
+    const { materialname, machine, materialprice} = req.body;
+    const query = 'INSERT INTO varnish (materialname, machine, materialprice) VALUES (?, ?, ?)';
+
+    db.query(query, [materialname, machine, materialprice], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering varnish' });
+      } else {
+        res.status(200).json({ message: 'varnish registered successfully' });
+      }
+    });
+  });
+
+  app.put('/api/updatevarnish', (req, res) => {
+    const {materialname,machine,materialprice,materialid} = req.body;
+    const query = 'UPDATE varnish SET materialname = ?, machine = ?, materialprice = ? WHERE materialid = ?';
+
+    db.query(query, [materialname,machine,materialprice,materialid], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating varnish' });
+      } else {
+        res.status(200).json({ message: 'varnish updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletevarnish', (req, res) => {
+    const { materialid } = req.body;
+    const query = 'DELETE FROM varnish WHERE materialid = ?';
+
+    db.query(query, [materialid], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting varnish' });
+      } else {
+        res.status(200).json({ message: 'varnish deleted' });
+      }
+    });
+  });
+
+}
+////////////////////////////////////////////////////
+
 
 /////////////////////HPCLICK//////////////////
 {
@@ -453,11 +514,11 @@ db.connect(err => {
 /////////////////////////COSTING//////////////////////////////
 {
   app.post('/api/registercosting', (req, res) => {
-    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard} = req.body;
-    const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine, mastercard) VALUES (?,?, ?, ?,?,?,?,?,?,?,?,?)';
+    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost, mastercard} = req.body;
+    const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost, mastercard) VALUES (?,?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?,?,?,?,?,?)';
 
     db.query(query, [
-      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine, mastercard], (err, result) => {
+      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost, mastercard], (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering costing' });
@@ -466,24 +527,18 @@ db.connect(err => {
         res.status(200).json({ id: registeredCostingNumber }); // Send the ID in the response
       }
     });
-
-    app.get('/api/getcosting', (req, res) => {
-      const query = 'SELECT * FROM costing';
-
-      db.query(query, (err, result) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Error fetching costing');
-        } else {
-          res.status(200).json(result);
-        }
-      });
-    });
-
   });
 
   app.get('/api/getcosting', (req, res) => {
-    const query = 'SELECT * FROM costing  ORDER BY entry_datetime DESC;';
+    const idFilter = req.query.id; // Get the ID filter from the query parameters
+
+    let query = 'SELECT * FROM costing';
+
+    if (idFilter) {
+      query += ` WHERE id = ${idFilter}`; // Add the ID filter condition to the query
+    }
+
+    query += ' ORDER BY entry_datetime DESC;';
 
     db.query(query, (err, result) => {
       if (err) {
@@ -561,9 +616,16 @@ db.connect(err => {
 /////////////////////MACHINE//////////////////
 {
   app.get('/api/getmachine', (req, res) => {
-    const query = 'SELECT * FROM machine';
+    const machinenamefilter = req.query.machinename;
+    let query = 'SELECT * FROM machine';
+    let queryParams = []; // Initialize an array to store query parameters
 
-    db.query(query, (err, result) => {
+    if (machinenamefilter) {
+      query += ' WHERE machinename = ?'; // Add the placeholder for the parameter
+      queryParams.push(machinenamefilter); // Add the parameter value to the array
+    }
+
+    db.query(query, queryParams, (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).send('Error fetching machine');
@@ -573,11 +635,12 @@ db.connect(err => {
     });
   });
 
-  app.post('/api/registermachine', (req, res) => {
-    const { machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime} = req.body;
-    const query = 'INSERT INTO machine (machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime) VALUES (?, ?, ?,?,?,?,?,?,?,?)';
 
-    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime], (err) => {
+  app.post('/api/registermachine', (req, res) => {
+    const { machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight} = req.body;
+    const query = 'INSERT INTO machine (machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight) VALUES (?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
+    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering machine' });
@@ -588,10 +651,10 @@ db.connect(err => {
   });
 
   app.put('/api/updatemachine', (req, res) => {
-    const {machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime,idmachine} = req.body;
-    const query = 'UPDATE machine SET machinename=?, maxwidth=?,maxpitch=?,minwidth=?,minpitch=?,noofstation=?,wastage=?,settinglength=?,speed=?,settingtime=? WHERE idmachine = ?';
+    const {machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, idmachine} = req.body;
+    const query = 'UPDATE machine SET machinename=?, maxwidth=?,maxpitch=?,minwidth=?,minpitch=?,noofstation=?,wastage=?,settinglength=?,speed=?,settingtime=?, plateprice=?, gear=?, gearpitch=?, trim=?, acrossgap=?, rolllength=?, jointwastage=?, coatingweight=? WHERE idmachine = ?';
 
-    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime,idmachine], (err) => {
+    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, idmachine], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating machine' });

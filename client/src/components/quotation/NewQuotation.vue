@@ -122,10 +122,7 @@ export default {
 
 <style scoped>
 
-.form-container {
-  display: flex;
-  flex-wrap: wrap;
-}
+
 
 .form-group {
   flex: 0 0 calc(50% - 20px); /* Adjust the width as needed */
@@ -136,12 +133,5 @@ export default {
   justify-content: center;
 }
 
-.dashboard {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
 </style>

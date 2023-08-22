@@ -1,8 +1,8 @@
 <template>
   <h2>ECS Label Specification</h2>
-  <div class="form-container">
+  <div class="group-container">
     <div class="form-group">
-      <button @click="openSearchMastercard" for="Mastercard">Mastercard:</button>
+      <button @click="openSearchMastercard" form="Mastercard">Mastercard:</button>
       <input type="text" id="Mastercard" v-model="formModel.mastercard" required />
     </div>
     <div class="form-group">
@@ -42,7 +42,7 @@
       <input type="text" id="finishing" v-model="selectedFinishing" required />
     </div>
   </div>
-  <div class="form-container">
+  <div class="group-container">
     <div class="form-group">
     </div>
     <div class="form-group">
@@ -463,8 +463,8 @@ export default {
         });
         if (response.status === 200) {
           this.successRegisterLabel = true;
-          this.successMessageLabel = 'label has been successfully updated.';
-          this.formModel.mastercard=''
+          this.successMessageLabel = 'label has been successfully updated.',
+          this.formModel.mastercard='',
           this.formModel.labelName='',
           this.formModel.material='',
           this.formModel.width='',
@@ -572,7 +572,7 @@ export default {
 
     async fetchMaterials() {
       try {
-        const response = await axios.get('/api/getmaterials');
+        const response = await axios.get('/api/getfacestock');
         this.materialPick = response.data;
         console.log(this.materialPick);
       } catch (error) {
@@ -607,7 +607,7 @@ export default {
 
 <style scoped>
 
-.form-container {
+.group-container {
   display: flex;
   flex-wrap: wrap;
 }

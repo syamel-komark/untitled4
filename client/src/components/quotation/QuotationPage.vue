@@ -35,7 +35,7 @@ export default {
 
   data() {
     return {
-      isQuotation: false,
+      isQuotation: true,
       isCosting: false,
       username: null,
       currentTime: null,

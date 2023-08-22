@@ -1,14 +1,14 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <h2>Material Maintenance</h2>
+    <h2>Varnish Maintenance</h2>
     <div class="table-container">
-      <h2>Material List</h2>
+      <h2>Varnish List</h2>
       <div class="searchmaterial-menu">
         <input
             type="text"
             v-model="materialSearchQuery"
-            placeholder="Search by Material Name"
+            placeholder="Search by Varnish Name"
         />
       </div>
       <table>
@@ -16,7 +16,7 @@
         <tr>
           <th>Material ID</th>
           <th>Material Name</th>
-          <th>Supplier</th>
+          <th>Machine</th>
           <th>Material Price</th>
           <th>Action</th>
 
@@ -26,7 +26,7 @@
         <tr v-for="materials in filterMaterials" :key="materials.materialid">
           <td>{{ materials.materialid }}</td>
           <td>{{ materials.materialname }}</td>
-          <td>{{ materials.materialsupplier }}</td>
+          <td>{{ materials.machine }}</td>
           <td>{{ materials.materialprice }}</td>
           <td>
             <button @click="pickMaterial(materials)">Use</button>
@@ -38,16 +38,16 @@
     </div>
     <div class="searchmaterial-menu">
       <div class="form-group">
-        <label for="labelName">Material Id:</label>
-        <input type="text" id="labelName" v-model="formModel.materialId" required readonly/>
+        <label for="labelName">Material ID:</label>
+        <input type="text" id="labelName" v-model="formModel.materialId" required readonly />
       </div>
       <div class="form-group">
         <label for="labelName">Material Name:</label>
         <input type="text" id="labelName" v-model="formModel.materialName" required />
       </div>
       <div class="form-group">
-        <label for="labelName">Material Supplier:</label>
-        <input type="text" id="labelName" v-model="formModel.materialSupplier" required />
+        <label for="labelName">Machine:</label>
+        <input type="text" id="labelName" v-model="formModel.machine" required />
       </div>
       <div class="form-group">
         <label for="labelName">Material Price:</label>
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+//import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
 import axios from "axios";
 export default {
@@ -103,9 +104,9 @@ export default {
       successMessageLabel:'',
       success:false,
       formModel:{
-        materialId:'',
+        materialId: '',
         materialName:'',
-        materialSupplier:'',
+        machine:'',
         materialPrice: '',
       },
       materialSearchQuery:'',
@@ -142,42 +143,42 @@ export default {
 
     async deleteMaterial() {
       try {
-        const response = await axios.delete('/api/deletefacestock', {
+        const response = await axios.delete('/api/deletevarnish', {
           data: {
             materialid: this.formModel.materialId,
           },
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material delete success.';
+          this.successMessageLabel = 'varnish delete success.';
           console.log('Deletion successful');  // Corrected log statement
           // Update the materials list after deletion
           await this.fetchMaterials();
         } else {
           this.success = true;
-          this.successMessageLabel = 'material deletion failed.';
+          this.successMessageLabel = 'varnish deletion failed.';
           console.error('Deletion failed');    // Corrected log statement
         }
       } catch (error) {
-        console.error('Error deleting material:', error);
+        console.error('Error deleting varnish:', error);
       }
     },
 
     async updateMaterial() {
       try {
-        const response = await axios.put('/api/updatefacestock', {
+        const response = await axios.put('/api/updatevarnish', {
           materialid: this.formModel.materialId,
           materialname: this.formModel.materialName,
-          materialsupplier: this.formModel.materialSupplier,
+          machine: this.formModel.machine,
           materialprice: this.formModel.materialPrice,
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully updated.';
+          this.successMessageLabel = 'varnish has been successfully updated.';
           console.log('update successful');
         } else {
           this.success = true;
-          this.successMessageLabel = 'material update failed.';
+          this.successMessageLabel = 'varnish update failed.';
           console.error('update failed');
         }
       } catch (error) {
@@ -187,31 +188,34 @@ export default {
 
     async registerMaterial() {
       try {
-        const response = await axios.post('/api/registerfacestock', {
+        const response = await axios.post('/api/registervarnish', {
           materialname: this.formModel.materialName,
-          materialsupplier: this.formModel.materialSupplier,
+          machine: this.formModel.machine,
           materialprice: this.formModel.materialPrice,
         });
         if (response.status === 200) {
           this.success = true;
-          this.successMessageLabel = 'material has been successfully registered.';
+          this.successMessageLabel = 'varnish has been successfully registered.';
           console.log('Registration successful');
           await this.fetchMaterials;
 
         } else {
           this.success = true;
-          this.successMessageLabel = 'material registration failed.';
+          this.successMessageLabel = 'varnish registration failed.';
           console.error('Registration failed');
         }
       } catch (error) {
         console.error('Error during registration:', error);
       }
+      await this.fetchMaterials;
+
     },
 
     clearField(){
       this.formModel.materialId = '';
-      this.formModel.materialPrice='';
       this.formModel.materialName = '';
+      this.formModel.materialPrice='';
+      this.formModel.machine = '';
       this.formModel.materialSupplier = '';
       this.formModel.materialPrice = '';
     },
@@ -220,16 +224,17 @@ export default {
       this.formModel.materialId = materials.materialid;
       this.formModel.materialPrice = materials.materialprice; // Set the selected material
       this.formModel.materialName = materials.materialname;
-      this.formModel.materialSupplier = materials.materialsupplier;
+      this.formModel.machine = materials.machine;
     },
+
 
     async fetchMaterials() {
       try {
-        const response = await axios.get('/api/getfacestock');
+        const response = await axios.get('/api/getvarnish');
         this.materials = response.data;
         console.log(this.materials);
       } catch (error) {
-        console.error('Error fetching materials:', error);
+        console.error('Error fetching varnish:', error);
       }
     },
 

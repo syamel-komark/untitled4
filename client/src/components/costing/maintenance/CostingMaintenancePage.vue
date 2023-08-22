@@ -22,7 +22,7 @@
       </div>
       <div class="dashboard-item">
 
-
+        <button  @click="this.$router.push('/varnishmaintenance')">Varnish Maintenance</button>
         <button  @click="this.$router.push('/machinemaintenance')">Machine Maintenance</button>
 
       </div>

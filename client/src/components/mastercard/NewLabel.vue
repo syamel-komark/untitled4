@@ -166,7 +166,7 @@ export default {
 
     async fetchMaterials() {
       try {
-        const response = await axios.get('/api/getmaterials');
+        const response = await axios.get('/api/getfacestock');
         this.materialPick = response.data;
         console.log(this.materialPick);
       } catch (error) {
@@ -212,18 +212,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.welcome {
-  text-align: center;
-  margin-bottom: 20px;
-}
 
-.dashboard-items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
 
-.dashboard-item {
-  margin: 10px;
-}
 </style>

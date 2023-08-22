@@ -43,7 +43,7 @@ export default {
       loginLevel: null,
       notUser:false,
       isQuotation: false,
-      isCosting: false,
+      isCosting: true,
       username: null,
       currentTime: null,
     };

@@ -254,7 +254,7 @@ export default {
           this.success = true;
           this.successMessageLabel = 'fixedcost has been successfully registered.';
           console.log('Registration successful');
-          await this.fetchMaterials;
+          await this.fetchFacestock;
 
         } else {
           this.success = true;

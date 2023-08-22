@@ -10,6 +10,7 @@ import CostingPage from "@/components/costing/CostingPage";
 import NewCosting from "@/components/costing/NewCosting";
 import NewQuotation from "@/components/quotation/QuotationPage";
 import RegisterCustomer from "@/components/Customer/RegisterCustomer";
+import NewCostingECS from "@/components/costing/NewCostingECS";
 import ECSCalculator from "@/components/costing/ECSCalculator";
 import MaterialMaintenance from "@/components/costing/maintenance/MaterialMaintenance";
 import CostingMaintenancePage from "@/components/costing/maintenance/CostingMaintenancePage";
@@ -20,6 +21,7 @@ import HPClickMaintenance from "@/components/costing/maintenance/HPClickMaintena
 import fixedcostMaintenance from "@/components/costing/maintenance/FixedcostMaintenance";
 import fixedcostCalculate from "@/components/costing/maintenance/FixedcostCalculate";
 import MachineMaintenance from "@/components/costing/maintenance/MachineMaintenance";
+import VarnishMaintenance from "@/components/costing/maintenance/VarnishMaintenance";
 
 
 const routes = [
@@ -32,6 +34,7 @@ const routes = [
   { path: '/newcosting', component: NewCosting},
   { path: '/newquotation', component: NewQuotation},
   { path: '/registercustomer', component: RegisterCustomer},
+  { path: '/newcostingecs', component: NewCostingECS},
   { path: '/ecscalculator', component: ECSCalculator},
   { path: '/materialmaintenance', component: MaterialMaintenance},
   { path: '/costingmaintenancepage', component: CostingMaintenancePage},
@@ -42,6 +45,8 @@ const routes = [
   { path: '/fixedcostmaintenance', component: fixedcostMaintenance},
   { path: '/fixedcostcalculate', component: fixedcostCalculate},
   { path: '/machinemaintenance', component: MachineMaintenance},
+  { path: '/varnishmaintenance', component: VarnishMaintenance},
+
 ];
 
 const router = createRouter({

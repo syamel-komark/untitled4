@@ -2,7 +2,7 @@
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <h2>Customer info</h2>
-    <div class="form-container">
+    <div class="group-container">
       <div class="form-group">
         <button @click="generateQuotation">Customer Name</button>
         <input type="text" id="customerName" v-model="customerName" required />
