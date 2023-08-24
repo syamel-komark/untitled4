@@ -651,10 +651,10 @@ db.connect(err => {
   });
 
   app.put('/api/updatemachine', (req, res) => {
-    const {machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, idmachine} = req.body;
-    const query = 'UPDATE machine SET machinename=?, maxwidth=?,maxpitch=?,minwidth=?,minpitch=?,noofstation=?,wastage=?,settinglength=?,speed=?,settingtime=?, plateprice=?, gear=?, gearpitch=?, trim=?, acrossgap=?, rolllength=?, jointwastage=?, coatingweight=? WHERE idmachine = ?';
+    const {machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, hotstampingplateprice, silkscreenplateprice, flexiblediecutprice, flatbeddiecutprice, soliddiecutprice, idmachine} = req.body;
+    const query = 'UPDATE machine SET machinename=?, maxwidth=?,maxpitch=?,minwidth=?,minpitch=?,noofstation=?,wastage=?,settinglength=?,speed=?,settingtime=?, plateprice=?, gear=?, gearpitch=?, trim=?, acrossgap=?, rolllength=?, jointwastage=?, coatingweight=?, hotstampingplateprice=?, silkscreenplateprice=?, flexiblediecutprice=?, flatbeddiecutprice=?, soliddiecutprice=? WHERE idmachine = ?';
 
-    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, idmachine], (err) => {
+    db.query(query, [machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight, hotstampingplateprice, silkscreenplateprice, flexiblediecutprice, flatbeddiecutprice, soliddiecutprice, idmachine], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating machine' });

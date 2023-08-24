@@ -1,173 +1,295 @@
 <template>
-  <h2>ECS Label Specification<label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
-  <div class="group-container">
-    <div class="table-container">
-      <div class="searchmaterial-menu">
+  <div class="container">
+    <div>
+      <h2>ECS Label Specification
+        <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
+    </div>
+    <div>
+      <div class="group-container">
+        <div class ="table">
+          <header>COSTING TABLE</header>
+          <div class="table-container">
+            <table>
+              <thead>
+              <tr>
+                <th>Costing Number</th>
+                <th>Mastercard</th>
+                <th>Label name</th>
+                <th>Facestock</th>
+                <th>Width</th>
+                <th>Pitch</th>
+                <th>Color</th>
+                <th>Across</th>
+                <th>Around</th>
+                <th>Gear</th>
+                <th>Process</th>
+                <th>Finishing</th>
+                <th>Foil Cost</th>
+                <th>Laminate</th>
+                <th>Laminate Cost</th>
+                <th>Material Cost</th>
+                <th>Varnish</th>
+                <th>Varnish Cost</th>
+                <th>Ink</th>
+                <th>Ink Cost</th>
+
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="costing in costingInfo" :key="costing.id">
+                <td>{{ costing.id }}</td>
+                <td>{{ costing.mastercard }}</td>
+                <td>{{ costing.labelname }}</td>
+                <td>{{ costing.material }}</td>
+                <td>{{ costing.width }}</td>
+                <td>{{ costing.pitch }}</td>
+                <td>{{ costing.color }}</td>
+                <td>{{ costing.across }}</td>
+                <td>{{ costing.around }}</td>
+                <td>{{ costing.gear }}</td>
+                <td>{{ costing.process }}</td>
+                <td>{{ costing.finishing }}</td>
+                <td>{{ costing.foilcost }}</td>
+                <td>{{ costing.laminate }}</td>
+                <td>{{ costing.laminatecost }}</td>
+                <td>{{ costing.materialcost }}</td>
+                <td>{{ costing.varnish }}</td>
+                <td>{{ costing.varnishcost }}</td>
+                <td>{{ costing.ink }}</td>
+                <td>{{ costing.inkcost }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Costing Number</th>
-          <th>Mastercard</th>
-          <th>Label name</th>
-          <th>Facestock</th>
-          <th>Width</th>
-          <th>Pitch</th>
-          <th>Color</th>
-          <th>Across</th>
-          <th>Around</th>
-          <th>Gear</th>
-          <th>Process</th>
-          <th>Finishing</th>
-          <th>Foil Cost</th>
-          <th>Laminate</th>
-          <th>Laminate Cost</th>
-          <th>Material Cost</th>
-          <th>Varnish</th>
-          <th>Varnish Cost</th>
-          <th>Ink</th>
-          <th>Ink Cost</th>
+    </div>
+    <div>
+      <h2>USER INPUT</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="quantity">Quantity Ordered:</label>
+            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" @input="getMoq" v-model="quantity" required />
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing-type">Diecut:</label>
+            <select id="printing-type" v-model="diecuttype" required>
+              <option value="solid">Solid</option>
+              <option value="flexible">Flexible</option>
+              <option value="flatbed">Flatbed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">material price:</label>
+            <input type="text" id="finishing" v-model="formModel.facestockCost" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>CALCULATED LENGTH FIELD</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length total">Label printing length total:</label>
+            <input type="text" id="finishing" v-model="calculatePrintingLengthTotal" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Back print m:</label>
+            <input type="text" id="finishing" v-model="calculateBackPrint" required readonly/>
+          </div>
+          <div class="form-item">
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing length">Label printing length:</label>
+            <input type="text" id="finishing" v-model="calculatePrintingLength" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">Label color setting length:</label>
+            <input type="text" id="finishing" v-model="calculateSettingLengthColor" required />
+          </div>
+          <div class="form-item">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Sheet Form Setting:</label>
+            <input type="text" id="finishing" v-model="calculateSheetFormLength" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">Label joints setting length:</label>
+            <input type="text" id="finishing" v-model="calculateJointLengthWastage" required readonly/>
+          </div>
+          <div class="form-item">
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing gap">Process Wastage:</label>
+            <input type="text" id="finishing" v-model="calculateProcessWastage" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">Label wastage:</label>
+            <input type="text" id="finishing" v-model="machineSpec.wastage" required readonly/>
+          </div>
+          <div class="form-item">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>MATERIAL COST</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">ink cost:</label>
+            <input type="text" id="finishing" v-model="calculateInkCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">varnish cost:</label>
+            <input type="text" id="finishing" v-model="calculateVarnishCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">paper cost:</label>
+            <input type="text" id="finishing" v-model="calculatePaperMaterialPrice" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Multi Form Ink:</label>
+            <input type="text" id="finishing" v-model="calculateMultiformInk" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="laminate cost">Laminate cost:</label>
+            <input type="text" id="finishing" v-model="calculateLaminateCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Multi Form Material:</label>
+            <input type="text" id="finishing" v-model="calculateMultiformMaterial" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Kill Glue Cost:</label>
+            <input type="text" id="finishing" v-model="calculateKillGlueCost" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Foil Cost:</label>
+            <input type="text" id="finishing" v-model="calculateFoilCost" required readonly/>
+          </div>
+          <div class="form-item">
 
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="costing in costingInfo" :key="costing.id">
-          <td>{{ costing.id }}</td>
-          <td>{{ costing.mastercard }}</td>
-          <td>{{ costing.labelname }}</td>
-          <td>{{ costing.material }}</td>
-          <td>{{ costing.width }}</td>
-          <td>{{ costing.pitch }}</td>
-          <td>{{ costing.color }}</td>
-          <td>{{ costing.across }}</td>
-          <td>{{ costing.around }}</td>
-          <td>{{ costing.gear }}</td>
-          <td>{{ costing.process }}</td>
-          <td>{{ costing.finishing }}</td>
-          <td>{{ costing.foilcost }}</td>
-          <td>{{ costing.laminate }}</td>
-          <td>{{ costing.laminatecost }}</td>
-          <td>{{ costing.materialcost }}</td>
-          <td>{{ costing.varnish }}</td>
-          <td>{{ costing.varnishcost }}</td>
-          <td>{{ costing.ink }}</td>
-          <td>{{ costing.inkcost }}</td>
-        </tr>
-        </tbody>
-      </table>
+          </div>
+          <div class="form-item">
+            <label for="printing length">total material cost</label>
+            <input type="text" id="finishing" v-model="totalMaterialCost" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>TOOLING COST</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Perforated Die Cut:</label>
+            <input type="text" id="finishing" v-model="calculatePerforatedCut" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Silk Screen Plate Price:</label>
+            <input type="text" id="finishing" v-model="calculateSilkscreenPlate" required readonly/>
+          </div>
+      </div>
+        <div class="form-group">
+          <div class = "form-item">
+            <label for="printing length">total tooling cost:</label>
+            <input type="text" id="finishing" v-model="totalToolingCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Back Cut:</label>
+            <input type="text" id="finishing" v-model="calculateBackCutCutter" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">plate cost:</label>
+            <input type="text" id="finishing" v-model="calculatePlatePrice" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Hot Stamping Plate:</label>
+            <input type="text" id="finishing" v-model="calculateHotStampingPlate" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Cold Foil Plate Cost:</label>
+            <input type="text" id="finishing" v-model="calculateFoilPlate" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">fixed cost:</label>
+            <input type="text" id="finishing" v-model="calculateFixedCosts" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">diecut cost:</label>
+            <input type="text" id="finishing" v-model="calculateDieCut" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>PRICING FIELD</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class ="form-item">
+            <label for="printing length">sum Cost:</label>
+            <input type="text" id="finishing"  v-model="sumCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">Unit Cost:</label>
+            <input type="text" id="finishing"  v-model="unitCost" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">Unit Cost Without Tooling:</label>
+            <input type="text" id="finishing"  v-model="unitCostWithoutTooling" required readonly/>
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing length">margin:</label>
+            <input type="text" id="finishing" @input="setMargin" v-model="margin" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">RSP:</label>
+            <input type="text" id="finishing"  v-model="RSP" required readonly/>
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing length">Current Selling Price:</label>
+            <input type="text" id="finishing"  v-model="RSP" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>DONE</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <button @click="runAsyncFunctions" id="registercosting">Next</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="group-container">
-    <div class="form-group">
-      <label for="quantity">Quantity Ordered:</label>
-      <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" @input="getMoq" v-model="quantity" required />
-    </div>
-    <div class="form-group">
-      <label for="printing length total">Label printing length total:</label>
-      <input type="text" id="finishing" v-model="calculatePrintingLengthTotal" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing gap">Label gap:</label>
-      <input type="text" id="finishing" v-model="calculateBackPrint" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">Label printing length:</label>
-      <input type="text" id="finishing" v-model="calculatePrintingLength" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing gap">Cold Foil Plate Cost:</label>
-      <input type="text" id="finishing" v-model="calculateFoilPlate" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">Label wastage:</label>
-      <input type="text" id="finishing" v-model="machineSpec.wastage" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing gap">Back print m:</label>
-      <input type="text" id="finishing" v-model="calculateBackPrint" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">Label color setting length:</label>
-      <input type="text" id="finishing" v-model="calculateSettingLengthColor" required />
-    </div>
-    <div class="form-group">
-      <label for="printing length">ink cost:</label>
-      <input type="text" id="finishing" v-model="calculateInkCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">Label joints setting length:</label>
-      <input type="text" id="finishing" v-model="calculateJointLengthWastage" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">material width:</label>
-      <input type="text" id="finishing" v-model="calculateMaterialWidth" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="laminate cost">Laminate cost:</label>
-      <input type="text" id="finishing" v-model="calculateLaminateCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">varnish cost:</label>
-      <input type="text" id="finishing" v-model="calculateVarnishCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">material price:</label>
-      <input type="text" id="finishing" v-model="formModel.facestockCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">paper cost:</label>
-      <input type="text" id="finishing" v-model="calculatePaperMaterialPrice" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">plate cost:</label>
-      <input type="text" id="finishing" v-model="calculatePlatePrice" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">diecut cost:</label>
-      <input type="text" id="finishing" v-model="calculateDieCut" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">fixed cost:</label>
-      <input type="text" id="finishing" v-model="calculateFixedCosts" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing gap">Foil Cost:</label>
-      <input type="text" id="finishing" v-model="calculateFoilCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">total tooling cost:</label>
-      <input type="text" id="finishing" v-model="totalToolingCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">sum material</label>
-      <input type="text" id="finishing" v-model="sumMaterial" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">sum Cost:</label>
-      <input type="text" id="finishing"  v-model="sumCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">Unit Cost:</label>
-      <input type="text" id="finishing"  v-model="unitCost" required readonly/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">margin:</label>
-      <input type="text" id="finishing" @input="setMargin" v-model="margin" required/>
-    </div>
-    <div class="form-group">
-      <label for="printing length">RSP:</label>
-      <input type="text" id="finishing"  v-model="RSP" required readonly/>
-    </div>
 
-
-  </div>
-  <div class="group-container">
-    <div class="form-group">
-    </div>
-    <div class="form-group">
-      <button @click="runAsyncFunctions" id="registercosting">Next</button>
-  </div>
-  </div>
-  </div>
 </template>
 
 <script>
@@ -181,9 +303,10 @@ export default {
 
   data() {
     return {
+      diecuttype: 'flexible',
       machineInfo:[],
       costingInfo:[],
-      margin: 0.7,
+      margin: 0.3,
       wastage:1.05,
       selectedFinishing:'',
       selectedProcess:'',
@@ -220,30 +343,6 @@ export default {
         ink:'',
         inkCost:'',
       },
-      fixedCost:{
-        ECS340: 0.05219,
-        AVTInspection: 0.0261 ,
-        AutoCut: 0.0261,
-        numberingMachine:0.0261,
-        kopack13: 0.0261,
-        sonata:0.01,
-        iwasaki:0.0261,
-        gallus4:0.01,
-        bagMaking:0.005,
-        gravureSlitting:0.0261,
-        gravurePrinting:0.0052,
-        lamination:0.0052,
-        utecoPrinting:0.0418,
-        utecoSlitting:0.0261,
-        packing:0.01,
-        EM280:0.0261,
-        rhyguan:0.0261,
-        digital:0.0522,
-        k1Printing:0.021,
-        k1Slitting:0.0261,
-
-
-      },
       machineSpec:{
         coatingWeight:'',
         trim:'',
@@ -254,11 +353,22 @@ export default {
         gearPitch:'',
         platePrice:'',
         gapAcross:'',
+        solidDiecutPrice:'',
+        flexibleDiecutPrice:'',
+        flatbedDiecutPrice:'',
+        silkScreenPlatePrice:'',
+        hotStampingPlatePrice:'',
       }
     };
   },
 
   computed: {
+
+    calculateProcessWastage(){
+      let wastage = 20;
+      let process =this.splitProcess.length;
+      return wastage*process;
+    },
 
     splitProcess(){
       let data = this.formModel.process;
@@ -283,49 +393,53 @@ export default {
     },
 
     RSP(){
-      let sum=[]
+      let rsp=[]
       for(let i=0;i<this.moq.length;i++) {
-        const paperCost = this.calculatePaperMaterialPrice[i];
-        const varnishCost = this.calculateVarnishCost[i];
-        const inkCost = this.calculateInkCost[i];
-        const fixedCost = this.calculateFixedCosts[i];
-        const toolingCost = this.totalToolingCost;
-        const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
-        sum.push(total/this.moq[i]/this.margin);
-
+        const unitcost = this.unitCost[i];
+        const margin = 1/(parseInt(1)-parseFloat(this.margin));
+        const sp = unitcost*margin;
+        rsp.push(sp);
       }
-      return sum.map((value) => parseFloat(value.toFixed(4)));
+      return rsp.map((value) => parseFloat(value.toFixed(6)));
     },
 
-    unitCost(){
+    unitCostWithoutTooling(){
       let sum=[]
       for(let i=0;i<this.moq.length;i++) {
-        const paperCost = this.calculatePaperMaterialPrice[i];
-        const varnishCost = this.calculateVarnishCost[i];
-        const inkCost = this.calculateInkCost[i];
+        const quantity = this.moq[i];
+        const materialCost = this.totalMaterialCost[i];
         const fixedCost = this.calculateFixedCosts[i];
-        const toolingCost = this.totalToolingCost;
-        const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
-        sum.push(total/this.moq[i]);
-      }
-      return sum.map((value) => parseFloat(value).toFixed(4));
-    },
-
-    sumCost(){
-      let sum=[]
-      for(let i=0;i<this.moq.length;i++) {
-        const paperCost = this.calculatePaperMaterialPrice[i];
-        const varnishCost = this.calculateVarnishCost[i];
-        const inkCost = this.calculateInkCost[i];
-        const fixedCost = this.calculateFixedCosts[i];
-        const toolingCost = this.totalToolingCost;
-        const total = paperCost+varnishCost+inkCost+fixedCost+toolingCost;
+        const total = ((materialCost+fixedCost)/quantity);
         sum.push(total);
       }
       return sum.map((value) => parseFloat(value).toFixed(4));
     },
 
-    sumMaterial(){
+
+    unitCost(){
+      let unitcost=[]
+      for(let i=0;i<this.moq.length;i++) {
+        const sum = this.sumCost[i];
+        const moq = this.moq[i];
+        const uc = sum/moq;
+        unitcost.push(uc);
+      }
+      return unitcost.map((value) => parseFloat(value).toFixed(6));
+    },
+
+    sumCost(){
+      let sum=[]
+      const toolingCost = this.totalToolingCost;
+      for(let i=0;i<this.moq.length;i++) {
+        const materialCost = this.totalMaterialCost[i];
+        const fixedCost = this.calculateFixedCosts[i];
+        const total = parseFloat(materialCost)+parseFloat(fixedCost)+parseFloat(toolingCost);
+        sum.push(total);
+      }
+      return sum.map((value) => parseFloat(value).toFixed(4));
+    },
+
+    totalMaterialCost(){
       let sum=[]
       for(let i=0;i<this.moq.length;i++) {
         const paperCost = this.calculatePaperMaterialPrice[i];
@@ -334,14 +448,40 @@ export default {
         const fixedCost = this.calculateFixedCosts[i];
         const laminateCost = this.calculateLaminateCost[i];
         const foilCost = this.calculateFoilCost[i];
-        const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost;
+        const killGlueCost = this.calculateKillGlueCost[i];
+        const multiFormMaterialCost = this.calculateMultiformMaterial[i];
+        const multiFormInkCost = this.calculateMultiformInk[i];
+
+
+
+        const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
         sum.push(total);
       }
       return sum.map((value) => parseFloat(value.toFixed(4)));
     },
 
+    calculatePrintingLengthTotal(){
+      let printLength=null;
+      printLength=this.moq.map(moq => moq *
+          (((parseInt(this.formModel.pitch)+parseInt(this.calculateGap))/this.formModel.across)/1000)
+          * (1+this.machineSpec.wastage)
+          +parseInt(this.calculateSettingLengthColor)
+          +parseInt(this.calculateJointLengthWastage)
+          +parseInt(this.calculateBackPrint)
+          +parseInt(this.calculateKillGlueLength)
+          +parseInt(this.calculateSheetFormLength)
+          +parseInt(this.calculateProcessWastage)
+
+      );
+      return printLength;
+    },
+
+    //todo update finishing
+
     totalToolingCost(){
-      const sum = this.calculatePlatePrice + this.calculateDieCut + this.calculateFoilPlate;
+      const sum = this.calculatePlatePrice + this.calculateDieCut +
+          this.calculateFoilPlate +this.calculateKillGluePlate+this.calculateHotStampingPlate
+          +this.calculateBackCutCutter+this.calculatePerforatedCut;
       return parseFloat(sum).toFixed(3);
     },
 
@@ -367,18 +507,33 @@ export default {
     },
 
     calculateDieCut(){
-      if(this.calculateMaterialWidth>300){
-        return 1500;
+      let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+      let diecut = finishingArray.filter(item => item.trim() === 'diecut').length;
+      let diecutType = this.diecuttype.toLowerCase(); //
+      if(diecut>0) {
+        if (diecutType === "flexible") {
+          const diecutPrice = this.machineSpec.flexibleDiecutPrice * this.calculateMaterialWidth / 1000;
+          return diecutPrice;
+        }
+        if (diecutType === "flatbed") {
+          const diecutPrice = this.machineSpec.flatbedDiecutPrice * ((2 * parseInt(this.formModel.pitch) / 1000) + (2 * parseInt(this.formModel.width) / 1000)) + parseInt(80);
+          return diecutPrice;
+        }
+        if (diecutType === "solid") {
+          const diecutPrice = this.machineSpec.solidDiecutPrice * this.calculateMaterialWidth / 1000;
+          return diecutPrice;
+        }
       }
-      if(this.calculateMaterialWidth<300 && this.calculateMaterialWidth>200){
-        return 1200
-      }
-      if(this.calculateMaterialWidth<200 && this.calculateMaterialWidth>100){
-        return 800
-      }
-      else{
-        return 300
-      }
+      return 0;
+
+    },
+
+    calculatePerforatedCut(){
+      let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+      let diecut = finishingArray.filter(item => item.trim() === 'perforated').length;
+      let perforated = diecut * 50
+      return perforated;
+
     },
 
     calculatePlatePrice(){
@@ -397,19 +552,6 @@ export default {
       let gap =null;
       gap = parseFloat(((this.formModel.gear*this.machineSpec.gearPitch)/this.formModel.around)) - parseInt(this.formModel.pitch);
       return parseFloat(gap.toFixed(3));
-    },
-
-    calculatePrintingLengthTotal(){
-      let printLength=null;
-      printLength=this.moq.map(moq => moq *
-          (((parseInt(this.formModel.pitch)+parseInt(this.calculateGap))/this.formModel.across)/1000)
-          * (1+this.machineSpec.wastage)
-          +parseInt(this.calculateSettingLengthColor)
-          +parseInt(this.calculateJointLengthWastage)
-          +parseInt(this.calculateBackPrint)
-
-      );
-      return printLength;
     },
 
     calculatePrintingLength(){
@@ -515,13 +657,12 @@ export default {
       if (this.formModel.finishing) { // Check if formModel.finishing is defined
         let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
         let foilCount = finishingArray.filter(item => item.trim() === 'coldfoil').length;
-        let color = this.formModel.color;
         let platePrice = this.machineSpec.platePrice; //rm/m2
         let length = parseFloat(this.formModel.pitch/1000); //m
         let width = parseFloat(this.formModel.width/1000); //m
         //let gap = parseFloat(this.calculateGap)/1000;
         let plateArea =  length * width * this.formModel.around * this.formModel.across*1.1;
-        let plateCost = plateArea * platePrice * color*foilCount;
+        let plateCost = plateArea * platePrice *foilCount;
         return parseFloat(plateCost.toFixed(2));
       } else {
         return []; // Return an empty array if formModel.finishing is undefined
@@ -537,7 +678,7 @@ export default {
 
     },
 
-    calculateBackPrint: function () {
+    calculateBackPrint(){
       if (this.formModel.finishing) { // Check if formModel.finishing is defined
         let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
         let printCount = finishingArray.filter(item => item.trim() === 'backprint').length;
@@ -551,7 +692,154 @@ export default {
       }
     },
 
+    calculateKillGlueCost() {
+      let printLength = this.calculatePrintingLengthTotal;
+      let materialWidth = this.calculateMaterialWidth / 1000;
 
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let killGlueCount = finishingArray.filter(item => item.trim() === 'killglue').length;
+
+        let killGlueCost = this.formModel.varnishCost / 1000; // rm/g
+        let coatingWeight = this.machineSpec.coatingWeight; // g/m2
+
+        let killGlueUse = printLength.map(length => length * materialWidth * killGlueCost * killGlueCount * coatingWeight);
+        return killGlueUse.map(value => parseFloat(value.toFixed(2)));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateKillGluePlate() {
+
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let killGlueCount = finishingArray.filter(item => item.trim() === 'killglue').length;
+        let platePrice = this.machineSpec.platePrice; //rm/m2
+        let length = parseFloat(this.formModel.pitch/1000); //m
+        let width = parseFloat(this.formModel.width/1000); //m
+        //let gap = parseFloat(this.calculateGap)/1000;
+        let plateArea =  length * width * this.formModel.around * this.formModel.across*1.1;
+        let plateCost = plateArea * platePrice *killGlueCount;
+        return parseFloat(plateCost.toFixed(2));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateKillGlueLength(){
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let printCount = finishingArray.filter(item => item.trim() === 'killglue').length;
+
+        let settingMat = 250; // rm/m2
+
+        let matuse = settingMat * printCount;
+        return matuse;
+      } else {
+        return 0; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateHotStampingPlate() {
+
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let hotStampingCount = finishingArray.filter(item => item.trim() === 'hotstamp').length;
+        let platePrice = this.machineSpec.hotStampingPlatePrice; //rm/m2
+        let length = parseFloat(this.formModel.pitch/1000); //m
+        let width = parseFloat(this.formModel.width/1000); //m
+        //let gap = parseFloat(this.calculateGap)/1000;
+        let plateArea =  length * width * this.formModel.across*1.1;
+        let plateCost = plateArea * platePrice *hotStampingCount;
+        return parseFloat(plateCost.toFixed(2));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateSilkscreenPlate() {
+
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let silkScreenPlate = finishingArray.filter(item => item.trim() === 'silkscreen').length;
+        let platePrice = this.machineSpec.silkScreenPlatePrice; //rm/m2
+        let length = parseFloat(this.formModel.pitch/1000); //m
+        let width = parseFloat(this.formModel.width/1000); //m
+        //let gap = parseFloat(this.calculateGap)/1000;
+        let plateArea =  length * width * this.formModel.across * this.formModel.across * 1.1;
+        let plateCost = plateArea * platePrice *silkScreenPlate;
+        return parseFloat(plateCost.toFixed(2));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateBackCutCutter() {
+
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let backCutPlate = finishingArray.filter(item => item.trim() === 'backcut').length;
+        let plateCost = backCutPlate * 50
+        return parseFloat(plateCost.toFixed(2));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateMultiformMaterial() {
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let printLength = this.calculatePrintingLengthTotal;
+        let materialWidth = this.calculateMaterialWidth / 1000;
+        let formCost = 1.4;
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let multiformCount = finishingArray.filter(item => item.trim() === 'multiform').length;
+        let formUse = printLength.map(length => length * materialWidth * formCost * multiformCount);
+        return formUse.map(value => parseFloat(value.toFixed(2)));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateMultiformInk(){
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let multiformCount = finishingArray.filter(item => item.trim() === 'multiform').length;
+        let printLength = this.calculatePrintingLengthTotal;
+        let materialWidth = this.calculateMaterialWidth/1000;
+        let inkCost = this.formModel.inkCost/1000; //rm/g
+        let color = this.formModel.color;
+        let coatingWeight = this.machineSpec.coatingWeight; //g/m2
+        let inkUse = printLength.map(length=> ((length)*materialWidth*inkCost*color*coatingWeight*multiformCount)*1.05);
+        return inkUse.map((value) => parseFloat(value.toFixed(2)));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+
+    },
+
+    calculateSheetFormLength(){
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let sheetFormCount = finishingArray.filter(item => item.trim() === 'sheetform').length;
+        let rollLength = 1000;
+        let jointWastage = 5; //how much material required to autocut
+        let printLength = this.moq.map(moq => moq *
+            (((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/this.formModel.across)/1000)
+        );
+        let numberOfJoints = printLength.map(print=> Math.ceil(print / rollLength));//how many rolls
+        let jointLength = numberOfJoints.map(joint => Math.round(joint * jointWastage * sheetFormCount));//how many autocut need to reload
+        return jointLength;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+
+    },
 
 
 
@@ -589,12 +877,10 @@ export default {
       this.margin = this.getMargin;
     },
 
-
     storeValue(){
       this.gap=this.calculateGap;
       this.printingLength=this.calculatePrintingLength;
     },
-
 
     getMoq() {
       if (this.quantity) {
@@ -673,6 +959,11 @@ export default {
         this.machineSpec.gearPitch = allMachineInfo[0].gearpitch; // Set the selected material
         this.machineSpec.platePrice = allMachineInfo[0].plateprice; // Set the selected material
         this.machineSpec.gapAcross = allMachineInfo[0].acrossgap; // Set the selected material
+        this.machineSpec.hotStampingPlatePrice=allMachineInfo[0].hotstampingplateprice;
+        this.machineSpec.silkScreenPlatePrice=allMachineInfo[0].silkscreenplateprice;
+        this.machineSpec.flexibleDiecutPrice=allMachineInfo[0].flexiblediecutprice;
+        this.machineSpec.flatbedDiecutPrice=allMachineInfo[0].flatbeddiecutprice;
+        this.machineSpec.solidDiecutPrice=allMachineInfo[0].soliddiecutprice;
 
         console.log(this.machineSpec);
       } catch (error) {
@@ -695,28 +986,65 @@ export default {
 
 <style scoped>
 
+
+.table{
+  margin: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.container{
+  margin :10px;
+  display: flex;
+  flex-direction: column ;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.form-item{
+  margin: 10px;
+  width: 400px;
+  height: 50px;
+  display: flex;
+  justify-content: space-evenly;
+  justify-items: center;
+}
+.form-group {
+  margin-right: 20px;
+  margin-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
 .table-container {
-  height: 200px; /* Set the desired maximum height */
-  width: 800px;
+  height: auto;
   overflow-y: auto; /* Add vertical scroll if necessary */
   background-color: white;
-  display: inline-block;
-  justify-self: center;
+  display: flex;
 }
 
 .group-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin: 10px
 }
 
 .form-group {
-  flex: 0 0 calc(50% - 20px); /* Adjust the width as needed */
   margin-right: 20px;
   margin-bottom: 10px;
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
+}
+
+select{
+  width: 100%;
+  height: 35px;
+  margin-left: 20px;
 }
 
 

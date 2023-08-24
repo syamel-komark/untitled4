@@ -103,6 +103,8 @@
       </div>
     </div>
   </div>
+
+
   </div>
   <button @click="runAsyncFunctions" id="registercosting">Next</button>
   <div class="success-modal" v-if="searchVarnish">
@@ -283,7 +285,7 @@
         </tr>
         </tbody>
       </table>
-  </div><button @click="closePrintingProcess">Done</button>
+    </div><button @click="closePrintingProcess">Done</button>
   </div>
   <div class="success-modal" v-if="searchMastercard">
     <div class="table-container">
@@ -326,7 +328,7 @@
         <input type="number" class="form-control" v-model="finishing.Varnish" />
         <label for="">Laminate</label>
         <input type="number" class="form-control" v-model="finishing.laminate" />
-        </div>
+      </div>
       <div class="form-group">
         <label for="">Killglue</label>
         <input type="number" class="form-control" v-model="finishing.Killglue" />
@@ -396,7 +398,6 @@
       </table>
     </div><button @click=closeSearchCosting>Close</button>
   </div>
-
 
 
 
@@ -480,13 +481,13 @@ export default {
         pitch:'',
         width:'',
         gear:'',
-        facestockCost:'',
-        laminateCost:'',
-        foilCost:'',
+        facestockCost:0,
+        laminateCost:0,
+        foilCost:0,
         ink:'',
-        inkCost:'',
+        inkCost:0,
         varnish:'',
-        varnishCost:'',
+        varnishCost:0,
       },
       moreFinishing : false,
       selectedFinishing:[],
@@ -1188,19 +1189,6 @@ export default {
   justify-self: center;
 }
 
-.success-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 800px;
-  height: 400px;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
 
 .form {
   flex: 1 1 auto;
@@ -1241,6 +1229,7 @@ export default {
   border-radius: 5px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-content: center;
 }
 button {
   background-color: #3498db;

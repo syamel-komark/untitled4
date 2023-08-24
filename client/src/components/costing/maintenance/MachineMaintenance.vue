@@ -135,7 +135,7 @@
           </div>
           <div>
             <label for="labelName">Side Trim width (mm):</label>
-            <input type="text" id="labelName" v-model="formModel.sideTrim" required />
+            <input type="text" id="labelName" v-model="formModel.trim" required />
           </div>
         </div>
         <div class="form-group">
@@ -151,7 +151,30 @@
             <label for="labelName">Coating weight (g/m2):</label>
             <input type="text" id="labelName" v-model="formModel.coatingWeight" required />
           </div>
+          <div>
+            <label for="labelName">Hot Stamping Plate Price(RM/m2):</label>
+            <input type="text" id="labelName" v-model="formModel.hotStampingPlatePrice" required />
+          </div>
         </div>
+        <div class="form-group">
+          <div>
+            <label for="labelName">Silk Screen Plate Price (RM/m2):</label>
+            <input type="text" id="labelName" v-model="formModel.silkScreenPlatePrice" required />
+          </div>
+          <div>
+            <label for="labelName">Flexible Diecut Price (RM/m):</label>
+            <input type="text" id="labelName" v-model="formModel.flexibleDiecutPrice" required />
+          </div>
+          <div>
+            <label for="labelName">Flatbed Diecut Price (RM/m):</label>
+            <input type="text" id="labelName" v-model="formModel.flatbedDiecutPrice" required />
+          </div>
+          <div>
+            <label for="labelName">Solid Diecut Price Price(RM/m):</label>
+            <input type="text" id="labelName" v-model="formModel.solidDiecutPrice" required />
+          </div>
+        </div>
+
       </div>
       <div>
         <button @click="deleteMaterial">Delete</button>
@@ -224,6 +247,11 @@ export default {
         rollLength:'',
         jointWastage:'',
         coatingWeight:'',
+        solidDiecutPrice:'',
+        flexibleDiecutPrice:'',
+        flatbedDiecutPrice:'',
+        silkScreenPlatePrice:'',
+        hotStampingPlatePrice:'',
       },
       materialSearchQuery:'',
       machine:[],
@@ -299,8 +327,13 @@ export default {
           trim: this.formModel.trim,
           acrossgap: this.formModel.acrossGap,
           rolllength: this.formModel.rollLength,
-          joint: this.formModel.jointWastage,
+          jointwastage: this.formModel.jointWastage,
           coatingweight: this.formModel.coatingWeight,
+          hotstampingplateprice: this.formModel.hotStampingPlatePrice,
+          silkscreenplateprice: this.formModel.silkScreenPlatePrice,
+          flexiblediecutprice: this.formModel.flexibleDiecutPrice,
+          flatbeddiecutprice: this.formModel.flatbedDiecutPrice,
+          soliddiecutprice: this.formModel.solidDiecutPrice,
           idmachine: this.formModel.idMachine,
 
 
@@ -340,6 +373,11 @@ export default {
           rolllength: this.formModel.rollLength,
           jointwastage: this.formModel.jointWastage,
           coatingweight: this.formModel.coatingWeight,
+          hotstampingplateprice: this.formModel.hotStampingPlatePrice,
+          silkscreenplateprice: this.formModel.silkScreenPlatePrice,
+          flexiblediecutprice: this.formModel.flexibleDiecutPrice,
+          flatbeddiecutprice: this.formModel.flatbedDiecutPrice,
+          soliddiecutprice: this.formModel.solidDiecutPrice,
           idmachine: this.formModel.idMachine,
         });
         if (response.status === 200) {
@@ -378,6 +416,11 @@ export default {
       this.formModel.rollLength='';
       this.formModel.jointWastage='';
       this.formModel.coatingWeight='';
+      this.formModel.hotStampingPlatePrice='';
+      this.formModel.silkScreenPlatePrice='';
+      this.formModel.flatbedDiecutPrice='';
+      this.formModel.flexibleDiecutPrice='';
+      this.formModel.solidDiecutPrice='';
     },
 
     pickMaterial(machine) {
@@ -400,6 +443,12 @@ export default {
       this.formModel.rollLength=machine.rolllength;
       this.formModel.jointWastage=machine.jointwastage;
       this.formModel.coatingWeight=machine.coatingweight;
+      this.formModel.hotStampingPlatePrice=machine.hotstampingplateprice;
+      this.formModel.silkScreenPlatePrice=machine.silkscreenplateprice;
+      this.formModel.flexibleDiecutPrice=machine.flexiblediecutprice;
+      this.formModel.flatbedDiecutPrice=machine.flatbeddiecutprice;
+      this.formModel.solidDiecutPrice=machine.soliddiecutprice;
+
 
     },
 
