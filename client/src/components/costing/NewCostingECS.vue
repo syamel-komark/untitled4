@@ -55,55 +55,75 @@
           <div>
             <button @click="searchInk=true">Ink:</button>
             <input type="text" id="Material" v-model="formModel.ink" required />
-            <label for="number">Price:</label>
-            <input type="text" id="materialprice" v-model="formModel.inkCost" required />
           </div>
           <div>
             <button @click="searchVarnish=true">Varnish:</button>
             <input type="text" id="Material" v-model="formModel.varnish" required />
-            <label for="number">Price:</label>
-            <input type="text" id="materialprice" v-model="formModel.varnishCost" required />
           </div>
           <div>
             <button @click="searchFacestock=true">Facestock:</button>
             <input type="text" id="Material" v-model="formModel.facestock" required />
-            <label for="number">Price:</label>
-            <input type="text" id="materialprice" v-model="formModel.facestockCost" required />
           </div>
           <div>
             <button @click="searchLaminate=true">Laminate:</button>
             <input type="text" id="Material" v-model="formModel.laminate" required />
-            <label for="number">Price:</label>
-            <input type="text" id="materialprice" v-model="formModel.laminateCost" required />
           </div>
           <div>
             <button @click="searchFoil=true">Foil:</button>
             <input type="text" id="Material" v-model="formModel.foil" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <div>
+            <label for="number">Price:</label>
+            <input type="text" id="materialprice" v-model="formModel.inkCost" required />
+          </div>
+          <div>
+            <label for="number">Price:</label>
+            <input type="text" id="materialprice" v-model="formModel.varnishCost" required />
+          </div>
+          <div>
+            <label for="number">Price:</label>
+            <input type="text" id="materialprice" v-model="formModel.facestockCost" required />
+          </div>
+          <div>
+            <label for="number">Price:</label>
+            <input type="text" id="materialprice" v-model="formModel.laminateCost" required />
+          </div>
+          <div>
             <label for="number">Price:</label>
             <input type="text" id="materialprice" v-model="formModel.foilCost" required />
           </div>
 
         </div>
+
       </div>
     </div>
     <div class="group-container">
-      <div>
+      <h2>Process and Finishing:</h2>
+      <div class="form-group">
         <div>
-          <h2>Process:</h2>
-          <div class="form-group">
-            <button @click="searchFixedCost=true">Process:</button>
-            <input type="text" id="process" v-model="this.selectedProcesses" required />
-          </div>
-          <h2>Finishing:</h2>
-          <div class="form-group">
             <button @click="openFinishing">Finishing:</button>
             <input type="text" id="finishing" v-model="selectedFinishing" required />
           </div>
+          <div>
+            <button @click="searchFixedCost=true">Process:</button>
+            <input type="text" id="process" v-model="this.selectedProcesses" required />
+          </div>
+
+        </div>
+      <div class = "form-group">
+        <div>
+          <button @click="searchDieCut=true">Diecut Type:</button>
+          <input type="text" id="process" v-model="this.formModel.dieCutType" required />
+        </div>
+        <div>
+          <label for="number">Quantity Order (pcs):</label>
+          <input type="text" id="process" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.quantityOrder" required />
         </div>
       </div>
     </div>
   </div>
-
 
   </div>
   <button @click="runAsyncFunctions" id="registercosting">Next</button>
@@ -364,9 +384,21 @@
     <div class="table-container">
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
-        <button @click="this.$router.push('/ecscalculator');">next</button>
+        <button @click="this.successRegisterLabel=false">Close</button>
+        <button @click="this.$router.push('/ecscalculator');">Create Quoataion</button>
       </div>
     </div>
+  </div>
+  <div class="success-modal" v-if="searchDieCut">
+    <div class = "form-group">
+      <label for="printing-type">Diecut:</label>
+      <select id="printing-type" v-model="this.formModel.dieCutType" required>
+        <option value="solid">Solid</option>
+        <option value="flexible">Flexible</option>
+        <option value="flatbed">Flatbed</option>
+      </select>
+    </div>
+    <button @click="searchDieCut=false">Close</button>
   </div>
   <div class="success-modal" v-if="searchCosting">
     <div class="table-container">
@@ -401,7 +433,6 @@
 
 
 
-
 </template>
 
 <script>
@@ -416,6 +447,7 @@ export default {
 
   data() {
     return {
+      searchDieCut: false,
       machineInfo:[],
       machineSpec:{
         coatingWeight:'',
@@ -437,16 +469,6 @@ export default {
       searchCostingQuery: '',
       newCostingId:'',
       machine: 'ECS340',
-      gearArray:  [99, 108, 122, 127, 140, 146, 160],
-      pitchArray: [
-        314.325, 157.1625, 104.775, 78.58125, 62.865, 52.3875, 44.90357143, 39.290625, 34.925, 31.4325,
-        342.9, 171.45, 114.3, 85.725, 68.58, 57.15, 48.98571429, 42.8625, 38.1, 34.29,
-        387.35, 193.675, 129.1166667, 96.8375, 77.47, 64.55833333, 55.33571429, 48.41875, 43.03888889, 38.735,
-        403.225, 201.6125, 134.4083333, 100.80625, 80.645, 67.20416667, 57.60357143, 50.403125, 44.80277778, 40.3225,
-        444.5, 222.25, 148.1666667, 111.125, 88.9, 74.08333333, 63.5, 55.5625, 49.38888889, 44.45,
-        463.55, 231.775, 154.5166667, 115.8875, 92.71, 77.25833333, 66.22142857, 57.94375, 51.50555556, 46.355,
-        508, 254, 169.3333333, 127, 101.6, 84.66666667, 72.57142857, 63.5, 56.44444444, 50.8
-      ],
       successRegisterLabel: false,
       successMessageLabel:'',
       searchMastercardQuery:'',
@@ -488,6 +510,8 @@ export default {
         inkCost:0,
         varnish:'',
         varnishCost:0,
+        dieCutType:'flexible',
+        quantityOrder:'',
       },
       moreFinishing : false,
       selectedFinishing:[],
@@ -827,7 +851,8 @@ export default {
       this.formModel.inkCost = costing.inkcost; // Set the selected material
       this.formModel.varnish = costing.varnish; // Set the selected material
       this.formModel.varnishCost = costing.varnishcost; // Set the selected material
-
+      this.formModel.dieCutType = costing.diecut;
+      this.formModel.quantityOrder = costing.quantity;
       this.newCostingId = costing.id;
       this.searchCosting = false;
     },
@@ -910,6 +935,8 @@ export default {
           inkcost: this.formModel.inkCost,
           varnish: this.formModel.varnish,
           varnishcost: this.formModel.varnishCost,
+          diecut :this.formModel.dieCutType,
+          quantity :this.formModel.quantityOrder,
 
 
 
@@ -1202,7 +1229,7 @@ export default {
 
 
 .group-container {
-  width:700px;
+  width:550px;
   border: 2px solid gray;
   border-radius: 10px;
   display:  flex;
@@ -1212,9 +1239,7 @@ export default {
   justify-content: space-evenly;
   margin: 10px 10px 10px 10px;
 }
-
 .form-group {
-  flex: 0 0 calc(50%); /* Adjust the width as needed */
   padding: 10px;
   margin: 10px;
   display: flex;
@@ -1256,6 +1281,12 @@ input[type=text], input[type=number], textarea {
   padding: 5px;
   box-sizing: border-box;
   font-size: 18px;
+}
+
+select{
+  width: 100%;
+  height: 35px;
+  margin-left: 5px;
 }
 
 </style>

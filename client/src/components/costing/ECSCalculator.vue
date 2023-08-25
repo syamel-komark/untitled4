@@ -70,23 +70,79 @@
         <div class="form-group">
           <div class="form-item">
             <label for="quantity">Quantity Ordered:</label>
-            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" @input="getMoq" v-model="quantity" required />
+            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.orderQuantity" required />
           </div>
         </div>
         <div class = "form-group">
           <div class="form-item">
             <label for="printing-type">Diecut:</label>
-            <select id="printing-type" v-model="diecuttype" required>
-              <option value="solid">Solid</option>
-              <option value="flexible">Flexible</option>
-              <option value="flatbed">Flatbed</option>
-            </select>
+            <input id="printing-type" v-model="this.formModel.dieCutType" required/>
           </div>
         </div>
         <div class="form-group">
           <div class="form-item">
             <label for="printing length">material price:</label>
             <input type="text" id="finishing" v-model="formModel.facestockCost" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h2>PRICING FIELD</h2>
+        <div class="group-container">
+          <div class="form-group">
+            <div class="form-item">
+              <label for="printing length">Unit Cost:</label>
+              <input type="text" id="finishing"  v-model="unitCost" required readonly/>
+            </div>
+            <div class="form-item">
+              <label for="printing length">Unit Cost Without Tooling:</label>
+              <input type="text" id="finishing"  v-model="unitCostWithoutTooling" required readonly/>
+            </div>
+          </div>
+          <div class = "form-group">
+            <div class="form-item">
+              <label for="printing length">margin:</label>
+              <input type="text" id="finishing" @input="setMargin" v-model="margin" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-item">
+              <label for="printing length">RSP:</label>
+              <input type="text" id="finishing"  v-model="RSP" required readonly/>
+            </div>
+            <div class="form-item">
+              <label for="printing length">Current Selling Price:</label>
+              <input type="text" id="finishing"  v-model="RSP" required readonly/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2>TOTAL COST</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">fixed cost:</label>
+            <input type="text" id="finishing" v-model="calculateFixedCosts" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">total material cost</label>
+            <input type="text" id="finishing" v-model="totalMaterialCost" required readonly/>
+          </div>
+        </div>
+        <div class = "form-group">
+          <div class="form-item">
+            <label for="printing length">total tooling cost:</label>
+            <input type="text" id="finishing" v-model="totalToolingCost" required readonly/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">sum Cost:</label>
+            <input type="text" id="finishing"  v-model="sumCost" required readonly/>
           </div>
         </div>
       </div>
@@ -104,6 +160,8 @@
             <input type="text" id="finishing" v-model="calculateBackPrint" required readonly/>
           </div>
           <div class="form-item">
+            <label for="printing length">Label wastage:</label>
+            <input type="text" id="finishing" v-model="machineSpec.wastage" required readonly/>
           </div>
         </div>
         <div class = "form-group">
@@ -114,8 +172,6 @@
           <div class="form-item">
             <label for="printing length">Label color setting length:</label>
             <input type="text" id="finishing" v-model="calculateSettingLengthColor" required />
-          </div>
-          <div class="form-item">
           </div>
         </div>
         <div class="form-group">
@@ -128,18 +184,8 @@
             <input type="text" id="finishing" v-model="calculateJointLengthWastage" required readonly/>
           </div>
           <div class="form-item">
-          </div>
-        </div>
-        <div class = "form-group">
-          <div class="form-item">
             <label for="printing gap">Process Wastage:</label>
             <input type="text" id="finishing" v-model="calculateProcessWastage" required readonly/>
-          </div>
-          <div class="form-item">
-            <label for="printing length">Label wastage:</label>
-            <input type="text" id="finishing" v-model="machineSpec.wastage" required readonly/>
-          </div>
-          <div class="form-item">
           </div>
         </div>
       </div>
@@ -157,7 +203,7 @@
             <input type="text" id="finishing" v-model="calculateVarnishCost" required readonly/>
           </div>
           <div class="form-item">
-            <label for="printing length">paper cost:</label>
+            <label for="printing length">total paper cost</label>
             <input type="text" id="finishing" v-model="calculatePaperMaterialPrice" required readonly/>
           </div>
           <div class="form-item">
@@ -188,8 +234,7 @@
 
           </div>
           <div class="form-item">
-            <label for="printing length">total material cost</label>
-            <input type="text" id="finishing" v-model="totalMaterialCost" required readonly/>
+
           </div>
         </div>
       </div>
@@ -209,8 +254,8 @@
       </div>
         <div class="form-group">
           <div class = "form-item">
-            <label for="printing length">total tooling cost:</label>
-            <input type="text" id="finishing" v-model="totalToolingCost" required readonly/>
+            <label for="printing length">diecut cost:</label>
+            <input type="text" id="finishing" v-model="calculateDieCut" required readonly/>
           </div>
           <div class="form-item">
             <label for="printing gap">Back Cut:</label>
@@ -229,53 +274,6 @@
           <div class="form-item">
             <label for="printing gap">Cold Foil Plate Cost:</label>
             <input type="text" id="finishing" v-model="calculateFoilPlate" required readonly/>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-item">
-            <label for="printing length">fixed cost:</label>
-            <input type="text" id="finishing" v-model="calculateFixedCosts" required readonly/>
-          </div>
-          <div class="form-item">
-            <label for="printing length">diecut cost:</label>
-            <input type="text" id="finishing" v-model="calculateDieCut" required readonly/>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <h2>PRICING FIELD</h2>
-      <div class="group-container">
-        <div class="form-group">
-          <div class ="form-item">
-            <label for="printing length">sum Cost:</label>
-            <input type="text" id="finishing"  v-model="sumCost" required readonly/>
-          </div>
-          <div class="form-item">
-            <label for="printing length">Unit Cost:</label>
-            <input type="text" id="finishing"  v-model="unitCost" required readonly/>
-          </div>
-          <div class="form-item">
-            <label for="printing length">Unit Cost Without Tooling:</label>
-            <input type="text" id="finishing"  v-model="unitCostWithoutTooling" required readonly/>
-          </div>
-        </div>
-        <div class = "form-group">
-          <div class="form-item">
-            <label for="printing length">margin:</label>
-            <input type="text" id="finishing" @input="setMargin" v-model="margin" required/>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-item">
-            <label for="printing length">RSP:</label>
-            <input type="text" id="finishing"  v-model="RSP" required readonly/>
-          </div>
-        </div>
-        <div class = "form-group">
-          <div class="form-item">
-            <label for="printing length">Current Selling Price:</label>
-            <input type="text" id="finishing"  v-model="RSP" required readonly/>
           </div>
         </div>
       </div>
@@ -303,7 +301,6 @@ export default {
 
   data() {
     return {
-      diecuttype: 'flexible',
       machineInfo:[],
       costingInfo:[],
       margin: 0.3,
@@ -342,6 +339,9 @@ export default {
         varnishCost:'',
         ink:'',
         inkCost:'',
+        orderQuantity:'',
+        dieCutType: 'flexible',
+
       },
       machineSpec:{
         coatingWeight:'',
@@ -366,7 +366,7 @@ export default {
 
     calculateProcessWastage(){
       let wastage = 20;
-      let process =this.splitProcess.length;
+      let process =this.splitProcess.length-1;
       return wastage*process;
     },
 
@@ -476,7 +476,6 @@ export default {
       return printLength;
     },
 
-    //todo update finishing
 
     totalToolingCost(){
       const sum = this.calculatePlatePrice + this.calculateDieCut +
@@ -509,7 +508,7 @@ export default {
     calculateDieCut(){
       let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
       let diecut = finishingArray.filter(item => item.trim() === 'diecut').length;
-      let diecutType = this.diecuttype.toLowerCase(); //
+      let diecutType = this.formModel.dieCutType.toLowerCase(); //
       if(diecut>0) {
         if (diecutType === "flexible") {
           const diecutPrice = this.machineSpec.flexibleDiecutPrice * this.calculateMaterialWidth / 1000;
@@ -850,9 +849,10 @@ export default {
 
     this.getMachine();
 
+    this.getInfo();
+
     this.getMoq();
 
-    this.getInfo();
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
@@ -883,9 +883,9 @@ export default {
     },
 
     getMoq() {
-      if (this.quantity) {
+      if (this.formModel.orderQuantity) {
         // Split the input string by ';'
-        let quantities = this.quantity.split(';').map(qty => qty.trim());
+        let quantities = this.formModel.orderQuantity.split(';').map(qty => qty.trim());
 
         // Convert each quantity to a number and store in the moq array
         this.moq = quantities.map(qty => parseInt(qty, 10));
@@ -927,7 +927,10 @@ export default {
         this.formModel.varnishCost = parseFloat(allCostingInfo[0].varnishcost); // Set the selected material
         this.formModel.inkCost = parseFloat(allCostingInfo[0].inkcost); // Set the selected material
         this.formModel.ink = allCostingInfo[0].ink; // Set the selected material
-        this.formModel.varnish = allCostingInfo[0].varnish; // Set the selected material
+        this.formModel.orderQuantity = allCostingInfo[0].quantity; // Set the selected material
+        this.formModel.dieCutType = allCostingInfo[0].diecut; // Set the selected material
+
+        this.getMoq();
 
 
 

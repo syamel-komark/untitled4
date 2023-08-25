@@ -114,8 +114,7 @@ export default {
   background-color: #f0f0f0;
 }
 
-.login-form,
-.register-form {
+.login-form {
   display: inline-block;
   margin: 10px;
   padding: 20px;
