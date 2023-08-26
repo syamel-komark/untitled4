@@ -681,6 +681,128 @@ db.connect(err => {
 }
 ////////////////////////////////////////////////////
 
+////////////////CUSTOMER//////////////////////////
+{
+  app.post('/api/registercustomer', (req, res) => {
+    const { customername, customeraddress, customercontact, customeremail, customersalesperson} = req.body;
+    const query = 'INSERT INTO customers (customername, customeraddress, customercontact, customeremail, customersalesperson) VALUES (?, ?, ?,?,?)';
+
+    db.query(query, [customername, customeraddress, customercontact, customeremail, customersalesperson], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering customer' });
+      } else {
+        res.status(200).json({ message: 'customer registered successfully' });
+      }
+    });
+  });
+
+  app.get('/api/getcustomers', (req, res) => {
+    const query = 'SELECT * FROM customers';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching customers');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updatecustomers', (req, res) => {
+    const { customername, customeraddress, customercontact, customeremail, customersalesperson, id} = req.body;
+    const query = 'UPDATE customers SET customername = ?, customeraddress = ?, customercontact = ?, customeremail = ?, customersalesperson = ? WHERE id = ?';
+
+    db.query(query, [customername, customeraddress, customercontact, customeremail, customersalesperson, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating customer' });
+      } else {
+        res.status(200).json({ message: 'customer updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletecustomers', (req, res) => {
+    const { id } = req.body;
+    const query = 'DELETE FROM customers WHERE id = ?';
+
+    db.query(query, [id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting customer' });
+      } else {
+        res.status(200).json({ message: 'customer deleted' });
+      }
+    });
+  });
+
+
+}
+////////////////////////////////////////////////////
+
+////////////////SALESPERSON//////////////////////////
+{
+  app.post('/api/registersalesperson', (req, res) => {
+    const { salespersonname, salespersonaddress, salespersoncontact, salespersonemail, salespersonlevel} = req.body;
+    const query = 'INSERT INTO salespersons (salespersonname, salespersonaddress, salespersoncontact, salespersonemail, salespersonlevel) VALUES (?, ?, ?,?,?)';
+
+    db.query(query, [salespersonname, salespersonaddress, salespersoncontact, salespersonemail, salespersonlevel], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering salesperson' });
+      } else {
+        res.status(200).json({ message: 'salesperson registered successfully' });
+      }
+    });
+  });
+
+  app.get('/api/getsalesperson', (req, res) => {
+    const query = 'SELECT * FROM salespersons';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching salespersons');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updatesalesperson', (req, res) => {
+    const { salespersonname, salespersonaddress, salespersoncontact, salespersonemail, salespersonlevel, id} = req.body;
+    const query = 'UPDATE salespersons SET salespersonname = ?, salespersonaddress = ?, salespersoncontact = ?, salespersonemail = ?, salespersonlevel = ? WHERE id = ?';
+
+    db.query(query, [salespersonname, salespersonaddress, salespersoncontact, salespersonemail, salespersonlevel, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating salesperson' });
+      } else {
+        res.status(200).json({ message: 'salesperson updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletesalesperson', (req, res) => {
+    const { id } = req.body;
+    const query = 'DELETE FROM salespersons WHERE id = ?';
+
+    db.query(query, [id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting salesperson' });
+      } else {
+        res.status(200).json({ message: 'customer salesperson' });
+      }
+    });
+  });
+
+
+}
+////////////////////////////////////////////////////
+
 
 
 

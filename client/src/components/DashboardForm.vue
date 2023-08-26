@@ -3,16 +3,16 @@
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <div class="dashboard-items">
       <div class="dashboard-item">
-        <button @click="redirectTo('/costingpage')">New Costing</button>
+        <button @click="redirectTo('/costingpage')">Costing</button>
       </div>
       <div class="dashboard-item">
-        <button @click="redirectTo('/newlabel')">New Label</button>
+        <button @click="redirectTo('/newlabel')">Mastercard</button>
       </div>
       <div class="dashboard-item">
-        <button @click="redirectTo('/new-job')">New Job</button>
+        <button @click="redirectTo('/new-job')">Jobsheet</button>
       </div>
       <div class="dashboard-item">
-        <button @click="redirectTo('/new-job-report')">New Job Report</button>
+        <button @click="redirectTo('/new-job-report')">Report</button>
       </div>
     </div>
     <AdminMenu :isAdmin="isAdmin" />

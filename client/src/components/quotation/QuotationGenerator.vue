@@ -33,11 +33,9 @@
 export default {
   data() {
     return {
-      customerName: '',
-      productName: '',
-      quantity: 0,
-      unitPrice: 0,
-      quotationGenerated: false
+      formModel:{
+        customer
+      }
     };
   },
   computed: {

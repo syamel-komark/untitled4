@@ -8,10 +8,11 @@ import RegisterUser from "@/components/admin/RegisterUser";
 import MastercardSearch from "@/components/mastercard/MastercardSearch";
 import CostingPage from "@/components/costing/CostingPage";
 import NewCosting from "@/components/costing/NewCosting";
-import NewQuotation from "@/components/quotation/QuotationPage";
-import RegisterCustomer from "@/components/Customer/RegisterCustomer";
-import NewCostingECS from "@/components/costing/NewCostingECS";
-import ECSCalculator from "@/components/costing/ECSCalculator";
+import NewQuotation from "@/components/quotation/NewQuotation";
+import QuotationPage from "@/components/quotation/QuotationPage";
+import RegisterCustomer from "@/components/quotation/RegisterCustomer";
+import NewCostingECS from "@/components/costing/ecs/NewCostingECS";
+import ECSCalculator from "@/components/costing/ecs/ECSCalculator";
 import MaterialMaintenance from "@/components/costing/maintenance/MaterialMaintenance";
 import CostingMaintenancePage from "@/components/costing/maintenance/CostingMaintenancePage";
 import InkMaintenance from "@/components/costing/maintenance/InkMaintenance";
@@ -22,7 +23,7 @@ import fixedcostMaintenance from "@/components/costing/maintenance/FixedcostMain
 import fixedcostCalculate from "@/components/costing/maintenance/FixedcostCalculate";
 import MachineMaintenance from "@/components/costing/maintenance/MachineMaintenance";
 import VarnishMaintenance from "@/components/costing/maintenance/VarnishMaintenance";
-
+import SalesPerson from "@/components/quotation/SalesPerson";
 
 const routes = [
   { path: '/', component: LoginForm },
@@ -33,6 +34,7 @@ const routes = [
   { path: '/costingpage', component: CostingPage},
   { path: '/newcosting', component: NewCosting},
   { path: '/newquotation', component: NewQuotation},
+  { path: '/quotationpage', component: QuotationPage},
   { path: '/registercustomer', component: RegisterCustomer},
   { path: '/newcostingecs', component: NewCostingECS},
   { path: '/ecscalculator', component: ECSCalculator},
@@ -46,6 +48,7 @@ const routes = [
   { path: '/fixedcostcalculate', component: fixedcostCalculate},
   { path: '/machinemaintenance', component: MachineMaintenance},
   { path: '/varnishmaintenance', component: VarnishMaintenance},
+  { path: '/salesperson', component: SalesPerson},
 
 ];
 

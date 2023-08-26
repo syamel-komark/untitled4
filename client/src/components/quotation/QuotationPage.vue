@@ -4,33 +4,28 @@
     <div class="dashboard-items">
       <h2>Quotation Page</h2>
       <div class="dashboard-item">
-        <button @click="showNewCosting('/newcosting')">Costing Page</button>
-        <button @click="showNewQuotation('/newquotation')">New Quotation</button>
-        <button @click="showNewReport('/costingreport')">Report Page</button>
-      </div>
-      <div v-if="isQuotation" class="admin-menu">
-        <NewQuotation/>
+        <button @click="this.$router.push('/newquotation')">New Quotation</button>
+        <button @click="this.$router.push('/newcosting')">Quotation tracking Page</button>
+        <button @click="this.$router.push('/registercustomer')">Customer Maintenance</button>
+        <button @click="this.$router.push('/salesperson')">Sales Person Maintenace</button>
+        <button @click="this.$router.push('/newcosting')">Quotation tracking Page</button>
+
+
       </div>
     </div>
   </div>
-  <div v-if="isCosting" class="admin-menu">
-    <button @click="closeNewCosting">Close costing</button>
-  </div>
-  <div v-if="isQuotation" class="admin-menu">
-    <button @click="closeNewQuotation">Close quotation</button>
-  </div>
+
 
 </template>
 
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
-import NewQuotation from "@/components/quotation/NewQuotation.vue";
 
 export default {
 
   components: {
-    HeaderBar, NewQuotation,
+    HeaderBar,
   },
 
   data() {

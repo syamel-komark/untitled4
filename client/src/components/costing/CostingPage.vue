@@ -4,19 +4,12 @@
     <div class="dashboard-items">
       <h2>Costing Page</h2>
       <div class="dashboard-item">
-        <button @click="showNewCosting('/newcosting')">New Costing</button>
-        <button @click="showNewQuotation('/newquotation')">Quotation Page</button>
+        <button @click="this.$router.push('/newcosting')">New Costing</button>
+        <button @click="this.$router.push('/quotationpage')">Quotation Page</button>
         <button @click="showNewReport('/costingreport')">Report Page</button>
-        <button v-if="notUser" @click="this.$router.push('/CostingMaintenancePage')">Maintenance Page</button>
 
       </div>
-      <div v-if="isCosting" class="admin-menu">
-        <NewCosting/>
-      </div>
     </div>
-  </div>
-  <div v-if="isCosting" class="admin-menu">
-    <button @click="closeNewCosting">Close costing</button>
   </div>
 
 
@@ -25,12 +18,11 @@
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
-import NewCosting from "@/components/costing/NewCosting.vue";
 
 export default {
 
   components: {
-    HeaderBar, NewCosting,
+    HeaderBar,
   },
 
   computed: {
@@ -40,7 +32,6 @@ export default {
 
   data() {
     return {
-      loginLevel: null,
       notUser:false,
       isQuotation: false,
       isCosting: true,
