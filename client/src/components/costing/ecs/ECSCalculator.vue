@@ -70,13 +70,13 @@
         <div class="form-group">
           <div class="form-item">
             <label for="quantity">Quantity Ordered:</label>
-            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.orderQuantity" required />
+            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" @input = "getMoq" v-model="this.formModel.orderQuantity" required />
           </div>
         </div>
         <div class = "form-group">
           <div class="form-item">
             <label for="printing-type">Diecut:</label>
-            <input id="printing-type" v-model="this.formModel.dieCutType" required/>
+            <input id="printing-type" v-model="this.formModel.dieCutType" required readonly/>
           </div>
         </div>
         <div class="form-group">
@@ -358,33 +358,48 @@ export default {
         flatbedDiecutPrice:'',
         silkScreenPlatePrice:'',
         hotStampingPlatePrice:'',
-      }
+      },
+      save:{
+
+      },
     };
   },
 
   computed: {
 
     calculateProcessWastage(){
-      let wastage = 20;
-      let process =this.splitProcess.length-1;
-      return wastage*process;
+      let wastage = this.splitProcessWastage;
+      let splitData1=[];
+      let currentwastage = 0;
+      for (let i = 0; i < wastage.length; i++) {
+        splitData1.push(parseInt(currentwastage) + parseInt(wastage[i]));
+        currentwastage = splitData1[i];
+      }
+      return currentwastage;
     },
 
-    splitProcess(){
+    splitProcessWastage(){
       let data = this.formModel.process;
       const splitData = data.split(',');
 
       const splitData1 = [];
-      const splitData2 = [];
 
-      for (let i = 0; i < splitData.length; i++) {
-        if (i % 2 === 0) {
-          splitData1.push(splitData[i]);
-        } else {
-          splitData2.push(splitData[i]);
-        }
+      for (let i = 2; i < splitData.length; i+=3) {
+        splitData1.push(splitData[i]);
       }
-      return splitData2;
+      return splitData1;
+    },
+
+    splitProcessCost(){
+      let data = this.formModel.process;
+      const splitData = data.split(',');
+
+      const splitData1 = [];
+
+      for (let i = 1; i < splitData.length; i+=3) {
+        splitData1.push(splitData[i]);
+      }
+      return splitData1;
     },
 
     getMargin(){
@@ -486,7 +501,7 @@ export default {
 
     //i dont even know how this part works
     calculateFixedCosts() {
-      const fixedCosts = this.splitProcess;
+      const fixedCosts = this.splitProcessCost;
       const totalFixedCosts = []; //intialize for fixed cost matrix
 
       for (let i = 0; i < this.calculatePrintingLengthTotal.length; i++) {//sets loop parameter to go through each length
@@ -495,7 +510,7 @@ export default {
 
         for (let j = 0; j < fixedCosts.length; j++) {//loops through the process of length
           const fixedCost = fixedCosts[j];//calls the first process fixed cost
-          lengthFixedCosts += fixedCost * currentLength;//sums the whole process of fixedcost x length
+          lengthFixedCosts += parseFloat(fixedCost) * currentLength;//sums the whole process of fixedcost x length
         }
 
         totalFixedCosts.push(lengthFixedCosts); //push each fixed cost to respective length
@@ -844,7 +859,6 @@ export default {
 
   },
 
-
   created() {
 
     this.getMachine();
@@ -877,9 +891,10 @@ export default {
       this.margin = this.getMargin;
     },
 
-    storeValue(){
-      this.gap=this.calculateGap;
-      this.printingLength=this.calculatePrintingLength;
+    emitValue(){
+      const costingdata=this.formModel
+      this.$emit('costingdata', costingdata);
+
     },
 
     getMoq() {
@@ -931,6 +946,7 @@ export default {
         this.formModel.dieCutType = allCostingInfo[0].diecut; // Set the selected material
 
         this.getMoq();
+        this.emitValue();
 
 
 

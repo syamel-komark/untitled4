@@ -569,10 +569,10 @@ db.connect(err => {
   });
 
   app.post('/api/registerfixedcost', (req, res) => {
-    const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm} = req.body;
-    const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm) VALUES (?, ?, ?,?,?,?,?,?)';
+    const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage} = req.body;
+    const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage) VALUES (?, ?,?, ?,?,?,?,?,?)';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm], (err) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering fixedcost' });
@@ -583,10 +583,10 @@ db.connect(err => {
   });
 
   app.put('/api/updatefixedcost', (req, res) => {
-    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id} = req.body;
-    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=? WHERE id = ?';
+    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,id} = req.body;
+    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=?, settingwastage=? WHERE id = ?';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id], (err) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage, id], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating fixedcost' });

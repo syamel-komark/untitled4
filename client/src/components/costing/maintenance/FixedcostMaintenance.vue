@@ -46,11 +46,11 @@
       </table>
     </div>
     <div class="searchmaterial-menu">
+      <div>
+        <label for="labelName">Process ID:</label>
+        <input type="text" id="labelName" v-model="formModel.id" required readonly/>
+      </div>
       <div class="form-group">
-        <div>
-          <label for="labelName">Process ID:</label>
-          <input type="text" id="labelName" v-model="formModel.id" required readonly/>
-        </div>
         <div>
           <label for="labelName">Process Name:</label>
           <input type="text" id="labelName" v-model="formModel.process" required />
@@ -58,6 +58,10 @@
         <div>
           <label for="labelName">Machine Speed:</label>
           <input type="text" id="labelName" v-model="formModel.speed" required />
+        </div>
+        <div>
+          <label for="labelName">Setting wastage:</label>
+          <input type="text" id="labelName" v-model="formModel.settingWastage" required />
         </div>
 
       </div>
@@ -155,6 +159,7 @@ export default {
         fixedcostmonth: '',
         fixedcostday: '',
         fixedcostm: '',
+        settingWastage:''
       },
       fixedcostSearchQuery:'',
       fixedcost:[],
@@ -222,6 +227,7 @@ export default {
           fixedcostmonth: this.formModel.fixedcostmonth,
           fixedcostday: this.formModel.fixedcostday,
           fixedcostm: this.formModel.fixedcostm,
+          settingwastage: this.formModel.settingWastage,
           id:this.formModel.id,
         });
         if (response.status === 200) {
@@ -249,6 +255,7 @@ export default {
           fixedcostmonth: this.formModel.fixedcostmonth,
           fixedcostday: this.formModel.fixedcostday,
           fixedcostm: this.formModel.fixedcostm,
+          settingwastage: this.formModel.settingWastage,
         });
         if (response.status === 200) {
           this.success = true;
@@ -276,6 +283,7 @@ export default {
       this.formModel.fixedcostmonth = '';
       this.formModel.fixedcostday = '';
       this.formModel.fixedcostm = '';
+      this.formModel.settingWastage='';
     },
 
     pickFixedCost(fixedcost) {
@@ -288,6 +296,7 @@ export default {
       this.formModel.fixedcostmonth = fixedcost.fixedcostmonth;
       this.formModel.fixedcostday = fixedcost.fixedcostday;
       this.formModel.fixedcostm = fixedcost.fixedcostm;
+      this.formModel.settingWastage = fixedcost.settingwastage;
     },
 
 

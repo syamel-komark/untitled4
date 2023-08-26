@@ -24,6 +24,7 @@ import fixedcostCalculate from "@/components/costing/maintenance/FixedcostCalcul
 import MachineMaintenance from "@/components/costing/maintenance/MachineMaintenance";
 import VarnishMaintenance from "@/components/costing/maintenance/VarnishMaintenance";
 import SalesPerson from "@/components/quotation/SalesPerson";
+import CostingForm from "@/components/costing/CostingForm";
 
 const routes = [
   { path: '/', component: LoginForm },
@@ -49,6 +50,8 @@ const routes = [
   { path: '/machinemaintenance', component: MachineMaintenance},
   { path: '/varnishmaintenance', component: VarnishMaintenance},
   { path: '/salesperson', component: SalesPerson},
+  { path: '/costingform', component: CostingForm},
+
 
 ];
 

@@ -2,6 +2,9 @@
   <div class="dashboard">
   <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
   <h2>ECS Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+    <div v-if="selectCosting">
+      <header>Costing Number: {{this.newCostingId}}</header>
+    </div>
   </h2>
   <div class="form">
     <div class="group-container">
@@ -126,7 +129,7 @@
   </div>
 
   </div>
-  <button @click="runAsyncFunctions" id="registercosting">Next</button>
+  <button @click="runAsyncFunctions" id="registercosting">GENERATE COSTING SHEET</button>
   <div class="success-modal" v-if="searchVarnish">
     <div class="table-container">
       <h2>Varnish List</h2>
@@ -285,7 +288,7 @@
   <div class="success-modal" v-if="searchFixedCost">
     <div class="table-container">
       <h2>Process List</h2>
-      <input type="text" id="process" v-model="this.selectedProcesses" required />
+      <input type="text" id="process" v-model="this.selectedProcesses" required readonly />
       <button @click="clearProcess()">Clear</button>
       <div class="searchmaterial-menu">
         <input
@@ -385,7 +388,7 @@
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
         <button @click="this.successRegisterLabel=false">Close</button>
-        <button @click="this.$router.push('/ecscalculator');">Create Quoataion</button>
+        <button @click="this.$router.push('/costingform');">Create Costing Sheet</button>
       </div>
     </div>
   </div>
@@ -447,6 +450,7 @@ export default {
 
   data() {
     return {
+      selectCosting: false,
       searchDieCut: false,
       machineInfo:[],
       machineSpec:{
@@ -461,6 +465,7 @@ export default {
         gapAcross:'',
       },
       columnsPerRow: 4,
+      selectedProcessWastage:[],
       selectedProcessCost:[],
       selectedProcesses: [], // Array to store the selected process IDs
       processQuantities: {}, // Object to store quantities for each process ID
@@ -565,27 +570,47 @@ export default {
 
   computed: {
 
-    generateGearArray() {
-      if (!this.machineSpec || !this.machineSpec.gear) {
-        return []; // Return an empty array if machineSpec or gear is undefined
-      }
+    splitProcessWastage(){
+      let data = this.selectedProcess;
+      const splitData = data.split(',');
 
-      let gear = this.machineSpec.gear.replace(/\s+/g, '').toLowerCase().split(',');
-      let gearArray = [];
+      const splitData1 = [];
 
-      for (let i = 0; i < gear.length; i++) {
-        for (let j = 0; j < 10; j++) {
-          gearArray.push(gear[i]  * this.machineSpec.gearPitch / j); // Multiply gear by (j + 1) factor
+      for (let i = 2; i < splitData.length; i+=3) {
+          splitData1.push(splitData[i]);
         }
-      }
-
-      return gearArray;
+      return splitData1;
     },
+
+    splitProcessCost(){
+      let data = this.selectedProcess;
+      const splitData = data.split(',');
+
+      const splitData1 = [];
+
+      for (let i = 1; i < splitData.length; i+=3) {
+        splitData1.push(splitData[i]);
+      }
+      return splitData1;
+    },
+
+    splitProcess(){
+      let data = this.selectedProcess;
+      const splitData = data.split(',');
+
+      const splitData1 = [];
+
+      for (let i = 0; i < splitData.length; i+=3) {
+        splitData1.push(splitData[i]);
+      }
+      return splitData1;
+    },
+
 
     compileProcess() {
       let data = [];
       for (let i = 0; i < this.selectedProcesses.length; i++) {
-        let compile = `${this.selectedProcesses[i]},${this.selectedProcessCost[i]}`;
+        let compile = `${this.selectedProcesses[i]},${this.selectedProcessCost[i]},${this.selectedProcessWastage[i]}`;
         data.push(compile);
       }
       return data.join(',');
@@ -619,18 +644,22 @@ export default {
       return nonZero;
     },
 
-    nonZeroProcesses() {
-      const nonZero = [];
-      for (const process in this.printingProcess) {
-        if (this.printingProcess[process] > 0) {
-          for (let i = 0; i < this.printingProcess[process]; i++) {
-            nonZero.push(process);
-          }
+    generateGearArray() {
+      if (!this.machineSpec || !this.machineSpec.gear) {
+        return []; // Return an empty array if machineSpec or gear is undefined
+      }
+
+      let gear = this.machineSpec.gear.replace(/\s+/g, '').toLowerCase().split(',');
+      let gearArray = [];
+
+      for (let i = 0; i < gear.length; i++) {
+        for (let j = 0; j < 10; j++) {
+          gearArray.push(gear[i]  * this.machineSpec.gearPitch / j); // Multiply gear by (j + 1) factor
         }
       }
-      return nonZero;
-    },
 
+      return gearArray;
+    },
     pitch(){
       return parseInt(this.formModel.pitch);
     },
@@ -808,13 +837,17 @@ export default {
     clearProcess(){
       this.selectedProcessCost=[];
       this.selectedProcesses=[];
+      this.selectedProcessWastage=[];
     },
 
     addProcess(fixedcost){
       const selectedProcess = fixedcost.process;
       const selectedCost = fixedcost.fixedcostm;
+      const selectedWastage = fixedcost.settingwastage;
       this.selectedProcesses.push(selectedProcess);
       this.selectedProcessCost.push(selectedCost);
+      this.selectedProcessWastage.push(selectedWastage);
+
 
     },
 
@@ -855,6 +888,10 @@ export default {
       this.formModel.quantityOrder = costing.quantity;
       this.newCostingId = costing.id;
       this.searchCosting = false;
+      this.selectedProcesses = this.splitProcess;
+      this.selectedProcessCost = this.splitProcessCost;
+      this.selectedProcessWastage = this.splitProcessWastage;
+      this.selectCosting =true;
     },
 
     async fetchCostinginfo() {
@@ -881,18 +918,6 @@ export default {
 
     async runAsyncFunctions() {
       try {
-        sessionStorage.setItem('mastercard', this.formModel.mastercard);
-        sessionStorage.setItem('labelname', this.formModel.labelName);
-        sessionStorage.setItem('pitch', this.formModel.pitch);
-        sessionStorage.setItem('width', this.formModel.width);
-        sessionStorage.setItem('material', this.formModel.material);
-        sessionStorage.setItem('color', this.formModel.color);
-        sessionStorage.setItem('across', this.formModel.across);
-        sessionStorage.setItem('around', this.formModel.around);
-        sessionStorage.setItem('gear', this.formModel.gear);
-        sessionStorage.setItem('process', this.selectedProcess);
-        sessionStorage.setItem('finishing', this.selectedFinishing);
-        sessionStorage.setItem('machine', this.machine);
         await this.registerCosting();
         sessionStorage.setItem('costingnumber', this.newCostingId);
         console.log('Both functions executed successfully');
