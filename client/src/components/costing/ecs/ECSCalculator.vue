@@ -1,4 +1,9 @@
 <template>
+  <div class="form-item">
+    <label for="quantity">Quantity Ordered:</label>
+    <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.receivedQuantity" required />
+  </div>
+
   <div class="container">
     <div>
       <h2>ECS Label Specification
@@ -70,7 +75,7 @@
         <div class="form-group">
           <div class="form-item">
             <label for="quantity">Quantity Ordered:</label>
-            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.orderQuantity" required />
+            <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" @input="getMoq" v-model="this.formModel.orderQuantity" required />
           </div>
         </div>
         <div class = "form-group">
@@ -294,6 +299,9 @@
 import axios from "axios";
 
 export default {
+  props:{
+    quantity : String,
+  },
 
   components: {
     //HeaderBar,
@@ -301,6 +309,7 @@ export default {
 
   data() {
     return {
+      receivedQuantity:'',
       machineInfo:[],
       costingInfo:[],
       margin: 0.3,
@@ -309,7 +318,6 @@ export default {
       selectedProcess:'',
       gap:'',
       printingLength:[],
-      quantity:'',
       moq:[],
       newCostingId:"",
       machine: 'ECS340',
@@ -873,6 +881,11 @@ export default {
 
   methods: {
 
+    calculateUnitCost(){
+      this.formModel.orderQuantity = this.quantity;
+
+    },
+
     setMargin(){
       this.margin = this.getMargin;
     },
@@ -983,6 +996,10 @@ export default {
       this.$router.push(path);
     },
 
+  },
+
+  watch: {
+    quantity: 'calculateUnitCost', // Recalculate when quantity changes
   },
 };
 </script>

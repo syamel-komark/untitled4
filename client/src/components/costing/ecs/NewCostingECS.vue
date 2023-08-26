@@ -2,6 +2,7 @@
   <div class="dashboard">
   <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
   <h2>ECS Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+  <div v-if="pickCost">Costing id:{{costingId}}</div>
   </h2>
   <div class="form">
     <div class="group-container">
@@ -119,14 +120,16 @@
         </div>
         <div>
           <label for="number">Quantity Order (pcs):</label>
-          <input type="text" id="process" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.quantityOrder" required />
+          <input type="text" id="process" placeholder="Key in quantity to quote (use ; for multiple moq)" @input="emitQuantity" v-model="this.formModel.quantityOrder" required />
         </div>
       </div>
     </div>
   </div>
 
   </div>
-  <button @click="runAsyncFunctions" id="registercosting">Next</button>
+  <button @click="runAsyncFunctions" id="registercosting" >Next</button>
+  <label for="Pitch">Calculated Unit Cost:</label>
+  <input type="text" id="Pitch" v-model="calculatedUnitCost" required />
   <div class="success-modal" v-if="searchVarnish">
     <div class="table-container">
       <h2>Varnish List</h2>
@@ -430,6 +433,11 @@
       </table>
     </div><button @click=closeSearchCosting>Close</button>
   </div>
+  <ECSCalculator :costingId="emit.costingId"
+                 :dieCutType = "emit.dieCutType"
+                 :quantity="emit.quantity"
+                 @unit-cost-calculated="handleUnitCostCalculated"
+  />
 
 
 
@@ -438,15 +446,25 @@
 <script>
 import HeaderBar from "@/components/AppHeader.vue";
 import axios from "axios";
+import ECSCalculator from "@/components/costing/ecs/ECSCalculator";
 
 export default {
 
   components: {
+    ECSCalculator,
     HeaderBar,
   },
 
   data() {
     return {
+      emit:{
+        quantity:'',
+        dieCutType: '',
+        costingId:'',
+      },
+      pickCost:false,
+      costingId:'',
+      calculatedUnitCost:[],
       searchDieCut: false,
       machineInfo:[],
       machineSpec:{
@@ -805,6 +823,16 @@ export default {
 
   methods: {
 
+    emitQuantity(){
+      this.emit.quantity = this.formModel.quantityOrder;
+      this.emit.diecut = this.formModel.dieCutType;
+      this.emit.costingId = this.costingId
+    },
+
+    handleUnitCostCalculated(unitCost) {
+      this.calculatedUnitCost = unitCost;
+    },
+
     clearProcess(){
       this.selectedProcessCost=[];
       this.selectedProcesses=[];
@@ -854,6 +882,9 @@ export default {
       this.formModel.dieCutType = costing.diecut;
       this.formModel.quantityOrder = costing.quantity;
       this.newCostingId = costing.id;
+      this.costingId = costing.id;
+      this.pickCost=true;
+
       this.searchCosting = false;
     },
 
@@ -881,20 +912,12 @@ export default {
 
     async runAsyncFunctions() {
       try {
-        sessionStorage.setItem('mastercard', this.formModel.mastercard);
-        sessionStorage.setItem('labelname', this.formModel.labelName);
-        sessionStorage.setItem('pitch', this.formModel.pitch);
-        sessionStorage.setItem('width', this.formModel.width);
-        sessionStorage.setItem('material', this.formModel.material);
-        sessionStorage.setItem('color', this.formModel.color);
-        sessionStorage.setItem('across', this.formModel.across);
-        sessionStorage.setItem('around', this.formModel.around);
-        sessionStorage.setItem('gear', this.formModel.gear);
-        sessionStorage.setItem('process', this.selectedProcess);
-        sessionStorage.setItem('finishing', this.selectedFinishing);
         sessionStorage.setItem('machine', this.machine);
         await this.registerCosting();
         sessionStorage.setItem('costingnumber', this.newCostingId);
+        this.costingId = this.newCostingId;
+        //this.quantity =this.formModel.quantityOrder;
+        this.$emit('costing', this.newCostingId);
         console.log('Both functions executed successfully');
       } catch (error) {
         console.error('An error occurred:', error);
