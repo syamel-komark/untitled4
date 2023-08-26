@@ -1,9 +1,4 @@
 <template>
-  <div class="form-item">
-    <label for="quantity">Quantity Ordered:</label>
-    <input type="text" id="quantity" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.receivedQuantity" required />
-  </div>
-
   <div class="container">
     <div>
       <h2>ECS Label Specification
@@ -99,7 +94,7 @@
           <div class="form-group">
             <div class="form-item">
               <label for="printing length">Unit Cost:</label>
-              <input type="text" id="finishing"  v-model="unitCost" required readonly/>
+              <input type="text" id="finishing" v-model="unitCost" required readonly/>
             </div>
             <div class="form-item">
               <label for="printing length">Unit Cost Without Tooling:</label>
@@ -301,6 +296,8 @@ import axios from "axios";
 export default {
   props:{
     quantity : String,
+    dieCutType: String,
+    costingId: String,
   },
 
   components: {
@@ -309,7 +306,6 @@ export default {
 
   data() {
     return {
-      receivedQuantity:'',
       machineInfo:[],
       costingInfo:[],
       margin: 0.3,
@@ -514,22 +510,25 @@ export default {
     },
 
     calculateDieCut(){
-      let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
-      let diecut = finishingArray.filter(item => item.trim() === 'diecut').length;
-      let diecutType = this.formModel.dieCutType.toLowerCase(); //
-      if(diecut>0) {
-        if (diecutType === "flexible") {
-          const diecutPrice = this.machineSpec.flexibleDiecutPrice * this.calculateMaterialWidth / 1000;
-          return diecutPrice;
+      if(this.formModel.dieCutType){
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let diecut = finishingArray.filter(item => item.trim() === 'diecut').length;
+        let diecutType = this.formModel.dieCutType.toLowerCase(); //
+        if(diecut>0) {
+          if (diecutType === "flexible") {
+            const diecutPrice = this.machineSpec.flexibleDiecutPrice * this.calculateMaterialWidth / 1000;
+            return diecutPrice;
+          }
+          if (diecutType === "flatbed") {
+            const diecutPrice = this.machineSpec.flatbedDiecutPrice * ((2 * parseInt(this.formModel.pitch) / 1000) + (2 * parseInt(this.formModel.width) / 1000)) + parseInt(80);
+            return diecutPrice;
+          }
+          if (diecutType === "solid") {
+            const diecutPrice = this.machineSpec.solidDiecutPrice * this.calculateMaterialWidth / 1000;
+            return diecutPrice;
+          }
         }
-        if (diecutType === "flatbed") {
-          const diecutPrice = this.machineSpec.flatbedDiecutPrice * ((2 * parseInt(this.formModel.pitch) / 1000) + (2 * parseInt(this.formModel.width) / 1000)) + parseInt(80);
-          return diecutPrice;
-        }
-        if (diecutType === "solid") {
-          const diecutPrice = this.machineSpec.solidDiecutPrice * this.calculateMaterialWidth / 1000;
-          return diecutPrice;
-        }
+        return 0;
       }
       return 0;
 
@@ -881,11 +880,6 @@ export default {
 
   methods: {
 
-    calculateUnitCost(){
-      this.formModel.orderQuantity = this.quantity;
-
-    },
-
     setMargin(){
       this.margin = this.getMargin;
     },
@@ -895,13 +889,32 @@ export default {
       this.printingLength=this.calculatePrintingLength;
     },
 
-    getMoq() {
+    emitCalculation(){
+      this.formModel.orderQuantity=this.quantity
       if (this.formModel.orderQuantity) {
         // Split the input string by ';'
         let quantities = this.formModel.orderQuantity.split(';').map(qty => qty.trim());
 
         // Convert each quantity to a number and store in the moq array
         this.moq = quantities.map(qty => parseInt(qty, 10));
+        this.$emit('unit-cost-calculated', this.unitCost); // Emit the calculated moq to the parent')
+
+      } else {
+        this.moq = []; // Clear the moq array if no input
+      }
+
+    },
+
+    getMoq() {
+      this.formModel.orderQuantity=this.quantity
+      if (this.formModel.orderQuantity) {
+        // Split the input string by ';'
+        let quantities = this.formModel.orderQuantity.split(';').map(qty => qty.trim());
+
+        // Convert each quantity to a number and store in the moq array
+        this.moq = quantities.map(qty => parseInt(qty, 10));
+        this.$emit('unit-cost-calculated', this.unitCost); // Emit the calculated moq to the parent')
+
       } else {
         this.moq = []; // Clear the moq array if no input
       }
@@ -999,7 +1012,8 @@ export default {
   },
 
   watch: {
-    quantity: 'calculateUnitCost', // Recalculate when quantity changes
+    quantity: 'getMoq', // Recalculate when quantity changes
+
   },
 };
 </script>

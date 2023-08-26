@@ -128,8 +128,7 @@
 
   </div>
   <button @click="runAsyncFunctions" id="registercosting" >Next</button>
-  <label for="Pitch">Calculated Unit Cost:</label>
-  <input type="text" id="Pitch" v-model="calculatedUnitCost" required />
+  <p>Calculated Unit Cost: {{ calculatedUnitCost }}</p>
   <div class="success-modal" v-if="searchVarnish">
     <div class="table-container">
       <h2>Varnish List</h2>
@@ -288,7 +287,7 @@
   <div class="success-modal" v-if="searchFixedCost">
     <div class="table-container">
       <h2>Process List</h2>
-      <input type="text" id="process" v-model="this.selectedProcesses" required />
+      <input type="text" id="process" v-model="this.selectedProcesses" required readonly/>
       <button @click="clearProcess()">Clear</button>
       <div class="searchmaterial-menu">
         <input
@@ -825,7 +824,6 @@ export default {
 
     emitQuantity(){
       this.emit.quantity = this.formModel.quantityOrder;
-      this.emit.diecut = this.formModel.dieCutType;
       this.emit.costingId = this.costingId
     },
 
