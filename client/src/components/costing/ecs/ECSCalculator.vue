@@ -360,6 +360,10 @@ export default {
         hotStampingPlatePrice:'',
       },
       save:{
+        totalToolingCost:'',
+        unitCost:'',
+        costingId:'',
+        gap:'',
 
       },
     };
@@ -861,12 +865,14 @@ export default {
 
   created() {
 
+
     this.getMachine();
 
     this.getInfo();
 
     this.getMoq();
 
+    //this.saveCalculation();
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
@@ -891,8 +897,20 @@ export default {
       this.margin = this.getMargin;
     },
 
+    saveCalculation(){
+      this.save.totalToolingCost = this.totalToolingCost;
+      this.save.unitCost = this.unitCost;
+      this.save.costingId = this.newCostingId;
+      this.save.gap = this.calculateGap;
+      this.save.printingLength = this.calculatePrintingLength;
+    },
+
     emitValue(){
-      const costingdata=this.formModel
+      const costingdata=this.formModel;
+      const calculated=this.save;
+      const machinespec = this.machineSpec;
+      this.$emit('machine', machinespec);
+      this.$emit('calculated', calculated);
       this.$emit('costingdata', costingdata);
 
     },
@@ -947,6 +965,7 @@ export default {
 
         this.getMoq();
         this.emitValue();
+        this.saveCalculation();
 
 
 
@@ -983,6 +1002,7 @@ export default {
         this.machineSpec.flexibleDiecutPrice=allMachineInfo[0].flexiblediecutprice;
         this.machineSpec.flatbedDiecutPrice=allMachineInfo[0].flatbeddiecutprice;
         this.machineSpec.solidDiecutPrice=allMachineInfo[0].soliddiecutprice;
+        this.machineSpec.machineName = allMachineInfo[0].machinename;
 
         console.log(this.machineSpec);
       } catch (error) {

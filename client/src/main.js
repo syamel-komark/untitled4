@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
+import print from 'vue3-print-nb'
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginForm from './components/LoginForm.vue';
 import Dashboard from './components/DashboardForm.vue';
@@ -25,6 +26,7 @@ import MachineMaintenance from "@/components/costing/maintenance/MachineMaintena
 import VarnishMaintenance from "@/components/costing/maintenance/VarnishMaintenance";
 import SalesPerson from "@/components/quotation/SalesPerson";
 import CostingForm from "@/components/costing/CostingForm";
+
 
 const routes = [
   { path: '/', component: LoginForm },
@@ -60,6 +62,9 @@ const router = createRouter({
   routes,
 });
 
+
 const app = createApp(App);
 app.use(router);
 app.mount('#app');
+app.use(print)
+
