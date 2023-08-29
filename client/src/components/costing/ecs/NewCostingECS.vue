@@ -38,16 +38,26 @@
     </div>
     <div class="group-container">
       <div>
-        <h2>Label Arrangement:</h2>
+        <h2>Arrangement & Diecut:</h2>
         <div class="form-group">
-          <button @click="calculateAcross" >Label Across:</button>
-          <input type="number" id="across" v-model="formModel.across" required />
+          <div>
+            <button @click="calculateAcross" >Label Across:</button>
+            <input type="number" id="across" v-model="formModel.across" required />
+          </div>
+          <div>
+            <button @click="searchDieCut=true">Diecut Type:</button>
+            <input type="text" id="process" v-model="this.formModel.dieCutType" required />
+          </div>
         </div>
         <div class="form-group">
-          <button @click="calculateAround" >Label Around:</button>
-          <input type="number" id="around" v-model="formModel.around" required />
-          <label for="Gear">Gear:</label>
-          <input type="text" id="gear" v-model="formModel.gear" required />
+          <div>
+            <button @click="calculateAround" >Label Around:</button>
+            <input type="number" id="around" v-model="formModel.around" required />
+          </div>
+          <div>
+            <label for="Gear">Gear:</label>
+            <input type="text" id="gear" v-model="formModel.gear" required />
+          </div>
         </div>
       </div>
     </div>
@@ -103,9 +113,10 @@
       </div>
     </div>
     <div class="group-container">
-      <h2>Process and Finishing:</h2>
-      <div class="form-group">
-        <div>
+      <div>
+        <h2>Process & Costing:</h2>
+        <div class="form-group">
+          <div>
             <button @click="openFinishing">Finishing:</button>
             <input type="text" id="finishing" v-model="selectedFinishing" required />
           </div>
@@ -113,16 +124,16 @@
             <button @click="searchFixedCost=true">Process:</button>
             <input type="text" id="process" v-model="this.selectedProcesses" required />
           </div>
-
         </div>
-      <div class = "form-group">
-        <div>
-          <button @click="searchDieCut=true">Diecut Type:</button>
-          <input type="text" id="process" v-model="this.formModel.dieCutType" required />
-        </div>
-        <div>
-          <label for="number">Quantity Order (pcs):</label>
-          <input type="text" id="process" placeholder="Key in quantity to quote (use ; for multiple moq)" v-model="this.formModel.quantityOrder" required />
+        <div class="form-group">
+          <div>
+            <label for="number">Selling Price (RM/PCS):</label>
+            <input type="text" id="process" placeholder="(use ; for multiple sp)" v-model="this.formModel.currentSellingPrice" required />
+          </div>
+          <div>
+            <label for="number">Quantity Order (pcs):</label>
+            <input type="text" id="process" placeholder="(use ; for multiple moq)" v-model="this.formModel.quantityOrder" required />
+          </div>
         </div>
       </div>
     </div>
@@ -450,6 +461,7 @@ export default {
 
   data() {
     return {
+      currentSellingPrice:'',
       selectCosting: false,
       searchDieCut: false,
       machineInfo:[],
@@ -886,6 +898,7 @@ export default {
       this.formModel.varnishCost = costing.varnishcost; // Set the selected material
       this.formModel.dieCutType = costing.diecut;
       this.formModel.quantityOrder = costing.quantity;
+      this.formModel.currentSellingPrice = costing.sellingprice;
       this.newCostingId = costing.id;
       this.searchCosting = false;
       this.selectedProcesses = this.splitProcess;
@@ -962,6 +975,7 @@ export default {
           varnishcost: this.formModel.varnishCost,
           diecut :this.formModel.dieCutType,
           quantity :this.formModel.quantityOrder,
+          sellingprice:this.formModel.currentSellingPrice,
 
 
 

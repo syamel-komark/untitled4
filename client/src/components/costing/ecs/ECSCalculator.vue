@@ -114,7 +114,11 @@
             </div>
             <div class="form-item">
               <label for="printing length">Current Selling Price:</label>
-              <input type="text" id="finishing"  v-model="RSP" required readonly/>
+              <input type="text" id="finishing"  v-model="sellingPrice" required readonly/>
+            </div>
+            <div class="form-item">
+              <label for="printing length">Current Margin:</label>
+              <input type="text" id="finishing"  v-model="calculateCurrentMargin" required readonly/>
             </div>
           </div>
         </div>
@@ -301,9 +305,10 @@ export default {
 
   data() {
     return {
+      sellingPrice:[],
       machineInfo:[],
       costingInfo:[],
-      margin: 0.3,
+      margin: 0.2,
       wastage:1.05,
       selectedFinishing:'',
       selectedProcess:'',
@@ -319,6 +324,7 @@ export default {
         settingLength:0,
       },
       formModel:{
+        currentSellingPrice:'',
         mastercard: '',
         labelName:'',
         across:'',
@@ -360,16 +366,46 @@ export default {
         hotStampingPlatePrice:'',
       },
       save:{
+        RSP:'',
+        currentSellingPrice: '',
         totalToolingCost:'',
         unitCost:'',
         costingId:'',
         gap:'',
+        materialWidth:'',
+        totalCost:'',
+        inkCost:'',
+        paperCost:'',
+        laminateCost:'',
+        varnishCost:'',
+        foilCost:'',
+        totalmaterialCost:'',
+        fixedCost:'',
+        dieCutCost:'',
+        plateCost:'',
+        settingLength:'',
+        wastageLength:'',
+        totalLength:'',
 
       },
     };
   },
 
   computed: {
+
+    calculateCurrentMargin(){
+      const unitCost = this.unitCost;
+      const sellingPrice = this.sellingPrice;
+
+// Calculate the margin for each entry and store in the margins array
+      const margins = sellingPrice.map((price, index) => {
+        return ((price - unitCost[index]) / price) * 100;
+      });
+
+      console.log(margins); // Array of calculated margins
+      return margins.map((value) => parseFloat(value.toFixed(2)))
+
+    },
 
     calculateProcessWastage(){
       let wastage = this.splitProcessWastage;
@@ -419,7 +455,7 @@ export default {
         const sp = unitcost*margin;
         rsp.push(sp);
       }
-      return rsp.map((value) => parseFloat(value.toFixed(6)));
+      return rsp.map((value) => parseFloat(value.toFixed(4)));
     },
 
     unitCostWithoutTooling(){
@@ -443,7 +479,7 @@ export default {
         const uc = sum/moq;
         unitcost.push(uc);
       }
-      return unitcost.map((value) => parseFloat(value).toFixed(6));
+      return unitcost.map((value) => parseFloat(value).toFixed(4));
     },
 
     sumCost(){
@@ -455,7 +491,7 @@ export default {
         const total = parseFloat(materialCost)+parseFloat(fixedCost)+parseFloat(toolingCost);
         sum.push(total);
       }
-      return sum.map((value) => parseFloat(value).toFixed(4));
+      return sum.map((value) => parseFloat(value).toFixed(2));
     },
 
     totalMaterialCost(){
@@ -476,14 +512,15 @@ export default {
         const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
         sum.push(total);
       }
-      return sum.map((value) => parseFloat(value.toFixed(4)));
+      return sum.map((value) => parseFloat(value.toFixed(2)));
     },
+
 
     calculatePrintingLengthTotal(){
       let printLength=null;
       printLength=this.moq.map(moq => moq *
-          (((parseInt(this.formModel.pitch)+parseInt(this.calculateGap))/this.formModel.across)/1000)
-          * (1+this.machineSpec.wastage)
+          (((((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/1000)/this.formModel.across))
+          * (1+parseFloat(this.machineSpec.wastage)))
           +parseInt(this.calculateSettingLengthColor)
           +parseInt(this.calculateJointLengthWastage)
           +parseInt(this.calculateBackPrint)
@@ -492,8 +529,24 @@ export default {
           +parseInt(this.calculateProcessWastage)
 
       );
-      return printLength;
+      return printLength.map((value) => parseFloat(value.toFixed(0)));
     },
+
+    calculatePrintingLengthWastage(){
+      let printLength=null;
+      printLength=this.moq.map(moq => moq *
+          (((((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/1000)/this.formModel.across))
+              * (parseFloat(this.machineSpec.wastage)))
+          +parseInt(this.calculateJointLengthWastage)
+          +parseInt(this.calculateBackPrint)
+          +parseInt(this.calculateKillGlueLength)
+          +parseInt(this.calculateSheetFormLength)
+          +parseInt(this.calculateProcessWastage)
+
+      );
+      return printLength.map((value) => parseFloat(value.toFixed(0)));
+    },
+
 
 
     totalToolingCost(){
@@ -568,16 +621,16 @@ export default {
 
     calculateGap(){
       let gap =null;
-      gap = parseFloat(((this.formModel.gear*this.machineSpec.gearPitch)/this.formModel.around)) - parseInt(this.formModel.pitch);
+      gap = parseFloat(((this.formModel.gear*this.machineSpec.gearPitch)/this.formModel.around)) - parseFloat(this.formModel.pitch);
       return parseFloat(gap.toFixed(3));
     },
 
     calculatePrintingLength(){
       let printLength=null;
       printLength=this.moq.map(moq => moq *
-          (((parseInt(this.formModel.pitch)+parseFloat(this.calculateGap))/this.formModel.across)/1000)
+          (((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/this.formModel.across)/1000)
           );
-      return printLength.map((value) => parseFloat(value.toFixed(4)));
+      return printLength.map((value) => parseFloat(value.toFixed(0)));
     },
 
     calculateSettingLengthColor(){
@@ -846,7 +899,7 @@ export default {
         let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
         let sheetFormCount = finishingArray.filter(item => item.trim() === 'sheetform').length;
         let rollLength = 1000;
-        let jointWastage = 5; //how much material required to autocut
+        let jointWastage = 1; //how much material required to autocut
         let printLength = this.moq.map(moq => moq *
             (((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/this.formModel.across)/1000)
         );
@@ -865,14 +918,13 @@ export default {
 
   created() {
 
+    this.getCurrentSellingPrice();
 
     this.getMachine();
 
     this.getInfo();
 
     this.getMoq();
-
-    //this.saveCalculation();
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
@@ -903,6 +955,25 @@ export default {
       this.save.costingId = this.newCostingId;
       this.save.gap = this.calculateGap;
       this.save.printingLength = this.calculatePrintingLength;
+      this.save.materialWidth = this.calculateMaterialWidth;
+      this.save.totalCost = this.sumCost;
+      this.save.inkCost = this.calculateInkCost;
+      this.save.paperCost = this.calculatePaperMaterialPrice;
+      this.save.laminateCost = this.calculateLaminateCost;
+      this.save.varnishCost = this.calculateVarnishCost;
+      this.save.foilCost = this.calculateFoilCost;
+      this.save.totalMaterialCost = this.totalMaterialCost;
+      this.save.fixedCost = this.calculateFixedCosts;
+      this.save.dieCutCost = this.calculateDieCut;
+      this.save.plateCost = this.calculatePlatePrice;
+      this.save.settingLength = this.calculateSettingLengthColor;
+      this.save.wastageLength = this.calculatePrintingLengthWastage;
+      this.save.totalLength = this.calculatePrintingLengthTotal;
+      this.save.currentMargin = this.calculateCurrentMargin;
+      this.save.RSP = this.RSP;
+
+
+
     },
 
     emitValue(){
@@ -927,6 +998,20 @@ export default {
       }
 
     },
+
+    getCurrentSellingPrice() {
+      if (this.formModel.currentSellingPrice) {
+        // Split the input string by ';'
+        let quantities = this.formModel.currentSellingPrice.split(';').map(qty => qty.trim());
+
+        // Convert each quantity to a number and store in the moq array
+        this.sellingPrice = quantities.map(qty => parseFloat(qty).toFixed(4));
+      } else {
+        this.selling = []; // Clear the moq array if no input
+      }
+
+    },
+
 
     async getInfo() {
       this.newCostingId = sessionStorage.getItem('costingnumber');
@@ -962,6 +1047,8 @@ export default {
         this.formModel.ink = allCostingInfo[0].ink; // Set the selected material
         this.formModel.orderQuantity = allCostingInfo[0].quantity; // Set the selected material
         this.formModel.dieCutType = allCostingInfo[0].diecut; // Set the selected material
+        this.formModel.currentSellingPrice = allCostingInfo[0].sellingprice; // Set the selected material
+        this.getCurrentSellingPrice()
 
         this.getMoq();
         this.emitValue();

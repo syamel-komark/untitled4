@@ -514,11 +514,11 @@ db.connect(err => {
 /////////////////////////COSTING//////////////////////////////
 {
   app.post('/api/registercosting', (req, res) => {
-    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity, mastercard} = req.body;
-    const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity, mastercard) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?,?,?,?,?,?)';
+    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity,sellingprice, mastercard} = req.body;
+    const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity,sellingprice, mastercard) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?,?,?,?,?,?)';
 
     db.query(query, [
-      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity, mastercard], (err, result) => {
+      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity,sellingprice, mastercard], (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering costing' });

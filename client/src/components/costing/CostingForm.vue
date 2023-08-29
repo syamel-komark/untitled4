@@ -4,7 +4,7 @@
     <button v-print="'#myPrintableContent'">Print Costing</button>
     <div class="print" id="myPrintableContent">
       <div class="company-header">
-        <img src="output (5).png" alt="Komark" width="150" height="60" />
+        <img src="output (5).png" alt="Komark" width="150" height="60" @click="toggleCalculator" />
         <label>Komark HQ ONC2.0 Costing Sheet</label>
         <div class="company-header-content">
           <label>Costing Number:{{this.calculated.costingId}}</label>
@@ -37,6 +37,13 @@
                 <label type="sub">Gap:</label>
                 <input for="sub" v-model="this.calculated.gap">
               </div>
+              <div class="sub-item">
+                <label type="sub">Material Width (mm):</label>
+                <input for="sub" v-model="this.calculated.materialWidth">
+                <label type="sub">No of Color:</label>
+                <input for="sub" v-model="this.costingData.color">
+              </div>
+
 
             </div>
           </div>
@@ -49,111 +56,200 @@
             <input for="header" v-model="this.costingData.finishing">
             <label>Process:</label>
             <input for="header" v-model="this.formModel.process">
+            <label>Quantity:</label>
+            <input for="header" v-model="this.costingData.orderQuantity">
           </div>
         </div>
       </div>
       <div class="quantity-field">
-        <div class ="quantity-head">
-            <label>Quantity Ordered (PCS)</label>
+        <div class = "quantity-group">
+          <div class = "quantity-label-column">
+            <div class = "quantity-label">
+              <label>SUMMARY</label>
+            </div>
           </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+          <div class = "quantity-column">
+            <div class ="quantity-head">
+              <label>MOQ (PCS)</label>
+            </div>
+            <div class ="quantity-table">
+              <div class = "quantity-item">
+                <label>Total Pieces</label>
+                <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity">
+                  <label>{{ quantity }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Print Length (m)</label>
+                <div v-for="(length, index) in calculated.printingLength" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Wastage Length (m)</label>
+                <div v-for="(length, index) in calculated.wastageLength" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Setting Length (m)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.settingLength }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Total Length (m)</label>
+                <div v-for="(length, index) in calculated.totalLength" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+
+
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
         </div>
-        <div class ="quantity-head">
-          <label>Printed Length(PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+        <div class = "quantity-group">
+          <div class = "quantity-label-column">
+            <div class = "quantity-label">
+              <label>MATERIAL COST</label>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
-        </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+          <div class = "quantity-column">
+            <div class ="quantity-table">
+              <div class = "quantity-item">
+                <label>Paper Cost(RM)</label>
+                <div v-for="(length, index) in calculated.paperCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Ink Cost (RM)</label>
+                <div v-for="(length, index) in calculated.inkCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Varnish Cost (RM)</label>
+                <div v-for="(length, index) in calculated.varnishCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Laminate Cost(RM)</label>
+                <div v-for="(length, index) in calculated.laminateCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Foil Cost(RM)</label>
+                <div v-for="(length, index) in calculated.foilCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Total Material Cost(RM)</label>
+                <div v-for="(length, index) in calculated.totalMaterialCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
         </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+        <div class = "quantity-group">
+          <div class = "quantity-label-column">
+            <div class = "quantity-label">
+              <label>FIXED COST</label>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
-        </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+          <div class = "quantity-column">
+            <div class ="quantity-table">
+              <div class = "quantity-item">
+                <label>Fixed Cost(RM)</label>
+                <div v-for="(length, index) in calculated.fixedCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
         </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+        <div class = "quantity-group-fixed">
+          <div class = "quantity-label-column-fixed">
+            <div class = "quantity-label">
+              <label>TOOLING COST</label>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
-        </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+          <div class = "quantity-column-fixed">
+            <div class ="quantity-table-fixed">
+              <div class = "quantity-item-fixed">
+                <label>Diecut Cost(RM)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.dieCutCost }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Plate Cost (RM)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.plateCost }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Total Tooling Cost(RM)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.totalToolingCost }}</label>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Display the calculated values for this quantity -->
-
-          <!-- Add other calculations as needed -->
         </div>
-        <div class ="quantity-head">
-          <label>Quantity Ordered (PCS)</label>
-        </div>
-        <div class ="quantity-head">
-          <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity-column">
-            <label>{{ quantity }}</label>
+        <div class = "quantity-group">
+          <div class = "quantity-label-column">
+            <div class = "quantity-label">
+              <label>COSTING SUMMARY</label>
+            </div>
           </div>
+          <div class = "quantity-column">
+            <div class ="quantity-table">
+              <div class = "quantity-item">
+                <label>Total Cost(RM)</label>
+                <div v-for="(length, index) in calculated.totalCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Unit Cost(RM/PCS)</label>
+                <div v-for="(length, index) in calculated.unitCost" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Current selling Price(RM/PCS)</label>
+                <div v-for="(length, index) in formModel.sellingPrice" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>Current Margin(%)</label>
+                <div v-for="(length, index) in calculated.currentMargin" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item">
+                <label>RSP 20%(RM/PCS)</label>
+                <div v-for="(length, index) in calculated.RSP" :key="index" class="quantity">
+                  <label>{{ length }}</label>
+                </div>
+              </div>
 
-          <!-- Display the calculated values for this quantity -->
 
-          <!-- Add other calculations as needed -->
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
 
   </div>
-  <ECSCalculator
+  <ECSCalculator v-show="showCalculator"
       @costingdata = "getCostingData"
       @calculated = "getCalculated"
       @machine = "getMachine"
@@ -161,7 +257,6 @@
   />
 
 </template>
-
 
 <script>
 //import axios from "axios";
@@ -176,6 +271,7 @@ export default {
 
   data() {
     return {
+      showCalculator:false,
       originalDate: new Date(),
       quantities:[1000,2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
       formattedDate:'',
@@ -183,6 +279,7 @@ export default {
       calculated:[],
       costingData:[],
       formModel:{
+        sellingPrice:[],
         process:'',
         orderQuantity:[]
       },
@@ -212,7 +309,7 @@ export default {
     },
 
     createMoq(){
-      if(this.costingData.process){
+      if(this.costingData.orderQuantity){
         let data = this.costingData.orderQuantity;
         const splitData = data.split(';');
 
@@ -225,6 +322,23 @@ export default {
       }
       return [];
     },
+
+    createSellingPrice(){
+      if(this.costingData.currentSellingPrice){
+        let data = this.costingData.currentSellingPrice;
+        const splitData = data.split(';');
+
+        const splitData1 = [];
+
+        for (let i = 0; i < splitData.length; i++) {
+          splitData1.push(splitData[i]);
+        }
+        return splitData1;
+      }
+      return [];
+    },
+
+
 
 
   },
@@ -251,7 +365,9 @@ export default {
   },
 
   methods: {
-
+    toggleCalculator() {
+      this.showCalculator = !this.showCalculator;
+    },
     getMachine(machinespec){
       this.machineSpec = machinespec;
       console.log('Received machine:', this.machineSpec);
@@ -268,6 +384,7 @@ export default {
       this.costingData = costingdata;
       this.formModel.process =this.splitProcess;
       this.formModel.orderQuantity = this.createMoq;
+      this.formModel.sellingPrice = this.createSellingPrice
       console.log('Received form data:', this.costingData);
 
 
@@ -301,6 +418,77 @@ export default {
 
 <style scoped>
 
+.quantity-label-column-fixed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  padding: 2px;
+  margin: 2px;
+}
+
+.quantity-table-fixed {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-content: end;
+  flex-grow:1;
+
+
+}
+
+.quantity-column-fixed {
+  display: flex;
+  flex-direction: row;
+  flex-grow:1;
+  justify-content: flex-end;
+  border: 1px solid #ccc;
+  padding: 2px;
+  margin: 2px;
+}
+
+.quantity-fixed {
+  display: inline;
+  flex-direction: row;
+  flex-grow:1;
+  justify-content: end;
+  align-content: end;
+  border: 1px solid #ccc;
+  width: 80px;
+  height: 15px;
+  padding: 2px;
+  margin: 2px;
+}
+
+.quantity-item-fixed {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: baseline;
+
+}
+
+.quantity-group-fixed {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow:1;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-content: center;
+  border: 1px solid #ccc;
+  margin: 2px;
+}
+
+.quantity-group {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: end;
+  align-content: end;
+  border: 1px solid #ccc;
+  margin: 2px;
+}
+
 .quantity-field {
   display: flex;
   flex-wrap: wrap;
@@ -308,7 +496,7 @@ export default {
   justify-content: end;
   align-content: end;
   border: 1px solid #ccc;
-  margin: 5px;
+  margin: 2px;
 }
 
 .quantity-head {
@@ -319,36 +507,59 @@ export default {
 
 }
 
+.quantity-label {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+
+}
+
+.quantity-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: baseline;
+
+}
+
+.quantity-table {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-content: end;
+
+}
+
+.quantity-label-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  padding: 2px;
+  margin: 2px;
+}
+
+.quantity {
+  display: inline;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-content: end;
+  border: 1px solid #ccc;
+  width: 80px;
+  height: 15px;
+  padding: 2px;
+  margin: 2px;
+}
+
+
 .quantity-column {
   display: inline;
   flex-direction: row;
   justify-content: end;
   border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px;
-}
-
-.group-input{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-content: end;
-}
-
-.group-label{
-  width:30%;
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-content: end;
-}
-.quantity-header{
-  width:100%;
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: end;
-  align-content: end;
+  padding: 2px;
+  margin: 2px;
 }
 
 .company-header-content{
@@ -363,9 +574,9 @@ export default {
 .sub-item{
   display: flex;
   flex-direction: row;
-  margin:3px;
+  margin:2px;
   justify-content: space-evenly;
-  align-items: start;
+  align-items: baseline;
 }
 
 .print{
@@ -379,7 +590,7 @@ export default {
 
 .header-item-sub{
   width: 100%;
-  margin:3px;
+  margin:2px;
   dislay: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -388,7 +599,7 @@ export default {
 
 .header-item{
   width:50%;
-  margin:3px;
+  margin:2px;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -396,7 +607,7 @@ export default {
 }
 
 .header-content{
-  margin: 3px;
+  margin: 2px;
   display: inline-flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -406,7 +617,7 @@ export default {
 }
 
 .costing-header{
-  margin : 3px;
+  margin : 2px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -414,7 +625,7 @@ export default {
 }
 .company-header{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: start;
   align-items: center;
 }
@@ -430,7 +641,7 @@ export default {
 
 button {
   background-color: #3498db;
-  font-size: 15px;
+  font-size: 13px;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -440,7 +651,7 @@ button {
 }
 
 label {
-  font-size: 14px;
+  font-size: 13px;
   color: black;
   border: none;
   border-radius: 5px;
@@ -448,7 +659,7 @@ label {
 
 label[type=sub] {
   display: flex;
-  font-size: 14px;
+  font-size: 13px;
   color: black;
   border: none;
   margin:0px;
@@ -457,9 +668,9 @@ label[type=sub] {
 
 input[type=number], textarea {
   display: flex;
-  padding: 5px;
+  padding: 3px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 13px;
   resize: vertical;
   overflow: auto;
 }
@@ -468,7 +679,7 @@ input[for=header]{
   display: flex;
   padding: 3px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 13px;
   resize: vertical;
 }
 
@@ -477,7 +688,7 @@ input[for=sub]{
   display: flex;
   padding: 3px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 </style>
