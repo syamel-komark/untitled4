@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
   <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-  <h2>ECS340 Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+  <h2>KOPACK Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
     <div v-if="selectCosting">
       <header>Costing Number: {{this.newCostingId}}</header>
     </div>
@@ -399,7 +399,7 @@
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
         <button @click="this.successRegisterLabel=false">Close</button>
-        <button @click="this.$router.push('/costingformecs');">Create Costing Sheet</button>
+        <button @click="this.$router.push('/costingformkp');">Create Costing Sheet</button>
       </div>
     </div>
   </div>
@@ -466,6 +466,7 @@ export default {
       searchDieCut: false,
       machineInfo:[],
       machineSpec:{
+        maxWidth:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -485,7 +486,7 @@ export default {
       costingInfo:[],
       searchCostingQuery: '',
       newCostingId:'',
-      machine: 'ECS340',
+      machine: 'KP13',
       successRegisterLabel: false,
       successMessageLabel:'',
       searchMastercardQuery:'',
@@ -527,7 +528,7 @@ export default {
         inkCost:0,
         varnish:'',
         varnishCost:0,
-        dieCutType:'flexible',
+        dieCutType:'flatbed',
         quantityOrder:'',
       },
       moreFinishing : false,
@@ -554,11 +555,11 @@ export default {
       selectedProcess:[],
       isPrintingProcess: false,
       printingProcess:{
-        ECS340: 1,
+        ECS340: 0,
         AVTInspection: 1,
         AutoCut: 0,
         numberingMachine:0,
-        kopack13: 0,
+        kopack13: 1,
         sonata:0,
         iwasaki:0,
         gallus4:0,
@@ -579,7 +580,6 @@ export default {
       },
     };
   },
-
   computed: {
 
     splitProcessWastage(){
@@ -913,7 +913,7 @@ export default {
         const allCostingInfo = response.data;
 
         // Filter the costingInfo array to only include items with machine = "ECS"
-        this.costingInfo = allCostingInfo.filter(costing => costing.machine === 'ECS340');
+        this.costingInfo = allCostingInfo.filter(costing => costing.machine === 'KP13');
 
         console.log(this.costingInfo);
       } catch (error) {
@@ -1073,9 +1073,9 @@ export default {
 
     calculateAcross(){
       const labelWidth = this.formModel.width;
-      const ecsmaxwidth = this.machineSpec.maxWidth;
+      const emmaxwidth = this.machineSpec.maxWidth;
       const gap = this.machineSpec.gapAcross;
-      this.formModel.across = Math.floor(ecsmaxwidth/(parseInt(labelWidth)+parseInt(gap)));
+      this.formModel.across = Math.floor(emmaxwidth/(parseInt(labelWidth)+parseInt(gap)));
       return this.formModel.across;
     },
 
@@ -1205,7 +1205,7 @@ export default {
       try {
         const response = await axios.get('/api/getmachine', {
           params: {
-            machinename: 'ECS340'// Pass the costing ID as a query parameter
+            machinename: 'KP13'// Pass the costing ID as a query parameter
           }
         });
 
@@ -1223,7 +1223,8 @@ export default {
         this.machineSpec.platePrice = allMachineInfo[0].plateprice; // Set the selected material
         this.machineSpec.gapAcross = allMachineInfo[0].acrossgap; // Set the selected material
         this.machineSpec.gear = allMachineInfo[0].gear; // Set the selected material
-        this.machineSpec.maxWidth = allMachineInfo[0].maxwidth;
+        this.machineSpec.maxWidth = allMachineInfo[0].maxwidth; // Set the selected material
+
 
 
         console.log(this.machineSpec);

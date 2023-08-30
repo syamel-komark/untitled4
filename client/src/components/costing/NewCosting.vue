@@ -5,10 +5,10 @@
       <h2>Select Machine:</h2>
       <div class="group-container">
         <button @click="$router.push('newcostingecs')" form="ECS">ECS340</button>
-        <button @click="$router.push('newcostingecs')" form="ECS">EM280</button>
-        <button form="HP">HP</button>
-        <button form="KP">KP</button>
-        <button form="LE">LE</button>
+        <button @click="$router.push('newcostingem')" form="ECS">EM280</button>
+        <button @click="$router.push('newcostinghp')" form="HP">HP</button>
+        <button @click="$router.push('newcostingkp')" form="KP">KP</button>
+        <button @click="$router.push('newcostingle')" form="LE">LE</button>
         <button form="UTECO">UTECO</button>
         <button form="GRAVURE">GRAVURE</button>
       </div>

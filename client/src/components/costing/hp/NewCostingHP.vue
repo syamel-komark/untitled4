@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
   <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-  <h2>ECS340 Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+  <h2>HP Digitial Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
     <div v-if="selectCosting">
       <header>Costing Number: {{this.newCostingId}}</header>
     </div>
@@ -30,8 +30,8 @@
             <input type="text" id="Width" v-model="formModel.width" required />
           </div>
           <div>
-            <label for="number">Label No of Color:</label>
-            <input type="number" id="Color" v-model="formModel.color" required />
+            <button @click="searchInk=true">No Of Color:</button>
+            <input type="text" id="Material" v-model="formModel.color" required />
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
             <input type="number" id="around" v-model="formModel.around" required />
           </div>
           <div>
-            <label for="Gear">Gear:</label>
+            <label for="Gear">Repeat Length (mm):</label>
             <input type="text" id="gear" v-model="formModel.gear" required />
           </div>
         </div>
@@ -66,7 +66,7 @@
         <h2>Material:</h2>
         <div class="form-group">
           <div>
-            <button @click="searchInk=true">Ink:</button>
+            <label for="number">Ink:</label>
             <input type="text" id="Material" v-model="formModel.ink" required />
           </div>
           <div>
@@ -179,19 +179,19 @@
         <input
             type="text"
             v-model="searchInkQuery"
-            placeholder="Search by Ink Name"
+            placeholder="Search by Number of Color"
         />
       </div>
       <table>
         <thead>
         <tr>
-          <th>Ink Name</th>
+          <th>Number Of Ink</th>
           <th>Machine</th>
           <th>Material Price</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="ink in filterInk" :key="ink.materialid">
+        <tr v-for="ink in filterInk" :key="ink.materialname">
           <td>{{ ink.materialname }}</td>
           <td>{{ ink.machine }}</td>
           <td>{{ ink.materialprice }}</td>
@@ -399,7 +399,7 @@
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
         <button @click="this.successRegisterLabel=false">Close</button>
-        <button @click="this.$router.push('/costingformecs');">Create Costing Sheet</button>
+        <button @click="this.$router.push('/costingformhp');">Create Costing Sheet</button>
       </div>
     </div>
   </div>
@@ -466,6 +466,7 @@ export default {
       searchDieCut: false,
       machineInfo:[],
       machineSpec:{
+        maxWidth:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -485,7 +486,7 @@ export default {
       costingInfo:[],
       searchCostingQuery: '',
       newCostingId:'',
-      machine: 'ECS340',
+      machine: 'HP',
       successRegisterLabel: false,
       successMessageLabel:'',
       searchMastercardQuery:'',
@@ -527,7 +528,7 @@ export default {
         inkCost:0,
         varnish:'',
         varnishCost:0,
-        dieCutType:'flexible',
+        dieCutType:'flatbed',
         quantityOrder:'',
       },
       moreFinishing : false,
@@ -554,11 +555,11 @@ export default {
       selectedProcess:[],
       isPrintingProcess: false,
       printingProcess:{
-        ECS340: 1,
+        ECS340: 0,
         AVTInspection: 1,
         AutoCut: 0,
         numberingMachine:0,
-        kopack13: 0,
+        kopack13: 1,
         sonata:0,
         iwasaki:0,
         gallus4:0,
@@ -694,22 +695,16 @@ export default {
         return []; // Return an empty array if machineSpec or gear is undefined
       }
 
-      const gearArray = this.machineSpec.gear.replace(/\s+/g, '').toLowerCase().split(',');
-      const closestIndex = this.generateGearArray.indexOf(this.closestRepeat);
+      const gearArray = this.machineSpec.gear
 
-      if (closestIndex !== -1) {
-        const gearIndex = Math.floor(closestIndex / 10);
-        return gearArray[gearIndex];
-      }
-
-      return null;
+      return gearArray;
     },
     around() {
-      const closestIndex = this.generateGearArray.indexOf(this.closestRepeat);
-      console.log(closestIndex);
-      const floorIndex = (parseFloat(closestIndex/10) - Math.floor(closestIndex / 10)).toFixed(1) * 10;
-      console.log(floorIndex);
-      return ((floorIndex));
+      const pitch = this.pitch;
+      const gap = this.machineSpec.gearPitch;
+      const repeat = this.machineSpec.gear;
+      const around = repeat/(parseFloat(pitch) + parseFloat(gap));
+      return Math.floor(around);
     },
 
     filteredCosting() {
@@ -738,9 +733,9 @@ export default {
       if (this.searchInkQuery === '') {
         return this.ink;
       } else {
-        const query = this.searchInkQuery.toLowerCase();
+        const query = this.searchInkQuery;
         return this.ink.filter(ink => {
-          return ink.materialname.toLowerCase().includes(query);
+          return ink.materialname.includes(query);
         });
       }
     },
@@ -913,7 +908,7 @@ export default {
         const allCostingInfo = response.data;
 
         // Filter the costingInfo array to only include items with machine = "ECS"
-        this.costingInfo = allCostingInfo.filter(costing => costing.machine === 'ECS340');
+        this.costingInfo = allCostingInfo.filter(costing => costing.machine === 'HP');
 
         console.log(this.costingInfo);
       } catch (error) {
@@ -1073,9 +1068,9 @@ export default {
 
     calculateAcross(){
       const labelWidth = this.formModel.width;
-      const ecsmaxwidth = this.machineSpec.maxWidth;
+      const emmaxwidth = this.machineSpec.maxWidth;
       const gap = this.machineSpec.gapAcross;
-      this.formModel.across = Math.floor(ecsmaxwidth/(parseInt(labelWidth)+parseInt(gap)));
+      this.formModel.across = Math.floor(emmaxwidth/(parseInt(labelWidth)+parseInt(gap)));
       return this.formModel.across;
     },
 
@@ -1166,13 +1161,14 @@ export default {
     pickInk(ink) {
       this.formModel.inkCost = ink.materialprice; // Set the selected material
       this.formModel.ink = ink.materialname;
+      this.formModel.color = ink.materialname;
       this.searchInk = false;
       this.searchInkQuery = '';
     },
 
     async fetchInk() {
       try {
-        const response = await axios.get('/api/getink');
+        const response = await axios.get('/api/gethpclick');
         this.ink = response.data;
         console.log(this.ink);
       } catch (error) {
@@ -1205,7 +1201,7 @@ export default {
       try {
         const response = await axios.get('/api/getmachine', {
           params: {
-            machinename: 'ECS340'// Pass the costing ID as a query parameter
+            machinename: 'HP'// Pass the costing ID as a query parameter
           }
         });
 
@@ -1223,7 +1219,8 @@ export default {
         this.machineSpec.platePrice = allMachineInfo[0].plateprice; // Set the selected material
         this.machineSpec.gapAcross = allMachineInfo[0].acrossgap; // Set the selected material
         this.machineSpec.gear = allMachineInfo[0].gear; // Set the selected material
-        this.machineSpec.maxWidth = allMachineInfo[0].maxwidth;
+        this.machineSpec.maxWidth = allMachineInfo[0].maxwidth; // Set the selected material
+
 
 
         console.log(this.machineSpec);

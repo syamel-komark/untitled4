@@ -25,7 +25,20 @@ import fixedcostCalculate from "@/components/costing/maintenance/FixedcostCalcul
 import MachineMaintenance from "@/components/costing/maintenance/MachineMaintenance";
 import VarnishMaintenance from "@/components/costing/maintenance/VarnishMaintenance";
 import SalesPerson from "@/components/quotation/SalesPerson";
-import CostingForm from "@/components/costing/CostingForm";
+import CostingFormECS from "@/components/costing/ecs/CostingFormECS";
+import NewCostingEM from "@/components/costing/em/NewCostingEM";
+import CostingFormEM from "@/components/costing/em/CostingFormEM";
+import EMCalculator from "@/components/costing/em/EMCalculator";
+import KPCalculator from "@/components/costing/kopack/KPCalculator";
+import CostingFormKP from "@/components/costing/kopack/CostingFormKP";
+import NewCostingKP from "@/components/costing/kopack/NewCostingKP";
+import NewCostingHP from "@/components/costing/hp/NewCostingHP";
+import CostingFormHP from "@/components/costing/hp/CostingFormHP";
+import HPCalculator from "@/components/costing/hp/HPCalculator";
+import NewCostingLE from "@/components/costing/lowend/NewCostingLE";
+import CostingFormLE from "@/components/costing/lowend/CostingFormLE";
+import LECalculator from "@/components/costing/lowend/LECalculator";
+
 
 
 const routes = [
@@ -52,7 +65,22 @@ const routes = [
   { path: '/machinemaintenance', component: MachineMaintenance},
   { path: '/varnishmaintenance', component: VarnishMaintenance},
   { path: '/salesperson', component: SalesPerson},
-  { path: '/costingform', component: CostingForm},
+  { path: '/costingformecs', component: CostingFormECS},
+  { path: '/newcostingem', component: NewCostingEM},
+  { path: '/costingformem', component: CostingFormEM},
+  { path: '/emcalculator', component: EMCalculator},
+  { path: '/newcostingkp', component: NewCostingKP},
+  { path: '/costingformkp', component: CostingFormKP},
+  { path: '/kpcalculator', component: KPCalculator},
+  { path: '/newcostinghp', component: NewCostingHP},
+  { path: '/costingformhp', component: CostingFormHP},
+  { path: '/hpcalculator', component: HPCalculator},
+  { path: '/newcostingle', component: NewCostingLE},
+  { path: '/costingformle', component: CostingFormLE},
+  { path: '/lecalculator', component: LECalculator},
+
+
+
 
 
 ];

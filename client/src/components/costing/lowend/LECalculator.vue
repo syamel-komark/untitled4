@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <h2>ECS Label Specification
+      <h2>SONATA Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
     <div>
@@ -317,7 +317,7 @@ export default {
       quantity:'',
       moq:[],
       newCostingId:"",
-      machine: 'ECS340',
+      machine: 'SONATA',
       username: null,
       currentTime: null,
       input:{
@@ -350,7 +350,6 @@ export default {
 
       },
       machineSpec:{
-        maxWidth:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -621,9 +620,8 @@ export default {
     },
 
     calculateGap(){
-      let gap =null;
-      gap = parseFloat(((this.formModel.gear*this.machineSpec.gearPitch)/this.formModel.around)) - parseFloat(this.formModel.pitch);
-      return parseFloat(gap.toFixed(3));
+      let gap =this.machineSpec.gear;
+      return parseInt(gap);
     },
 
     calculatePrintingLength(){
@@ -1068,7 +1066,7 @@ export default {
       try {
         const response = await axios.get('/api/getmachine', {
           params: {
-            machinename: 'ECS340'// Pass the costing ID as a query parameter
+            machinename: 'SONATA'// Pass the costing ID as a query parameter
           }
         });
 
@@ -1091,6 +1089,8 @@ export default {
         this.machineSpec.flatbedDiecutPrice=allMachineInfo[0].flatbeddiecutprice;
         this.machineSpec.solidDiecutPrice=allMachineInfo[0].soliddiecutprice;
         this.machineSpec.machineName = allMachineInfo[0].machinename;
+        this.machineSpec.gear = allMachineInfo[0].gear;
+
 
         console.log(this.machineSpec);
       } catch (error) {

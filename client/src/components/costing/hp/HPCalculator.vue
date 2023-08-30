@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <h2>ECS Label Specification
+      <h2>HP Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
     <div>
@@ -317,7 +317,7 @@ export default {
       quantity:'',
       moq:[],
       newCostingId:"",
-      machine: 'ECS340',
+      machine: 'HP',
       username: null,
       currentTime: null,
       input:{
@@ -350,7 +350,6 @@ export default {
 
       },
       machineSpec:{
-        maxWidth:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -585,15 +584,15 @@ export default {
       if(diecut>0) {
         if (diecutType === "flexible") {
           const diecutPrice = this.machineSpec.flexibleDiecutPrice * this.calculateMaterialWidth / 1000;
-          return diecutPrice;
+          return parseFloat(diecutPrice).toFixed(2);
         }
         if (diecutType === "flatbed") {
           const diecutPrice = this.machineSpec.flatbedDiecutPrice * ((2 * parseInt(this.formModel.pitch) / 1000) + (2 * parseInt(this.formModel.width) / 1000)) + parseInt(80);
-          return diecutPrice;
+          return parseFloat(diecutPrice).toFixed(2);
         }
         if (diecutType === "solid") {
           const diecutPrice = this.machineSpec.solidDiecutPrice * this.calculateMaterialWidth / 1000;
-          return diecutPrice;
+          return parseFloat(diecutPrice).toFixed(2);
         }
       }
       return 0;
@@ -609,7 +608,7 @@ export default {
     },
 
     calculatePlatePrice(){
-      let color = this.formModel.color;
+      let color = 0;
       let platePrice = this.machineSpec.platePrice; //rm/m2
       let length = parseFloat(this.formModel.pitch/1000); //m
       let width = parseFloat(this.formModel.width/1000); //m
@@ -621,9 +620,8 @@ export default {
     },
 
     calculateGap(){
-      let gap =null;
-      gap = parseFloat(((this.formModel.gear*this.machineSpec.gearPitch)/this.formModel.around)) - parseFloat(this.formModel.pitch);
-      return parseFloat(gap.toFixed(3));
+      let gap = this.machineSpec.gearPitch;
+      return gap;
     },
 
     calculatePrintingLength(){
@@ -662,11 +660,10 @@ export default {
 
     calculateInkCost(){
       let printLength = this.calculatePrintingLengthTotal;
-      let materialWidth = this.calculateMaterialWidth/1000;
-      let inkCost = this.formModel.inkCost/1000; //rm/g
+      let repeat = this.formModel.gear/1000;
+      let inkCost = this.formModel.inkCost; //rm/impression
       let color = this.formModel.color;
-      let coatingWeight = this.machineSpec.coatingWeight; //g/m2
-      let inkUse = printLength.map(length=> ((length)*materialWidth*inkCost*color*coatingWeight)*1.05);
+      let inkUse = printLength.map(length=> ((length)/repeat*inkCost*color)*1.05);
       return inkUse.map((value) => parseFloat(value.toFixed(2)));
 
     },
@@ -1068,7 +1065,7 @@ export default {
       try {
         const response = await axios.get('/api/getmachine', {
           params: {
-            machinename: 'ECS340'// Pass the costing ID as a query parameter
+            machinename: 'HP'// Pass the costing ID as a query parameter
           }
         });
 

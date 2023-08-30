@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <h2>ECS Label Specification
+      <h2>EM Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
     <div>
@@ -317,7 +317,7 @@ export default {
       quantity:'',
       moq:[],
       newCostingId:"",
-      machine: 'ECS340',
+      machine: 'EM280',
       username: null,
       currentTime: null,
       input:{
@@ -350,7 +350,6 @@ export default {
 
       },
       machineSpec:{
-        maxWidth:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -1068,7 +1067,7 @@ export default {
       try {
         const response = await axios.get('/api/getmachine', {
           params: {
-            machinename: 'ECS340'// Pass the costing ID as a query parameter
+            machinename: 'EM280'// Pass the costing ID as a query parameter
           }
         });
 
