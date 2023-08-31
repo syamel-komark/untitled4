@@ -2,6 +2,8 @@
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <button v-print="'#myPrintableContent'">Print Costing</button>
+    <button @click="updatePricing">Save Pricing</button>
+
     <div class="print" id="myPrintableContent">
       <div class="company-header">
         <img src="output (5).png" alt="Komark" width="150" height="60" @click="toggleCalculator" />
@@ -256,12 +258,24 @@
 
   />
 
+  <div class="success-modal" v-if="successUpdatePricing">
+    <div class="table-container">
+      <div class="success-content">
+        <p>{{ successMessageLabel }}</p>
+        <button @click="this.success=false">Close</button>
+        <button @click="createQuotation">Create Quotation</button>
+      </div>
+    </div>
+  </div>
+
+
 </template>
 
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
 import EMCalculator from "@/components/costing/em/EMCalculator";
+import axios from "axios";
 export default {
 
   components: {
@@ -271,6 +285,8 @@ export default {
 
   data() {
     return {
+      successUpdatePricing:false,
+      successMessageLabel:'',
       showCalculator:false,
       originalDate: new Date(),
       quantities:[1000,2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
@@ -365,6 +381,33 @@ export default {
   },
 
   methods: {
+    createQuotation(){
+      sessionStorage.setItem('quotationId',this.calculated.costingId);
+      this.$router.push('/newquotation');
+    },
+
+
+    async updatePricing() {
+      try {
+        const response = await axios.put('/api/updatepricing', {
+          id: this.calculated.costingId,
+          unitcost: this.calculated.unitCost.join(','),
+          rsp: this.calculated.RSP.join(','),
+
+        });
+        if (response.status === 200) {
+          this.successUpdatePricing = true;
+          this.successMessageLabel = 'pricing have been successfully updated';
+          console.log('update successful');
+        } else {
+          this.successMessageLabel = 'pricing update failed.';
+          console.error('update failed');
+        }
+      } catch (error) {
+        console.error('Error during update:', error);
+      }
+    },
+
     toggleCalculator() {
       this.showCalculator = !this.showCalculator;
     },

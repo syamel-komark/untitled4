@@ -38,6 +38,7 @@ import HPCalculator from "@/components/costing/hp/HPCalculator";
 import NewCostingLE from "@/components/costing/lowend/NewCostingLE";
 import CostingFormLE from "@/components/costing/lowend/CostingFormLE";
 import LECalculator from "@/components/costing/lowend/LECalculator";
+import QuotationGenerator from "@/components/quotation/QuotationGenerator";
 
 
 
@@ -78,6 +79,8 @@ const routes = [
   { path: '/newcostingle', component: NewCostingLE},
   { path: '/costingformle', component: CostingFormLE},
   { path: '/lecalculator', component: LECalculator},
+  { path: '/quotationgenerator', component: QuotationGenerator},
+
 
 
 

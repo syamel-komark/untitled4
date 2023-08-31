@@ -518,7 +518,7 @@ db.connect(err => {
     const query = 'INSERT INTO costing (labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity,sellingprice, mastercard) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?,?,?,?,?,?)';
 
     db.query(query, [
-      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity,sellingprice, mastercard], (err, result) => {
+      labelname, material, pitch, width, color, across, around, gear, process, finishing,machine,foil,foilcost,materialcost,laminate,laminatecost,ink,inkcost,varnish,varnishcost,diecut,quantity, sellingprice, mastercard], (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering costing' });
@@ -549,6 +549,78 @@ db.connect(err => {
       }
     });
   });
+
+  app.put('/api/updatepricing', (req, res) => {
+    const { unitcost,rsp, id} = req.body;
+    const query = 'UPDATE costing SET unitcost = ?, rsp = ? WHERE id = ?';
+
+    db.query(query, [unitcost,rsp, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating pricing' });
+      } else {
+        res.status(200).json({ message: 'pricing updated successfully' });
+      }
+    });
+  });
+
+
+}
+//////////////////////////////////////////////////////////////////////////
+
+/////////////////////////QUOTATION//////////////////////////////
+{
+  app.post('/api/registerquotation', (req, res) => {
+    const { customername,customeraddress,costingnumber} = req.body;
+    const query = 'INSERT INTO quotation (customername,customeraddress,costingnumber) VALUES (?,?,?)';
+
+    db.query(query, [
+      customername,customeraddress,costingnumber], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering quotation' });
+      } else {
+        const registeredQuotationNumber = result.insertId;
+        res.status(200).json({ id: registeredQuotationNumber }); // Send the ID in the response
+      }
+    });
+  });
+
+  app.get('/api/getquotation', (req, res) => {
+    const idFilter = req.query.id; // Get the ID filter from the query parameters
+
+    let query = 'SELECT * FROM quotation';
+
+    if (idFilter) {
+      query += ` WHERE id = ${idFilter}`; // Add the ID filter condition to the query
+    }
+
+    query += ' ORDER BY entry_datetime DESC;';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching quotation');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updatepricing', (req, res) => {
+    const { unitcost,rsp, id} = req.body;
+    const query = 'UPDATE costing SET unitcost = ?, rsp = ? WHERE id = ?';
+
+    db.query(query, [unitcost,rsp, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating pricing' });
+      } else {
+        res.status(200).json({ message: 'pricing updated successfully' });
+      }
+    });
+  });
+
 
 }
 //////////////////////////////////////////////////////////////////////////
