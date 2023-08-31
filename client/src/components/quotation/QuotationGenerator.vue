@@ -93,7 +93,7 @@
             <p>Unit Price: (RM/PCS):</p>
           </div>
           <div class="quotation-entry-item">
-            <div  v-for="(index) in RSP[index]" :key="index" class="quotation-enty-item">
+            <div  v-for="(index) in rsp[index]" :key="index" class="quotation-enty-item">
               <p>{{index}}</p>
             </div>
           </div>
@@ -222,7 +222,7 @@ export default {
         let final = [];
         let moq = [];
         for (let i = 0; i < data.length; i++) {
-          quantity[i] = data[i].sellingprice;
+          quantity[i] = data[i].rsp;
           final.push(quantity[i]);
         }
         for (let i = 0; i < final.length; i++) {
@@ -264,7 +264,7 @@ export default {
   methods: {
 
     setRSP(){
-      this.RSP = this.createRSP;
+      this.rsp = this.createRSP;
       console.log(this.quantity);
     },
 
