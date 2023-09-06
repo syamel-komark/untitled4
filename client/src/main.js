@@ -39,6 +39,9 @@ import NewCostingLE from "@/components/costing/lowend/NewCostingLE";
 import CostingFormLE from "@/components/costing/lowend/CostingFormLE";
 import LECalculator from "@/components/costing/lowend/LECalculator";
 import QuotationGenerator from "@/components/quotation/QuotationGenerator";
+import JobsheetPage from "@/components/jobsheet/JobsheetPage";
+import NewJobsheet from "@/components/jobsheet/NewJobsheet";
+import JobsheetForm from "@/components/jobsheet/JobsheetForm";
 
 
 
@@ -80,6 +83,11 @@ const routes = [
   { path: '/costingformle', component: CostingFormLE},
   { path: '/lecalculator', component: LECalculator},
   { path: '/quotationgenerator', component: QuotationGenerator},
+  { path: '/jobsheet', component: JobsheetPage},
+  { path: '/newjob', component: NewJobsheet},
+  {path: '/jobsheetform', component: JobsheetForm},
+
+
 
 
 

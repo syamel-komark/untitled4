@@ -1,6 +1,13 @@
 <template>
   <div class="container">
     <div>
+      <!-- Display the costing number received from the parent -->
+      <p>Received Costing Number: {{ receivedCostingNumber }}</p>
+      <!-- Input field to modify the costing number -->
+      <input v-model="modifiedCostingNumber" type="number" />
+      <button @click="updateCostingData">Update Parent</button>
+    </div>
+    <div>
       <h2>HP Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
@@ -298,6 +305,9 @@
 import axios from "axios";
 
 export default {
+  props: {
+    costingNumber: Number, // Define a prop to receive the costingNumber from the parent
+  },
 
   components: {
     //HeaderBar,
@@ -305,6 +315,8 @@ export default {
 
   data() {
     return {
+      receivedCostingNumber: this.costingNumber,
+      modifiedCostingNumber: this.costingNumber,
       sellingPrice:[],
       machineInfo:[],
       costingInfo:[],
@@ -500,7 +512,6 @@ export default {
         const paperCost = this.calculatePaperMaterialPrice[i];
         const varnishCost = this.calculateVarnishCost[i];
         const inkCost = this.calculateInkCost[i];
-        const fixedCost = this.calculateFixedCosts[i];
         const laminateCost = this.calculateLaminateCost[i];
         const foilCost = this.calculateFoilCost[i];
         const killGlueCost = this.calculateKillGlueCost[i];
@@ -509,7 +520,7 @@ export default {
 
 
 
-        const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
+        const total = paperCost+varnishCost+inkCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
         sum.push(total);
       }
       return sum.map((value) => parseFloat(value.toFixed(2)));
@@ -633,11 +644,11 @@ export default {
     },
 
     calculateSettingLengthColor(){
-        let setting = 0;
-        let settingLengthColor = this.machineSpec.settingLength;
-        let color = this.formModel.color;
-        setting = color * settingLengthColor
-        return setting;
+        //let setting = 0;
+        //let settingLengthColor = this.machineSpec.settingLength;
+       // let color = this.formModel.color;
+       // setting = color * settingLengthColor
+        return 30;
     },
 
     calculateJointLengthWastage(){
@@ -663,7 +674,7 @@ export default {
       let repeat = this.formModel.gear/1000;
       let inkCost = this.formModel.inkCost; //rm/impression
       let color = this.formModel.color;
-      let inkUse = printLength.map(length=> ((length)/repeat*inkCost*color)*1.05);
+      let inkUse = printLength.map(length=> ((length)/repeat*inkCost*color*2)*1.05);
       return inkUse.map((value) => parseFloat(value.toFixed(2)));
 
     },
@@ -942,6 +953,10 @@ export default {
   },
 
   methods: {
+    updateCostingData() {
+      // Emit a custom event to update the parent with the modified costingNumber
+      this.$emit("updateCostingData", this.modifiedCostingNumber);
+    },
 
     setMargin(){
       this.margin = this.getMargin;

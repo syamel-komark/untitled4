@@ -251,18 +251,17 @@
     </div>
 
   </div>
-  <EMCalculator v-show="showCalculator"
-      @costingdata = "getCostingData"
-      @calculated = "getCalculated"
-      @machine = "getMachine"
-
-  />
-
+  <component :is="jobsheetType" ref="calculator"
+             @costingdata = "getCostingData"
+             @calculated = "getCalculated"
+             @machine = "getMachine"
+  ></component>
+  <button @click="sendValueToChild">Send Value to Child</button>
   <div class="success-modal" v-if="successUpdatePricing">
     <div class="table-container">
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
-        <button @click="this.success=false">Close</button>
+        <button @click="this.successUpdatePricing=false">Close</button>
         <button @click="createQuotation">Create Quotation</button>
       </div>
     </div>
@@ -274,17 +273,27 @@
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
+import ECSCalculator from "@/components/costing/ecs/ECSCalculator";
+import HPCalculator from "@/components/costing/hp/HPCalculator";
 import EMCalculator from "@/components/costing/em/EMCalculator";
+import KPCalculator from "@/components/costing/kopack/KPCalculator";
+import LECalculator from "@/components/costing/lowend/LECalculator";
+
 import axios from "axios";
 export default {
-
+///todo: update the close this.successupdatepricing for all costingform
   components: {
-    EMCalculator,
+    ECSCalculator,
     HeaderBar,
+    HPCalculator,
+    EMCalculator,
+    KPCalculator,
+    LECalculator,
   },
 
   data() {
     return {
+      machineType:'',
       successUpdatePricing:false,
       successMessageLabel:'',
       showCalculator:false,
@@ -309,7 +318,20 @@ export default {
   },
 
   computed: {
-    //todo:create moq input menu
+
+    jobsheetType() {
+      const machine = this.machineType;
+      const machineToJobsheetType = {
+        ECS: 'ECSCalculator',
+        HP: 'HPCalculator',
+        EM280 :'EMCalculator',
+        KP13 : 'KPCalculator',
+        SONATA : 'LECalculator',
+        // Add more machines and their corresponding jobsheet types as needed
+      };
+      return machineToJobsheetType[machine] || '';
+    },
+
     splitProcess(){
       if(this.costingData.process){
         let data = this.costingData.process;
@@ -364,8 +386,15 @@ export default {
 
     this.getProcess();
 
+    this.sendValueToChild();
+
+
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
+    this.machineType = sessionStorage.getItem('machine') || '';
+    console.log(this.jobsheetType);
+
+
 
     // Get current time
     const now = new Date();
@@ -382,11 +411,21 @@ export default {
   },
 
   methods: {
+
+    sendValueToChild() {
+      // Get a reference to the child component
+      const childComponent = this.$refs.calculator;
+
+      // Emit a custom event to the child component with the value you want to send
+      if (childComponent && this.jobsheetType !== '') {
+        childComponent.$emit('custom-event', 'Value to send to child');
+      }
+    },
+
     createQuotation(){
       sessionStorage.setItem('quotationId',this.calculated.costingId);
       this.$router.push('/newquotation');
     },
-
 
     async updatePricing() {
       try {
@@ -408,6 +447,7 @@ export default {
         console.error('Error during update:', error);
       }
     },
+
 
     toggleCalculator() {
       this.showCalculator = !this.showCalculator;

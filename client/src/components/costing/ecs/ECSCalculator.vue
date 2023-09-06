@@ -1,6 +1,13 @@
 <template>
   <div class="container">
     <div>
+      <!-- Display the costing number received from the parent -->
+      <p>Received Costing Number: {{ receivedCostingNumber }}</p>
+      <!-- Input field to modify the costing number -->
+      <input v-model="modifiedCostingNumber" type="number" />
+      <button @click="updateCostingData">Update Parent</button>
+    </div>
+    <div>
       <h2>ECS Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
@@ -303,8 +310,14 @@ export default {
     //HeaderBar,
   },
 
+  props: {
+    costingNumber: Number, // Define a prop to receive the costingNumber from the parent
+  },
+
   data() {
     return {
+      receivedCostingNumber: this.costingNumber,
+      modifiedCostingNumber: this.costingNumber,
       sellingPrice:[],
       machineInfo:[],
       costingInfo:[],
@@ -945,6 +958,11 @@ export default {
   },
 
   methods: {
+
+    updateCostingData() {
+      // Emit a custom event to update the parent with the modified costingNumber
+      this.$emit("updateCostingData", this.modifiedCostingNumber);
+    },
 
     setMargin(){
       this.margin = this.getMargin;

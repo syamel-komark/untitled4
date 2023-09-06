@@ -2,65 +2,63 @@
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <div class="dashboard-items">
+      <h2>Jobsheet Page</h2>
       <div class="dashboard-item">
-        <button @click="redirectTo('/costingpage')">Costing</button>
-      </div>
-      <div class="dashboard-item">
-        <button @click="redirectTo('/jobsheet')">Jobsheet</button>
-      </div>
-      <div class="dashboard-item">
-        <button @click="redirectTo('/newlabel')">Mastercard</button>
-      </div>
-      <div class="dashboard-item">
-        <button @click="redirectTo('/new-job-report')">Report</button>
+        <button @click="this.$router.push('/newjob')">New Job</button>
+        <button @click="this.$router.push('/schedulejob')">Schedule Job</button>
+        <button @click="this.$router.push('/reportjob')">Report Job</button>
+
       </div>
     </div>
-    <AdminMenu :isAdmin="isAdmin" />
   </div>
+
+
 </template>
 
 <script>
-
+//import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
-import AdminMenu from "@/components/admin/AdminMenu.vue";
-
-// import { mapGetters } from "vuex";
-
-export const name = "Dashboard";
 
 export default {
 
   components: {
-    HeaderBar, AdminMenu,
+    HeaderBar,
+  },
+
+  computed: {
+
+
   },
 
   data() {
     return {
+      notUser:false,
+      isQuotation: false,
+      isCosting: true,
       username: null,
       currentTime: null,
-      loginLevel: null,
-      isAdmin: false,
     };
   },
+
+
   created() {
+
+//admin check
+    this.loginLevel = sessionStorage.getItem('level') || '';
+    this.notUser = this.loginLevel !== 'user';
+
+
+
+
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
-    this.loginLevel = sessionStorage.getItem('level') || '';
 
     // Get current time
     const now = new Date();
-    this.currentTime = `${now.toLocaleTimeString()}`
+    this.currentTime = now.toLocaleTimeString()
 
     // Update current time every second
     this.currentTimeInterval = setInterval(this.updateCurrentTime, 1000);
-
-    //admin check
-    this.isAdmin = this.loginLevel === 'admin';
-
-
-    console.log('Stored username:', this.username);
-    console.log('Stored userlevel:', this.loginLevel);
-    //console.log('Is admin', this.loginLevel);
 
   },
 
@@ -70,6 +68,29 @@ export default {
   },
 
   methods: {
+
+    closeNewQuotation(){
+      this.isQuotation = false;
+    },
+
+    showNewQuotation(){
+      this.$router.push('/newquotation');
+    },
+
+    showNewCosting(){
+      this.isCosting = true;
+      this.isQuotation= false;
+    },
+
+    closeNewCosting(){
+      this.isCosting = false;
+    },
+
+    logout() {
+      sessionStorage.removeItem('username');
+      this.$router.push('/');
+    },
+
     updateCurrentTime() {
       const now = new Date();
       this.currentTime = now.toLocaleTimeString();
@@ -78,12 +99,12 @@ export default {
       this.$router.push(path);
     },
 
-
   },
 };
 </script>
 
 <style scoped>
+
 .dashboard {
   padding: 20px;
   border: 1px solid #ccc;
@@ -92,19 +113,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.welcome {
-  text-align: center;
-  margin-bottom: 20px;
-}
+button{}
 
-.dashboard-items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-
-}
-
-.dashboard-item {
-  margin: 10px;
-}
 </style>

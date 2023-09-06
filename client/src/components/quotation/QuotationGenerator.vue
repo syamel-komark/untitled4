@@ -35,7 +35,7 @@
             <p>No:</p>
           </div>
           <div class="quotation-entry-item">
-            <p>{{index}}</p>
+            <p>{{index+1}}</p>
           </div>
         </div>
         <div class="quotation-entry">
@@ -132,7 +132,6 @@ export default {
   components: {
         HeaderBar,
   },
-//todo:whatever the thing need to be done so that quotation is made
   data() {
     return {
       rsp:'',
@@ -226,7 +225,7 @@ export default {
           final.push(quantity[i]);
         }
         for (let i = 0; i < final.length; i++) {
-          const splitdata = final[i].split(';');
+          const splitdata = final[i].split(',');///todo: change split for all rsp from ; to ,
           moq.push(splitdata);
         }
         return moq;
@@ -265,7 +264,7 @@ export default {
 
     setRSP(){
       this.rsp = this.createRSP;
-      console.log(this.quantity);
+      console.log(this.createRSP);
     },
 
     setQuantity(){

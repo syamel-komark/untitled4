@@ -500,16 +500,16 @@ export default {
         const paperCost = this.calculatePaperMaterialPrice[i];
         const varnishCost = this.calculateVarnishCost[i];
         const inkCost = this.calculateInkCost[i];
-        const fixedCost = this.calculateFixedCosts[i];
         const laminateCost = this.calculateLaminateCost[i];
         const foilCost = this.calculateFoilCost[i];
         const killGlueCost = this.calculateKillGlueCost[i];
         const multiFormMaterialCost = this.calculateMultiformMaterial[i];
         const multiFormInkCost = this.calculateMultiformInk[i];
+        //todo: fixed cost not supposed in material
 
 
 
-        const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
+        const total = paperCost+varnishCost+inkCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
         sum.push(total);
       }
       return sum.map((value) => parseFloat(value.toFixed(2)));
