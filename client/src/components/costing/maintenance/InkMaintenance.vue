@@ -100,7 +100,6 @@ export default {
   },
 
   data() {
-    //todo: confirm in price and varnish
     return {
       successMessageLabel:'',
       success:false,

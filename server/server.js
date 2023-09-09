@@ -568,6 +568,64 @@ db.connect(err => {
 }
 //////////////////////////////////////////////////////////////////////////
 
+/////////////////////////JOBSHEET//////////////////////////////
+{
+  app.post('/api/registerjobsheet', (req, res) => {
+    const { mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice} = req.body;
+    const query = 'INSERT INTO jobsheet (mastercard, labelname, material, pitch, width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink, varnish, diecut, quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
+    db.query(query, [
+      mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering jobsheet' });
+      } else {
+        const registeredJobsheetNumber = result.insertId;
+        res.status(200).json({ id: registeredJobsheetNumber }); // Send the ID in the response
+      }
+    });
+  });
+
+  app.get('/api/getjobsheet', (req, res) => {
+    const idFilter = req.query.id; // Get the ID filter from the query parameters
+
+    let query = 'SELECT * FROM jobsheet';
+
+    if (idFilter) {
+      query += ` WHERE id = ${idFilter}`; // Add the ID filter condition to the query
+    }
+
+    query += ' ORDER BY entry_datetime DESC;';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching jobsheet');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updatejobsheet', (req, res) => {
+    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection,colorcode, mastercard,id} = req.body;
+    const query = 'UPDATE jobsheet SET labelname=?, material=?, pitch=?, width=?, color=?, across=?, around=?, gear=?, process=?, finishing=?, machine=?,foil=?,laminate=?,ink=?,varnish=?,diecut=?,quantity=?,jobtype=?,quantityperroll=?,salesperson=?,rolldirection=?,colorcode=?, mastercard=? WHERE id = ?';
+
+    db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection, mastercard,colorcode,id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating jobsheet' });
+      } else {
+        res.status(200).json({ message: 'jobsheet updated successfully' });
+      }
+    });
+  });
+
+
+}
+//////////////////////////////////////////////////////////////////////////
+
+
 /////////////////////////QUOTATION//////////////////////////////
 {
   app.post('/api/registerquotation', (req, res) => {
@@ -706,7 +764,6 @@ db.connect(err => {
       }
     });
   });
-
 
   app.post('/api/registermachine', (req, res) => {
     const { machinename, maxwidth,maxpitch,minwidth,minpitch,noofstation,wastage,settinglength,speed,settingtime, plateprice, gear, gearpitch, trim, acrossgap, rolllength, jointwastage, coatingweight} = req.body;
@@ -867,6 +924,67 @@ db.connect(err => {
         res.status(500).json({ error: 'Error deleting salesperson' });
       } else {
         res.status(200).json({ message: 'customer salesperson' });
+      }
+    });
+  });
+
+
+}
+////////////////////////////////////////////////////
+
+////////////////PANTONE COLOR//////////////////////////
+{
+  app.post('/api/registercolor', (req, res) => {
+    const { colorname, hexcode} = req.body;
+    const query = 'INSERT INTO pantonecolor (colorname, hexcode) VALUES (?,?)';
+
+    db.query(query, [colorname, hexcode], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering pantone color' });
+      } else {
+        res.status(200).json({ message: 'Pantone color registered successfully' });
+      }
+    });
+  });
+
+  app.get('/api/getcolor', (req, res) => {
+    const query = 'SELECT * FROM pantonecolor';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching pantone color');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updatecolor', (req, res) => {
+    const { colorname, hexcode, id} = req.body;
+    const query = 'UPDATE pantonecolor SET colorname = ?, hexcode = ? WHERE id = ?';
+
+    db.query(query, [colorname, hexcode, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating pantone color' });
+      } else {
+        res.status(200).json({ message: 'Pantone color updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deletecolor', (req, res) => {
+    const { id } = req.body;
+    const query = 'DELETE FROM pantonecolor WHERE id = ?';
+
+    db.query(query, [id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting pantone color' });
+      } else {
+        res.status(200).json({ message: 'Pantone color deleted' });
       }
     });
   });

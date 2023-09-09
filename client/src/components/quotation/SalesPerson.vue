@@ -97,7 +97,7 @@ export default {
       if (this.materialSearchQuery === '') {
         return this.materials;
       } else {
-        const query = this.materialSearchQuery;
+        const query = this.materialSearchQuery.toLowerCase();
         return this.materials.filter(salespersons => {
           return salespersons.salespersonname.toLowerCase().includes(query);
         });

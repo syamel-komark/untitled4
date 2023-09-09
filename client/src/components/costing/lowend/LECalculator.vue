@@ -244,6 +244,30 @@
       </div>
     </div>
     <div>
+      <h2>MATERIAL USE</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">ink use:</label>
+            <input type="text" id="finishing" v-model="calculateInkUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">varnish use:</label>
+            <input type="text" id="finishing" v-model="calculateVarnishUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">laminate use</label>
+            <input type="text" id="finishing" v-model="calculateLaminateUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">foil use</label>
+            <input type="text" id="finishing" v-model="calculateFoilUse" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
       <h2>TOOLING COST</h2>
       <div class="group-container">
         <div class="form-group">
@@ -255,7 +279,7 @@
             <label for="printing gap">Silk Screen Plate Price:</label>
             <input type="text" id="finishing" v-model="calculateSilkscreenPlate" required readonly/>
           </div>
-      </div>
+        </div>
         <div class="form-group">
           <div class = "form-item">
             <label for="printing length">diecut cost:</label>
@@ -278,6 +302,21 @@
           <div class="form-item">
             <label for="printing gap">Cold Foil Plate Cost:</label>
             <input type="text" id="finishing" v-model="calculateFoilPlate" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>TIME COST</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Printing Duration:</label>
+            <input type="text" id="finishing" v-model="calculatePrintDuration" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Setting Duration:</label>
+            <input type="text" id="finishing" v-model="calculateSettingDuration" required readonly/>
           </div>
         </div>
       </div>
@@ -350,6 +389,8 @@ export default {
 
       },
       machineSpec:{
+        gear:'',
+        speed:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -366,6 +407,10 @@ export default {
         hotStampingPlatePrice:'',
       },
       save:{
+        laminateUse:'',
+        varnishUse:'',
+        foilUse:'',
+        inkUse:'',
         RSP:'',
         currentSellingPrice: '',
         totalToolingCost:'',
@@ -392,6 +437,18 @@ export default {
   },
 
   computed: {
+
+    calculatePrintDuration(){
+      const speed = this.machineSpec.speed;
+      const length = this.calculatePrintingLengthTotal;
+      const time = (length/speed)/60;
+      return parseFloat(time).toFixed(2);
+    },
+
+    calculateSettingDuration(){
+      const color = this.formModel.color;
+      return color * 30;
+    },
 
     calculateCurrentMargin(){
       const unitCost = this.unitCost;
@@ -500,7 +557,6 @@ export default {
         const paperCost = this.calculatePaperMaterialPrice[i];
         const varnishCost = this.calculateVarnishCost[i];
         const inkCost = this.calculateInkCost[i];
-        const fixedCost = this.calculateFixedCosts[i];
         const laminateCost = this.calculateLaminateCost[i];
         const foilCost = this.calculateFoilCost[i];
         const killGlueCost = this.calculateKillGlueCost[i];
@@ -509,7 +565,7 @@ export default {
 
 
 
-        const total = paperCost+varnishCost+inkCost+fixedCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
+        const total = paperCost+varnishCost+inkCost+laminateCost+foilCost+killGlueCost+multiFormMaterialCost+multiFormInkCost;
         sum.push(total);
       }
       return sum.map((value) => parseFloat(value.toFixed(2)));
@@ -520,7 +576,7 @@ export default {
       let printLength=null;
       printLength=this.moq.map(moq => moq *
           (((((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/1000)/this.formModel.across))
-          * (1+parseFloat(this.machineSpec.wastage)))
+              * (1+parseFloat(this.machineSpec.wastage)))
           +parseInt(this.calculateSettingLengthColor)
           +parseInt(this.calculateJointLengthWastage)
           +parseInt(this.calculateBackPrint)
@@ -621,6 +677,7 @@ export default {
 
     calculateGap(){
       let gap =this.machineSpec.gear;
+      console.log(this.machineSpec.gear);
       return parseInt(gap);
     },
 
@@ -628,16 +685,16 @@ export default {
       let printLength=null;
       printLength=this.moq.map(moq => moq *
           (((parseFloat(this.formModel.pitch)+parseFloat(this.calculateGap))/this.formModel.across)/1000)
-          );
+      );
       return printLength.map((value) => parseFloat(value.toFixed(0)));
     },
 
     calculateSettingLengthColor(){
-        let setting = 0;
-        let settingLengthColor = this.machineSpec.settingLength;
-        let color = this.formModel.color;
-        setting = color * settingLengthColor
-        return setting;
+      let setting = 0;
+      let settingLengthColor = this.machineSpec.settingLength;
+      let color = this.formModel.color;
+      setting = color * settingLengthColor
+      return setting;
     },
 
     calculateJointLengthWastage(){
@@ -669,6 +726,17 @@ export default {
 
     },
 
+    calculateInkUse(){
+      let printLength = this.calculatePrintingLengthTotal;
+      let materialWidth = this.calculateMaterialWidth/1000;
+      let color = this.formModel.color;
+      let coatingWeight = this.machineSpec.coatingWeight; //g/m2
+      let inkUse = parseFloat(((printLength)*materialWidth*color*coatingWeight)*1.05).toFixed(2);
+      return inkUse;
+
+    },
+
+
     calculateVarnishCost() {
       let printLength = this.calculatePrintingLengthTotal;
       let materialWidth = this.calculateMaterialWidth / 1000;
@@ -687,6 +755,24 @@ export default {
       }
     },
 
+    calculateVarnishUse() {
+      let printLength = this.calculatePrintingLengthTotal;
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let varnishCount = finishingArray.filter(item => item.trim() === 'varnish').length;
+
+        let coatingWeight = this.machineSpec.coatingWeight; // g/m2
+
+        let varnishUse = parseFloat(printLength * materialWidth * varnishCount * coatingWeight/1000).toFixed(2);
+        return varnishUse;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+
     calculateLaminateCost() {
       let printLength = this.calculatePrintingLengthTotal
       let materialWidth = this.calculateMaterialWidth / 1000;
@@ -704,6 +790,21 @@ export default {
       }
     },
 
+    calculateLaminateUse() {
+      let printLength = this.calculatePrintingLengthTotal
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let laminateCount = finishingArray.filter(item => item.trim() === 'laminate').length;
+        let laminateUse = parseFloat(printLength * materialWidth * laminateCount).toFixed(2);
+        return laminateUse;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+
     calculateFoilCost() {
       let printLength = this.calculatePrintingLengthTotal
       let materialWidth = this.calculateMaterialWidth / 1000;
@@ -720,6 +821,21 @@ export default {
         return []; // Return an empty array if formModel.finishing is undefined
       }
     },
+
+    calculateFoilUse() {
+      let printLength = this.calculatePrintingLengthTotal
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let foilCount = finishingArray.filter(item => item.trim() === 'coldfoil').length;
+        let foilUse = parseFloat(printLength * materialWidth * foilCount).toFixed(2);
+        return foilUse;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
 
     calculateFoilPlate() {
 
@@ -970,6 +1086,12 @@ export default {
       this.save.totalLength = this.calculatePrintingLengthTotal;
       this.save.currentMargin = this.calculateCurrentMargin;
       this.save.RSP = this.RSP;
+      this.save.printingDuration =this.calculatePrintDuration;
+      this.save.settingDuration = this.calculateSettingDuration;
+      this.save.inkUse = this.calculateInkUse;
+      this.save.laminateUse = this.calculateLaminateUse
+      this.save.foilUse = this.calculateFoilUse
+      this.save.varnishUse = this.calculateVarnishUse
 
 
 
@@ -1089,7 +1211,9 @@ export default {
         this.machineSpec.flatbedDiecutPrice=allMachineInfo[0].flatbeddiecutprice;
         this.machineSpec.solidDiecutPrice=allMachineInfo[0].soliddiecutprice;
         this.machineSpec.machineName = allMachineInfo[0].machinename;
+        this.machineSpec.speed = allMachineInfo[0].speed;
         this.machineSpec.gear = allMachineInfo[0].gear;
+
 
 
         console.log(this.machineSpec);

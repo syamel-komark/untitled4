@@ -24,6 +24,8 @@
 
         <button  @click="this.$router.push('/varnishmaintenance')">Varnish Maintenance</button>
         <button  @click="this.$router.push('/machinemaintenance')">Machine Maintenance</button>
+        <button  @click="this.$router.push('/colorpicker')">Pantone Color Maintenance</button>
+
 
       </div>
 

@@ -276,7 +276,6 @@ import HeaderBar from "@/components/AppHeader.vue";
 import HPCalculator from "@/components/costing/hp/HPCalculator";
 import axios from "axios";
 export default {
-//TODO: UPDATE SUCCESS TO SUCCESS UPDATE PRICING ONCE CLOSE QUOTATION REGISTER
   components: {
     HPCalculator,
     HeaderBar,

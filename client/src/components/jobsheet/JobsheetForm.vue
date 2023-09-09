@@ -10,6 +10,7 @@
         <label>Komark HQ ONC2.0 Costing Sheet</label>
         <div class="company-header-content">
           <label>Costing Number:{{this.calculated.costingId}}</label>
+          <label>Jobsheet Number:{{this.jobsheetNumber}}</label>
           <label>Date:{{formattedDate}}</label>
         </div>
       </div>
@@ -246,6 +247,66 @@
             </div>
           </div>
         </div>
+        <div class = "quantity-group-fixed">
+          <div class = "quantity-label-column-fixed">
+            <div class = "quantity-label">
+              <label>TIME COST</label>
+            </div>
+          </div>
+          <div class = "quantity-column-fixed">
+            <div class ="quantity-table-fixed">
+              <div class = "quantity-item-fixed">
+                <label>Printing Time (Hours)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.printingDuration }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Setting Time (minute)</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.settingDuration }}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class = "quantity-group-fixed">
+          <div class = "quantity-label-column-fixed">
+            <div class = "quantity-label">
+              <label>MATERIAL USE</label>
+            </div>
+          </div>
+          <div class = "quantity-column-fixed">
+            <div class ="quantity-table-fixed">
+              <div class = "quantity-item-fixed">
+                <label>Ink Use</label>
+                <div class="quantity-fixed">
+                  <label>{{ calculated.inkUse }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Varnish Use</label>
+                <div class="quantity-fixed">
+                  <label>{{ this.calculated.varnishUse }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Foil Use(m)</label>
+                <div class="quantity-fixed">
+                  <label>{{ this.calculated.foilUse }}</label>
+                </div>
+              </div>
+              <div class = "quantity-item-fixed">
+                <label>Laminate Use(m)</label>
+                <div class="quantity-fixed">
+                  <label>{{ this.calculated.laminateUse }}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
     </div>
@@ -255,6 +316,7 @@
              @costingdata = "getCostingData"
              @calculated = "getCalculated"
              @machine = "getMachine"
+             v-show="showCalculator"
   ></component>
   <button @click="sendValueToChild">Send Value to Child</button>
   <div class="success-modal" v-if="successUpdatePricing">
@@ -281,7 +343,6 @@ import LECalculator from "@/components/costing/lowend/LECalculator";
 
 import axios from "axios";
 export default {
-///todo: update the close this.successupdatepricing for all costingform
   components: {
     ECSCalculator,
     HeaderBar,
@@ -293,6 +354,7 @@ export default {
 
   data() {
     return {
+      jobsheetNumber:'',
       machineType:'',
       successUpdatePricing:false,
       successMessageLabel:'',
@@ -322,7 +384,7 @@ export default {
     jobsheetType() {
       const machine = this.machineType;
       const machineToJobsheetType = {
-        ECS: 'ECSCalculator',
+        ECS340: 'ECSCalculator',
         HP: 'HPCalculator',
         EM280 :'EMCalculator',
         KP13 : 'KPCalculator',
@@ -392,6 +454,7 @@ export default {
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
     this.machineType = sessionStorage.getItem('machine') || '';
+    this.jobsheetNumber = sessionStorage.getItem('jobsheetnumber') || '';
     console.log(this.jobsheetType);
 
 
@@ -675,7 +738,6 @@ export default {
 .header-item-sub{
   width: 100%;
   margin:2px;
-  dislay: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;

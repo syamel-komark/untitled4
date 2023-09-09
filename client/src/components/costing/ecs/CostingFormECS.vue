@@ -276,7 +276,6 @@ import HeaderBar from "@/components/AppHeader.vue";
 import ECSCalculator from "@/components/costing/ecs/ECSCalculator";
 import axios from "axios";
 export default {
-///todo: update the close this.successupdatepricing for all costingform
   components: {
     ECSCalculator,
     HeaderBar,

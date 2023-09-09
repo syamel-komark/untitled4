@@ -262,7 +262,7 @@
     <div class="table-container">
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
-        <button @click="this.success=false">Close</button>
+        <button @click="this.successUpdatePricing=false">Close</button>
         <button @click="createQuotation">Create Quotation</button>
       </div>
     </div>

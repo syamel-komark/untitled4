@@ -1,431 +1,241 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <h2>ECS340 Label Specification<button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+    <h2>Jobsheet Specification<br><button @click="openSearchCosting" form="costingnumber">Search Costing</button>
+      <button @click="openSearchJobsheet" form="costingnumber">Search Jobsheet</button>
       <div v-if="selectCosting">
         <header>Costing Number: {{this.newCostingId}}</header>
+        <header>Machine: {{this.machineType}}</header>
+
       </div>
+      <div v-if="selectJobsheet">
+        <header>Costing Number: {{this.newCostingId}}</header>
+        <header>Jobsheet Number: {{this.jobsheetId}}</header>
+        <header>Machine: {{this.machineType}}</header>
+
+      </div>
+
     </h2>
     <div class="form">
-      <div class="group-container">
-        <div>
-          <h2>Label:</h2>
-          <div class="form-group">
-            <div>
-              <button @click="openSearchMastercard" form="Mastercard">Mastercard:</button>
-              <input type="text" id="Mastercard" v-model="formModel.mastercard" required />
+      <div class="formsub">
+        <div class="group-container">
+          <div>
+            <h2>Label info:</h2>
+            <div class="form-group">
+              <div>
+                <label for="labelName">Mastercard:</label>
+                <input type="text" id="Mastercard" v-model="formModel.mastercard" required />
+              </div>
+              <div>
+                <label for="labelName">Label Name:</label>
+                <input type="text" id="labelName" v-model="formModel.labelName" required />
+              </div>
             </div>
-            <div>
-              <label for="labelName">Label Name:</label>
-              <input type="text" id="labelName" v-model="formModel.labelName" required />
+            <div class="form-group">
+              <div>
+                <label for="Pitch">Label Pitch:</label>
+                <input type="text" id="Pitch" v-model="formModel.pitch" required />
+              </div>
+              <div>
+                <label for="number">Label Width:</label>
+                <input type="text" id="Width" v-model="formModel.width" required />
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div>
-              <label for="Pitch">Label Pitch:</label>
-              <input type="text" id="Pitch" v-model="formModel.pitch" required />
+            <div class="form-group">
+              <div>
+                <label for="Pitch">No Of Color:</label>
+                <input type="text" id="Pitch" v-model="formModel.color" required />
+              </div>
+              <div>
+                <button for="number" @click="toggleSearchColor">Color Code:</button>
+                <input type="text" id="Width" v-model="formModel.colorCode" required />
+              </div>
             </div>
-            <div>
-              <label for="number">Label Width:</label>
-              <input type="text" id="Width" v-model="formModel.width" required />
+            <div class="form-group">`
+              <div>
+                <label for="labelName">Across:</label>
+                <input type="number" id="across" v-model="formModel.across" required />
+              </div>
+              <div>
+                <label for="labelName">Die Cut:</label>
+                <input type="text" id="process" v-model="this.formModel.dieCutType" required />
+              </div>
             </div>
-            <div>
-              <label for="number">Label No of Color:</label>
-              <input type="number" id="Color" v-model="formModel.color" required />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="group-container">
-        <div>
-          <h2>Arrangement & Diecut:</h2>
-          <div class="form-group">
-            <div>
-              <button @click="calculateAcross" >Label Across:</button>
-              <input type="number" id="across" v-model="formModel.across" required />
-            </div>
-            <div>
-              <button @click="searchDieCut=true">Diecut Type:</button>
-              <input type="text" id="process" v-model="this.formModel.dieCutType" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <div>
-              <button @click="calculateAround" >Label Around:</button>
-              <input type="number" id="around" v-model="formModel.around" required />
-            </div>
-            <div>
-              <label for="Gear">Gear:</label>
-              <input type="text" id="gear" v-model="formModel.gear" required />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="group-container">
-        <div>
-          <h2>Material:</h2>
-          <div class="form-group">
-            <div>
-              <button @click="searchInk=true">Ink:</button>
-              <input type="text" id="Material" v-model="formModel.ink" required />
-            </div>
-            <div>
-              <button @click="searchVarnish=true">Varnish:</button>
-              <input type="text" id="Material" v-model="formModel.varnish" required />
-            </div>
-            <div>
-              <button @click="searchFacestock=true">Facestock:</button>
-              <input type="text" id="Material" v-model="formModel.facestock" required />
-            </div>
-            <div>
-              <button @click="searchLaminate=true">Laminate:</button>
-              <input type="text" id="Material" v-model="formModel.laminate" required />
-            </div>
-            <div>
-              <button @click="searchFoil=true">Foil:</button>
-              <input type="text" id="Material" v-model="formModel.foil" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <div>
-              <label for="number">Price:</label>
-              <input type="text" id="materialprice" v-model="formModel.inkCost" required />
-            </div>
-            <div>
-              <label for="number">Price:</label>
-              <input type="text" id="materialprice" v-model="formModel.varnishCost" required />
-            </div>
-            <div>
-              <label for="number">Price:</label>
-              <input type="text" id="materialprice" v-model="formModel.facestockCost" required />
-            </div>
-            <div>
-              <label for="number">Price:</label>
-              <input type="text" id="materialprice" v-model="formModel.laminateCost" required />
-            </div>
-            <div>
-              <label for="number">Price:</label>
-              <input type="text" id="materialprice" v-model="formModel.foilCost" required />
+            <div class="form-group">
+              <div>
+                <label for="labelName">Around:</label>
+                <input type="number" id="around" v-model="formModel.around" required />
+              </div>
+              <div>
+                <label v-if="machineType === 'HP'" for="Gear">Repeat:</label>
+                <label v-if="machineType !== 'HP'" for="Gear">Gear:</label>
+                <input type="text" id="gear" v-model="formModel.gear" required />
+              </div>
             </div>
 
-          </div>
+            <div class="form-group">
+              <div>
+                <label for="labelName">Finishing:</label>
+                <input type="text" id="finishing" v-model="selectedFinishing" required />
+              </div>
+              <div>
+                <label for="labelName">Process:</label>
+                <input type="text" id="process" v-model="this.selectedProcesses" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <div>
 
-        </div>
-      </div>
-      <div class="group-container">
-        <div>
-          <h2>Process & Costing:</h2>
-          <div class="form-group">
-            <div>
-              <button @click="openFinishing">Finishing:</button>
-              <input type="text" id="finishing" v-model="selectedFinishing" required />
-            </div>
-            <div>
-              <button @click="searchFixedCost=true">Process:</button>
-              <input type="text" id="process" v-model="this.selectedProcesses" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <div>
-              <label for="number">Selling Price (RM/PCS):</label>
-              <input type="text" id="process" placeholder="(use ; for multiple sp)" v-model="this.formModel.currentSellingPrice" required />
-            </div>
-            <div>
-              <label for="number">Quantity Order (pcs):</label>
-              <input type="text" id="process" placeholder="(use ; for multiple moq)" v-model="this.formModel.quantityOrder" required />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="group-container">
-        <div>
-          <h2>Jobsheet Info:</h2>
-          <div class="form-group">
-            <div>
-              <label>Machine:</label>
-              <input type="text" id="finishing" v-model="machineType" required />
-            </div>
-          </div>
-        </div>
-      </div>
+                <label for="number">Job type:</label>
+                <select id="printing-type" v-model="this.formModel.jobType" required>
+                  <option value="ROA">NEW</option>
+                  <option value="ROB">SAMPLE</option>
+                  <option value="ROC">REPRINT</option>
+                  <option value="ROD">INTERNAL</option>
 
+                </select>
+              </div>
+              <div>
+                <label for="number">Quantity Order (pcs):</label>
+                <input type="text" id="process" v-model="this.formModel.quantityOrder" required />
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class = "formsub">
+        <div class="group-container">
+          <div>
+            <h2>Material:</h2>
+            <div class="form-group">
+              <div>
+                <label for="number">Facestock:</label>
+                <input type="text" id="Material" v-model="formModel.facestock" required />
+              </div>
+              <div>
+                <label for="number">Varnish:</label>
+                <input type="text" id="Material" v-model="formModel.varnish" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <div>
+                <label for="number">Laminate:</label>
+                <input type="text" id="Material" v-model="formModel.laminate" required />
+              </div>
+              <div>
+                <label for="number">Foil:</label>
+                <input type="text" id="Material" v-model="formModel.foil" required />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="group-container">
+          <div>
+            <h2>Order Info:</h2>
+            <div class="form-group">
+              <div>
+                <button @click="toggleSearchSalesPerson" form="costingnumber">Sales Person</button>
+                <input type="text" id="Material" v-model="formModel.salesPerson" required />
+              </div>
+              <div>
+                <button @click="toggleSearchCustomer" form="costingnumber">Customers</button>
+                <input type="text" id="Material" v-model="formModel.customerName" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <div>
+                <label for="number">To Print Quantity (PCS):</label>
+                <input type="text" id="Material" v-model="formModel.toPrintQuantity" required />
+              </div>
+              <div>
+                <label for="number">Order Number:</label>
+                <input type="text" id="process" v-model="this.formModel.orderNumber" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <div>
+                <label for="number">Quantity Per Roll:</label>
+                <input type="text" id="Material" v-model="formModel.quantityPerRoll" required />
+              </div>
+              <div>
+                <label for="printing-type">Roll Direction:</label>
+                <select id="printing-type" v-model="this.formModel.direction" required>
+                  <option value="ROA">ROA</option>
+                  <option value="ROB">ROB</option>
+                  <option value="ROC">ROC</option>
+                  <option value="ROD">ROD</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div>
+                <label for="number">Unit Cost (RM/PCS):</label>
+                <input type="text" id="Material" v-model="formModel.unitCost" required />
+              </div>
+              <div>
+                <label for="number">Selling Price (RM/PCS):</label>
+                <input type="text" id="Material" v-model="formModel.sellingPrice" required />
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+      </div>
 
     </div>
+  </div>
+  <br><button @click="runAsyncFunctions" id="registercosting">GENERATE JOBSHEET</button>
 
-  </div>
-  <button @click="runAsyncFunctions" id="registercosting">GENERATE JOBSHEET</button>
-  <div class="success-modal" v-if="searchVarnish">
+  <div class="success-modal" v-if="searchJobsheet">
     <div class="table-container">
-      <h2>Varnish List</h2>
+      <h2>Jobsheet List</h2>
       <div class="searchmaterial-menu">
         <input
             type="text"
-            v-model="searchVarnishQuery"
-            placeholder="Search by varnish Name"
+            v-model="searchJobsheetQuery"
+            @input="filterCosting"
+            placeholder="Search by Mastercard"
         />
       </div>
       <table>
         <thead>
         <tr>
-          <th>Varnish Name</th>
-          <th>Machine</th>
-          <th>Material Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="varnish in filterVarnish" :key="varnish.materialid">
-          <td>{{ varnish.materialname }}</td>
-          <td>{{ varnish.materialsupplier }}</td>
-          <td>{{ varnish.materialprice }}</td>
-          <td>
-            <button @click="pickVarnish(varnish)">Use</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="searchVarnish=false">Close</button>
-  </div>
-  <div class="success-modal" v-if="searchInk">
-    <div class="table-container">
-      <h2>Ink List</h2>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="searchInkQuery"
-            placeholder="Search by Ink Name"
-        />
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Ink Name</th>
-          <th>Machine</th>
-          <th>Material Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="ink in filterInk" :key="ink.materialid">
-          <td>{{ ink.materialname }}</td>
-          <td>{{ ink.machine }}</td>
-          <td>{{ ink.materialprice }}</td>
-          <td>
-            <button @click="pickInk(ink)">Use</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="searchInk=false">Close</button>
-  </div>
-  <div class="success-modal" v-if="searchLaminate">
-    <div class="table-container">
-      <h2>Laminate List</h2>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="laminateSearchQuery"
-            placeholder="Search by laminate Name"
-        />
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Laminate Name</th>
-          <th>Supplier</th>
-          <th>Material Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="laminate in filterLaminate" :key="laminate.materialid">
-          <td>{{ laminate.materialname }}</td>
-          <td>{{ laminate.materialsupplier }}</td>
-          <td>{{ laminate.materialprice }}</td>
-          <td>
-            <button @click="pickLaminate(laminate)">Use</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="searchLaminate=false">Close</button>
-  </div>
-  <div class="success-modal" v-if="searchFacestock">
-    <div class="table-container">
-      <h2>Material List</h2>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="facestockSearchQuery"
-            placeholder="Search by facestock Name"
-        />
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Facestock Name</th>
-          <th>Supplier</th>
-          <th>Material Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="facestock in filterFacestock" :key="facestock.materialid">
-          <td>{{ facestock.materialname }}</td>
-          <td>{{ facestock.materialsupplier }}</td>
-          <td>{{ facestock.materialprice }}</td>
-          <td>
-            <button @click="pickFacestock(facestock)">Use</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="searchFacestock=false">Close</button>
-  </div>
-  <div class="success-modal" v-if="searchFoil">
-    <div class="table-container">
-      <h2>Foil List</h2>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="foilSearchQuery"
-            placeholder="Search by Foil Name"
-        />
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Foil Name</th>
-          <th>Supplier</th>
-          <th>Material Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="foil in filterFoil" :key="foil.materialid">
-          <td>{{ foil.materialname }}</td>
-          <td>{{ foil.materialsupplier }}</td>
-          <td>{{ foil.materialprice }}</td>
-          <td>
-            <button @click="pickFoil(foil)">Use</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="searchFoil=false">Close</button>
-  </div>
-  <div class="success-modal" v-if="searchFixedCost">
-    <div class="table-container">
-      <h2>Process List</h2>
-      <input type="text" id="process" v-model="this.selectedProcesses" required readonly />
-      <button @click="clearProcess()">Clear</button>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="searchFixedCostQuery"
-            placeholder="Search by Process Name"
-
-        />
-      </div>
-      <table>
-        <tbody>
-        <tr v-for="row in tableData" :key="row[0].id">
-          <td v-for="cell in row" :key="cell.id">
-            <div>{{ cell.id }} - {{ cell.process }}</div>
-            <div><button @click="addProcess(cell)">Add</button></div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div><button @click="closePrintingProcess">Done</button>
-  </div>
-  <div class="success-modal" v-if="searchMastercard">
-    <div class="table-container">
-      <h2>Mastercard List</h2>
-      <div class="searchmaterial-menu">
-        <input
-            type="text"
-            v-model="searchMastercardQuery"
-            @input="filtermastercard"
-            placeholder="Search by Label Name"
-        />
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Mastercard Number</th>
+          <th>Action</th>
+          <th>Jobsheet Number</th>
+          <th>Mastercard</th>
           <th>Label name</th>
+          <th>Machine</th>
+          <th>Pitch</th>
+          <th>Width</th>
+          <th>Material</th>
+          <th>Quantity</th>
+
         </tr>
         </thead>
         <tbody>
-        <tr v-for="mastercard in filterMastercard" :key="mastercard.id">
-          <td>{{ mastercard.mastercard }}</td>
-          <td>{{ mastercard.labelname }}</td>
+        <tr v-for="jobsheet in filteredJobsheet" :key="jobsheet.id">
           <td>
-            <button @click="pickMastercard(mastercard)">Use</button>
+            <button @click="pickJobsheet(jobsheet)">Use</button>
           </td>
+          <td>{{ jobsheet.id }}</td>
+          <td>{{ jobsheet.mastercard }}</td>
+          <td>{{ jobsheet.labelname }}</td>
+          <td>{{ jobsheet.machine }}</td>
+          <td>{{ jobsheet.pitch }}</td>
+          <td>{{ jobsheet.width }}</td>
+          <td>{{ jobsheet.material }}</td>
+          <td>{{ jobsheet.quantity }}</td>
+
         </tr>
         </tbody>
       </table>
-    </div><button @click=closeSearchMastercard>Close</button>
-  </div>
-  <div class="success-modal" v-if="isFinishing">
-    <div class="dashboard">
-      <h1>Finishing<button @click="moreFinishing=true">More Finishing</button>
-      </h1>
-      <div class="form-group">
-        <label for="">Diecut</label>
-        <input type="number" class="form-control" v-model="finishing.Diecut" />
-        <label for="">Varnish</label>
-        <input type="number" class="form-control" v-model="finishing.Varnish" />
-        <label for="">Laminate</label>
-        <input type="number" class="form-control" v-model="finishing.laminate" />
-      </div>
-      <div class="form-group">
-        <label for="">Killglue</label>
-        <input type="number" class="form-control" v-model="finishing.Killglue" />
-        <label for="">Sheet Form</label>
-        <input type="number" class="form-control" v-model="finishing.sheetForm" />
-        <label for="">Cold Foil</label>
-        <input type="number" class="form-control" v-model="finishing.coldFoil" />
-      </div>
-      <div class="form-group">
-        <label for="">Hot Stamping</label>
-        <input type="number" class="form-control" v-model="finishing.hotStamp" />
-        <label for="">Silkscreen</label>
-        <input type="number" class="form-control" v-model="finishing.silkScreen" />
-        <label for="">BackCut</label>
-        <input type="number" class="form-control" v-model="finishing.backCut" />
-      </div>
-      <button @click=closeFinishing>Close</button>
-    </div>
-  </div>
-  <div class="success-modal" v-if="moreFinishing">
-    <button @click="moreFinishing=false">Close</button>
-    <div class="form-group">
-      <label for="">Multi Form</label>
-      <input type="number" class="form-control" v-model="finishing.multiForm" />
-      <label for="">Backprint</label>
-      <input type="number" class="form-control" v-model="finishing.Backprint" />
-      <label for="">Perforated</label>
-      <input type="number" class="form-control" v-model="finishing.perforated" />
-    </div>
-
-  </div>
-  <div class="success-modal" v-if="successRegisterLabel">
-    <div class="table-container">
-      <div class="success-content">
-        <p>{{ successMessageLabel }}</p>
-        <button @click="this.successRegisterLabel=false">Close</button>
-        <button @click="this.$router.push('/costingformecs');">Create Costing Sheet</button>
-      </div>
-    </div>
-  </div>
-  <div class="success-modal" v-if="searchDieCut">
-    <div class = "form-group">
-      <label for="printing-type">Diecut:</label>
-      <select id="printing-type" v-model="this.formModel.dieCutType" required>
-        <option value="solid">Solid</option>
-        <option value="flexible">Flexible</option>
-        <option value="flatbed">Flatbed</option>
-      </select>
-    </div>
-    <button @click="searchDieCut=false">Close</button>
+    </div><button @click=closeSearchJobsheet>Close</button>
   </div>
   <div class="success-modal" v-if="searchCosting">
     <div class="table-container">
@@ -457,6 +267,104 @@
       </table>
     </div><button @click=closeSearchCosting>Close</button>
   </div>
+  <div class="success-modal" v-if="searchColor">
+    <div class="table-container">
+      <h2>Costing List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="colorSearchQuery"
+            placeholder="Search by Pantone Code"
+        />
+        <input type="text" id="Width" v-model="formModel.colorCode" required readonly />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Action</th>
+          <th>Id</th>
+          <th>Color Name</th>
+          <th>Color</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="color in filterColor" :key="color.id">
+          <td>
+            <button @click="pickColor(color)">Use</button>
+          </td>
+          <td>{{ color.id }}</td>
+          <td>{{ color.colorname }}</td>
+          <td>
+            <div :style="{ backgroundColor: '#' + color.hexcode, width: '30px', height: '30px' }"></div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=toggleSearchColor>Close</button>
+  </div>
+  <div class="success-modal" v-if="searchCustomer">
+    <div class="table-container">
+      <h2>Customer List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="customerSearchQuery"
+            placeholder="Search by Customer Name"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Customer Name</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="customers in filterCustomers" :key="customers.id">
+          <td>{{ customers.id }}</td>
+          <td>{{ customers.customername }}</td>
+          <td>
+            <button @click="pickCustomer(customers)">Use</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=toggleSearchCustomer>Close</button>
+  </div>
+  <div class="success-modal" v-if="searchSalesPerson">
+    <div class="table-container">
+      <h2>Customer List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="salesPersonSearchQuery"
+            placeholder="Search by Sales Person Name"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Sales Person ID</th>
+          <th>Sales Person Name</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="salesperson in filterSalesPerson" :key="salesperson.id">
+          <td>{{ salesperson.id }}</td>
+          <td>{{ salesperson.salespersonname }}</td>
+          <td>
+            <button @click="pickSalesPerson(salesperson)">Use</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=toggleSearchSalesPerson>Close</button>
+  </div>
+
+
+
 
 
 
@@ -474,8 +382,19 @@ export default {
 
   data() {
     return {
+      jobsheetId:'',
+      selectJobsheet:'',
+      jobsheetInfo:[],
+      searchJobsheetQuery:'',
+      searchJobsheet:false,
+      previousJobsheetId:'',
+      newJobsheetId:'',
+      combinedColorCode:'',
+      colorSearchQuery: '',
+      searchColor:false,
+      color:[],
       machineType:'',
-      currentSellingPrice:'',
+      sellingPrice:'',
       selectCosting: false,
       searchDieCut: false,
       machineInfo:[],
@@ -522,6 +441,16 @@ export default {
       username: null,
       currentTime: null,
       formModel:{
+        unitCost:'',
+        sellingPrice:'',
+        orderNumber:'',
+        salesPerson:'',
+        customerName:'',
+        direction:'',
+        toPrintQuantity:'',
+        quantityPerRoll:'',
+        jobType:'',
+        colorCode:[],
         mastercard: '',
         labelName:'',
         across:'',
@@ -540,7 +469,7 @@ export default {
         inkCost:0,
         varnish:'',
         varnishCost:0,
-        dieCutType:'flexible',
+        dieCutType:'',
         quantityOrder:'',
       },
       moreFinishing : false,
@@ -590,10 +519,51 @@ export default {
 
 
       },
+      customerSearchQuery:'',
+      customers:[],
+      searchCustomer: false,
+      salesPerson:[],
+      salesPersonSearchQuery:'',
+      searchSalesPerson: false,
     };
   },
 
   computed: {
+
+    filterSalesPerson(){
+      if (this.salesPersonSearchQuery === '') {
+        return this.salesPerson;
+      } else {
+        const query = this.salesPersonSearchQuery.toLowerCase();
+        return this.salesPerson.filter(salesperson => {
+          return salesperson.salespersonname.toLowerCase().includes(query);
+        });
+      }
+    },
+
+
+    filterCustomers(){
+      if (this.customerSearchQuery === '') {
+        return this.customers;
+      } else {
+        const query = this.customerSearchQuery.toLowerCase();
+        return this.customers.filter(customers => {
+          return customers.customername.toLowerCase().includes(query);
+        });
+      }
+    },
+
+    filterColor() {
+      if (this.colorSearchQuery === '') {
+        return this.color;
+      } else {
+        const query = this.colorSearchQuery.toLowerCase();
+        return this.color.filter(color => {
+          return color.colorname.toLowerCase().includes(query);
+        });
+      }
+    },
+
 
     splitProcessWastage(){
       let data = this.selectedProcess;
@@ -725,6 +695,17 @@ export default {
       return ((floorIndex));
     },
 
+    filteredJobsheet() {
+      if (this.searchJobsheetQuery === '') {
+        return this.jobsheetInfo;
+      } else {
+        const query = this.searchJobsheetQuery;
+        return this.jobsheetInfo.filter(jobsheet => {
+          return jobsheet.mastercard.includes(query);
+        });
+      }
+    },
+
     filteredCosting() {
       if (this.searchCostingQuery === '') {
         return this.costingInfo;
@@ -819,6 +800,8 @@ export default {
 
     this.fetchCostinginfo()
 
+    this.fetchJobsheet()
+
     this.setFinishing()
 
     this.setProcess()
@@ -839,6 +822,13 @@ export default {
 
     this.getMachine();
 
+    this.fetchColor();
+
+    this.fetchCustomer();
+
+    this.fetchSalesPerson();
+
+
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
@@ -858,6 +848,186 @@ export default {
   },
 
   methods: {
+    async fetchSalesPerson() {
+      try {
+        const response = await axios.get('/api/getsalesperson');
+        this.salesPerson = response.data;
+        console.log(this.salesPerson);
+      } catch (error) {
+        console.error('Error fetching salesperson:', error);
+      }
+    },
+
+    toggleSearchSalesPerson() {
+      this.searchSalesPerson = !this.searchSalesPerson;
+    },
+
+    pickSalesPerson(salesperson) {
+      this.formModel.salesPerson = salesperson.salespersonname;
+      this.searchSalesPerson = false;
+    },
+
+    async fetchCustomer() {
+      try {
+        const response = await axios.get('/api/getcustomers');
+        this.customers = response.data;
+        console.log(this.customers);
+      } catch (error) {
+        console.error('Error fetching salesperson:', error);
+      }
+    },
+
+    toggleSearchCustomer() {
+      this.searchCustomer = !this.searchCustomer;
+    },
+
+    pickCustomer(customers) {
+      this.formModel.customerName = customers.customername;
+      this.searchCustomer = false;
+    },
+
+    async fetchJobsheet() {
+      try {
+        const response = await axios.get('/api/getjobsheet');
+        this.jobsheetInfo = response.data;
+        console.log(this.jobsheetInfo);
+      } catch (error) {
+        console.error('Error fetching mastercard:', error);
+      }
+    },
+
+    pickJobsheet(jobsheet) {
+      this.formModel.mastercard = jobsheet.mastercard; // Set the selected material
+      this.formModel.labelName = jobsheet.labelname; // Set the selected material
+      this.formModel.facestock = jobsheet.material; // Set the selected material
+      this.formModel.width = jobsheet.width; // Set the selected material
+      this.formModel.pitch = jobsheet.pitch; // Set the selected material
+      this.formModel.color = jobsheet.color; // Set the selected material
+      this.formModel.across = jobsheet.across; // Set the selected material
+      this.formModel.around = jobsheet.around; // Set the selected material
+      this.formModel.gear = jobsheet.gear; // Set the selected material
+      this.selectedProcess = jobsheet.process; // Set the selected material
+      this.selectedFinishing = jobsheet.finishing; // Set the selected material
+      this.formModel.foil = jobsheet.foil; // Set the selected material
+      this.formModel.laminate = jobsheet.laminate; // Set the selected material
+      this.formModel.ink = jobsheet.ink; // Set the selected material
+      this.formModel.varnish = jobsheet.varnish; // Set the selected material
+      this.formModel.dieCutType = jobsheet.diecut;
+      this.formModel.quantityOrder = jobsheet.quantity;
+      this.formModel.colorCode = jobsheet.colorcode;
+      this.formModel.jobType = jobsheet.jobtype;
+      this.formModel.quantityPerRoll = jobsheet.quantityperroll;
+      this.formModel.direction = jobsheet.rolldirection;
+      this.formModel.salesPerson = jobsheet.salesperson
+      this.formModel.customerName =  jobsheet.customer;
+      this.formModel.toPrintQuantity = jobsheet.toprintquantity;
+      this.formModel.orderNumber = jobsheet.ordernumber;
+      this.newCostingId = jobsheet.costingid;
+      this.formModel.unitCost = jobsheet.unitcost;
+      this.formModel.sellingPrice = jobsheet.sellingprice;
+
+
+
+
+      this.jobsheetId = jobsheet.id;
+      this.searchJobsheet = false;
+      this.selectedProcesses = this.splitProcess;
+      this.machineType = jobsheet.machine;
+      this.selectJobsheet =true;
+    },
+
+    async registerJobsheet() {
+      try {
+        let combinedColor = '';
+        if (Array.isArray(this.formModel.colorCode) && this.formModel.colorCode.length > 1) {
+          combinedColor = this.formModel.colorCode.join(',');
+        } else {
+          combinedColor = this.formModel.colorCode;
+        }
+        this.combinedColorCode = combinedColor;
+        console.log(this.combinedColorCode);
+
+        const response = await axios.post('/api/registerjobsheet', {
+          mastercard: this.formModel.mastercard,
+          labelname: this.formModel.labelName,
+          material: this.formModel.facestock,
+          pitch: this.formModel.pitch,
+          width: this.formModel.width,
+          color: this.formModel.color,
+          across: this.formModel.across,
+          around: this.formModel.around,
+          gear: this.formModel.gear,
+          colorcode: this.combinedColorCode,
+          process: this.selectedProcesses.join(' ,'),
+          finishing: this.selectedFinishing,
+          machine: this.machineType,
+          foil: this.formModel.foil,
+          foilcost: this.formModel.foilCost,
+          materialcost: this.formModel.facestockCost,
+          laminate: this.formModel.laminate,
+          laminatecost: this.formModel.laminateCost,
+          ink: this.formModel.ink,
+          inkcost: this.formModel.inkCost,
+          varnish: this.formModel.varnish,
+          varnishcost: this.formModel.varnishCost,
+          diecut :this.formModel.dieCutType,
+          quantity :this.formModel.quantityOrder,
+          sellingprice:this.formModel.sellingPrice,
+          unitcost:this.formModel.unitCost,
+          quantityperroll: this.formModel.quantityPerRoll,
+          salesperson: this.formModel.salesPerson,
+          rolldirection: this.formModel.direction,
+          entry_person: this.username,
+          customer: this.formModel.customerName,
+          toprintquantity: this.formModel.toPrintQuantity,
+          ordernumber: this.formModel.orderNumber,
+          jobtype: this.formModel.jobType,
+          costingid: this.newCostingId,
+
+
+
+
+
+
+        });
+
+        if (response.status === 200) {
+          this.newJobsheetId = response.data.id;
+          this.successRegisterLabel = true;
+          this.successMessageLabel = 'label has been successfully updated.';
+          console.log('Registration successful');
+        } else {
+          this.successMessageLabel = 'Label registration failed.';
+          console.error('Registration failed');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
+    },
+
+
+    pickColor(color) {
+      this.selectedColor = "#"+color.hexcode; // Set the selected material
+      this.colorName = color.colorname;
+      this.colorSearchQuery = '';
+      this.formModel.colorCode.push(this.colorName);
+      console.log(this.selectedColor);
+    },
+
+    async fetchColor() {
+      try {
+        const response = await axios.get('/api/getcolor');
+        this.color = response.data;
+        console.log(this.mastercard);
+      } catch (error) {
+        console.error('Error fetching mastercard:', error);
+      }
+    },
+
+    toggleSearchColor() {
+      this.searchColor = !this.searchColor;
+    },
+
 
     clearProcess(){
       this.selectedProcessCost=[];
@@ -910,8 +1080,9 @@ export default {
       this.formModel.varnish = costing.varnish; // Set the selected material
       this.formModel.varnishCost = costing.varnishcost; // Set the selected material
       this.formModel.dieCutType = costing.diecut;
+      this.formModel.unitCost = costing.unitcost;
       this.formModel.quantityOrder = costing.quantity;
-      this.formModel.currentSellingPrice = costing.sellingprice;
+      this.formModel.sellingPrice = costing.sellingprice;
       this.newCostingId = costing.id;
       this.searchCosting = false;
       this.selectedProcesses = this.splitProcess;
@@ -943,10 +1114,21 @@ export default {
       this.searchCosting=true;
     },
 
+    closeSearchJobsheet(){
+      this.searchJobsheet=false;
+    },
+
+    openSearchJobsheet(){
+      this.searchJobsheet=true;
+    },
+
     async runAsyncFunctions() {
       try {
+        await this.registerJobsheet();
         sessionStorage.setItem('costingnumber', this.newCostingId);
         sessionStorage.setItem('machine', this.machineType);
+        sessionStorage.setItem('jobsheetnumber', this.newJobsheetId);
+
         this.$router.push('/jobsheetform');
         console.log('Both functions executed successfully');
       } catch (error) {
@@ -990,7 +1172,7 @@ export default {
           varnishcost: this.formModel.varnishCost,
           diecut :this.formModel.dieCutType,
           quantity :this.formModel.quantityOrder,
-          sellingprice:this.formModel.currentSellingPrice,
+          sellingprice:this.formModel.sellingPrice,
 
 
 
@@ -1269,6 +1451,16 @@ export default {
   background-color: white;
   display: inline-block;
   justify-self: center;
+}
+
+.formsub {
+  flex: 1 1 auto;
+  display:  inline-flex;
+  flex-direction: column;;
+  flex-wrap: wrap;
+  align-items: self-start;
+  justify-content: space-evenly;
+  justify-items: stretch;
 }
 
 

@@ -42,6 +42,7 @@ import QuotationGenerator from "@/components/quotation/QuotationGenerator";
 import JobsheetPage from "@/components/jobsheet/JobsheetPage";
 import NewJobsheet from "@/components/jobsheet/NewJobsheet";
 import JobsheetForm from "@/components/jobsheet/JobsheetForm";
+import ColorPicker from "@/components/ColorPicker";
 
 
 
@@ -86,6 +87,8 @@ const routes = [
   { path: '/jobsheet', component: JobsheetPage},
   { path: '/newjob', component: NewJobsheet},
   {path: '/jobsheetform', component: JobsheetForm},
+  {path: '/colorpicker', component: ColorPicker},
+
 
 
 

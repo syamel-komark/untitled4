@@ -130,7 +130,7 @@ export default {
       if (this.salesPersonQuery === '') {
         return this.salesperson;
       } else {
-        const query = this.salesPersonQuery;
+        const query = this.salesPersonQuery.toLowerCase();
         return this.salesperson.filter(salespersons => {
           return salespersons.salespersonname.toLowerCase().includes(query);
         });
@@ -142,7 +142,7 @@ export default {
       if (this.materialSearchQuery === '') {
         return this.materials;
       } else {
-        const query = this.materialSearchQuery;
+        const query = this.materialSearchQuery.toLowerCase();
         return this.materials.filter(customers => {
           return customers.customername.toLowerCase().includes(query);
         });

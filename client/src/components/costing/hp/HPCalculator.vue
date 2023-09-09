@@ -1,13 +1,6 @@
 <template>
   <div class="container">
     <div>
-      <!-- Display the costing number received from the parent -->
-      <p>Received Costing Number: {{ receivedCostingNumber }}</p>
-      <!-- Input field to modify the costing number -->
-      <input v-model="modifiedCostingNumber" type="number" />
-      <button @click="updateCostingData">Update Parent</button>
-    </div>
-    <div>
       <h2>HP Label Specification
         <label for="costingnumber">Costing Number: {{ newCostingId }}</label></h2>
     </div>
@@ -251,6 +244,30 @@
       </div>
     </div>
     <div>
+      <h2>MATERIAL USE</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing length">ink use:</label>
+            <input type="text" id="finishing" v-model="calculateInkUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">varnish use:</label>
+            <input type="text" id="finishing" v-model="calculateVarnishUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">laminate use</label>
+            <input type="text" id="finishing" v-model="calculateLaminateUse" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing length">foil use</label>
+            <input type="text" id="finishing" v-model="calculateFoilUse" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
       <h2>TOOLING COST</h2>
       <div class="group-container">
         <div class="form-group">
@@ -290,6 +307,21 @@
       </div>
     </div>
     <div>
+      <h2>TIME COST</h2>
+      <div class="group-container">
+        <div class="form-group">
+          <div class="form-item">
+            <label for="printing gap">Printing Duration:</label>
+            <input type="text" id="finishing" v-model="calculatePrintDuration" required readonly/>
+          </div>
+          <div class="form-item">
+            <label for="printing gap">Setting Duration:</label>
+            <input type="text" id="finishing" v-model="calculateSettingDuration" required readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
       <h2>DONE</h2>
       <div class="group-container">
         <div class="form-group">
@@ -315,8 +347,6 @@ export default {
 
   data() {
     return {
-      receivedCostingNumber: this.costingNumber,
-      modifiedCostingNumber: this.costingNumber,
       sellingPrice:[],
       machineInfo:[],
       costingInfo:[],
@@ -362,6 +392,7 @@ export default {
 
       },
       machineSpec:{
+        speed:'',
         coatingWeight:'',
         trim:'',
         jointWastage:'',
@@ -378,6 +409,10 @@ export default {
         hotStampingPlatePrice:'',
       },
       save:{
+        laminateUse:'',
+        varnishUse:'',
+        foilUse:'',
+        inkUse:'',
         RSP:'',
         currentSellingPrice: '',
         totalToolingCost:'',
@@ -404,6 +439,19 @@ export default {
   },
 
   computed: {
+
+    calculatePrintDuration(){
+      const speed = this.machineSpec.speed;
+      const length = this.calculatePrintingLengthTotal;
+      const time = (length/speed)/60;
+      return parseFloat(time).toFixed(2);
+    },
+
+    calculateSettingDuration(){
+      //const color = this.formModel.color;
+      return 30/60;
+    },
+
 
     calculateCurrentMargin(){
       const unitCost = this.unitCost;
@@ -679,6 +727,14 @@ export default {
 
     },
 
+    calculateInkUse(){
+      let printLength = this.calculatePrintingLengthTotal;
+      let repeat = this.formModel.gear/1000;
+      let inkUse = parseFloat(((printLength)/repeat)).toFixed(2);
+      return inkUse
+
+    },
+
     calculateVarnishCost() {
       let printLength = this.calculatePrintingLengthTotal;
       let materialWidth = this.calculateMaterialWidth / 1000;
@@ -692,6 +748,23 @@ export default {
 
         let varnishUse = printLength.map(length => length * materialWidth * varnishCost * varnishCount * coatingWeight);
         return varnishUse.map(value => parseFloat(value.toFixed(2)));
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+    calculateVarnishUse() {
+      let printLength = this.calculatePrintingLengthTotal;
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let varnishCount = finishingArray.filter(item => item.trim() === 'varnish').length;
+
+        let coatingWeight = this.machineSpec.coatingWeight; // g/m2
+
+        let varnishUse = parseFloat(printLength * materialWidth * varnishCount * coatingWeight/1000).toFixed(2);
+        return varnishUse;
       } else {
         return []; // Return an empty array if formModel.finishing is undefined
       }
@@ -714,6 +787,21 @@ export default {
       }
     },
 
+    calculateLaminateUse() {
+      let printLength = this.calculatePrintingLengthTotal
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let laminateCount = finishingArray.filter(item => item.trim() === 'laminate').length;
+        let laminateUse = parseFloat(printLength * materialWidth * laminateCount).toFixed(2);
+        return laminateUse;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
+
     calculateFoilCost() {
       let printLength = this.calculatePrintingLengthTotal
       let materialWidth = this.calculateMaterialWidth / 1000;
@@ -730,6 +818,21 @@ export default {
         return []; // Return an empty array if formModel.finishing is undefined
       }
     },
+
+    calculateFoilUse() {
+      let printLength = this.calculatePrintingLengthTotal
+      let materialWidth = this.calculateMaterialWidth / 1000;
+
+      if (this.formModel.finishing) { // Check if formModel.finishing is defined
+        let finishingArray = this.formModel.finishing.toLowerCase().split(','); // Convert the string to an array
+        let foilCount = finishingArray.filter(item => item.trim() === 'coldfoil').length;
+        let foilUse = parseFloat(printLength * materialWidth * foilCount).toFixed(2);
+        return foilUse;
+      } else {
+        return []; // Return an empty array if formModel.finishing is undefined
+      }
+    },
+
 
     calculateFoilPlate() {
 
@@ -953,10 +1056,6 @@ export default {
   },
 
   methods: {
-    updateCostingData() {
-      // Emit a custom event to update the parent with the modified costingNumber
-      this.$emit("updateCostingData", this.modifiedCostingNumber);
-    },
 
     setMargin(){
       this.margin = this.getMargin;
@@ -984,6 +1083,12 @@ export default {
       this.save.totalLength = this.calculatePrintingLengthTotal;
       this.save.currentMargin = this.calculateCurrentMargin;
       this.save.RSP = this.RSP;
+      this.save.printingDuration =this.calculatePrintDuration;
+      this.save.settingDuration = this.calculateSettingDuration;
+      this.save.inkUse = this.calculateInkUse;
+      this.save.laminateUse = this.calculateLaminateUse
+      this.save.foilUse = this.calculateFoilUse
+      this.save.varnishUse = this.calculateVarnishUse
 
 
 
@@ -1028,6 +1133,7 @@ export default {
 
     async getInfo() {
       this.newCostingId = sessionStorage.getItem('costingnumber');
+      console.log(this.newCostingId);
       try {
         const response = await axios.get('/api/getcosting', {
           params: {
@@ -1103,6 +1209,8 @@ export default {
         this.machineSpec.flatbedDiecutPrice=allMachineInfo[0].flatbeddiecutprice;
         this.machineSpec.solidDiecutPrice=allMachineInfo[0].soliddiecutprice;
         this.machineSpec.machineName = allMachineInfo[0].machinename;
+        this.machineSpec.speed = allMachineInfo[0].speed;
+
 
         console.log(this.machineSpec);
       } catch (error) {
