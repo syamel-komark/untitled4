@@ -446,7 +446,7 @@ export default {
 
     calculateSettingDuration(){
       const color = this.formModel.color;
-      return color * 30;
+      return color * 30/60;
     },
 
     calculateCurrentMargin(){
@@ -730,7 +730,7 @@ export default {
       let materialWidth = this.calculateMaterialWidth/1000;
       let color = this.formModel.color;
       let coatingWeight = this.machineSpec.coatingWeight; //g/m2
-      let inkUse = parseFloat(((printLength)*materialWidth*color*coatingWeight)*1.05).toFixed(2);
+      let inkUse = parseFloat(((printLength)*materialWidth*color*coatingWeight)*1.05).toFixed(2)/1000;
       return inkUse;
 
     },

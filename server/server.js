@@ -571,11 +571,11 @@ db.connect(err => {
 /////////////////////////JOBSHEET//////////////////////////////
 {
   app.post('/api/registerjobsheet', (req, res) => {
-    const { mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice} = req.body;
-    const query = 'INSERT INTO jobsheet (mastercard, labelname, material, pitch, width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink, varnish, diecut, quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    const { mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice} = req.body;
+    const query = 'INSERT INTO jobsheet (mastercard, labelname, material, pitch, width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink, varnish, diecut, quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
     db.query(query, [
-      mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, toprintquantity, ordernumber, jobtype, costingid, unitcost, sellingprice], (err, result) => {
+      mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice], (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering jobsheet' });
@@ -949,7 +949,9 @@ db.connect(err => {
   });
 
   app.get('/api/getcolor', (req, res) => {
-    const query = 'SELECT * FROM pantonecolor';
+    let query = 'SELECT * FROM pantonecolor';
+    query += ' ORDER BY id DESC;';
+
 
     db.query(query, (err, result) => {
       if (err) {

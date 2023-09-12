@@ -88,10 +88,10 @@
 
                 <label for="number">Job type:</label>
                 <select id="printing-type" v-model="this.formModel.jobType" required>
-                  <option value="ROA">NEW</option>
-                  <option value="ROB">SAMPLE</option>
-                  <option value="ROC">REPRINT</option>
-                  <option value="ROD">INTERNAL</option>
+                  <option value="NEW">NEW</option>
+                  <option value="SAMPLE">SAMPLE</option>
+                  <option value="REPRINT">REPRINT</option>
+                  <option value="INTERNAL">INTERNAL</option>
 
                 </select>
               </div>
@@ -147,12 +147,16 @@
             </div>
             <div class="form-group">
               <div>
-                <label for="number">To Print Quantity (PCS):</label>
-                <input type="text" id="Material" v-model="formModel.toPrintQuantity" required />
-              </div>
-              <div>
                 <label for="number">Order Number:</label>
                 <input type="text" id="process" v-model="this.formModel.orderNumber" required />
+              </div>
+              <div>
+                <label for="number">Required Delivery Date:</label>
+                <input
+                    id="dateInput"
+                    type="date"
+                    v-model="formModel.deliveryDate"
+                />
               </div>
             </div>
             <div class="form-group">
@@ -447,7 +451,7 @@ export default {
         salesPerson:'',
         customerName:'',
         direction:'',
-        toPrintQuantity:'',
+        deliveryDate:'',
         quantityPerRoll:'',
         jobType:'',
         colorCode:[],
@@ -920,7 +924,7 @@ export default {
       this.formModel.direction = jobsheet.rolldirection;
       this.formModel.salesPerson = jobsheet.salesperson
       this.formModel.customerName =  jobsheet.customer;
-      this.formModel.toPrintQuantity = jobsheet.toprintquantity;
+      this.formModel.deliveryDate = jobsheet.deliverydate;
       this.formModel.orderNumber = jobsheet.ordernumber;
       this.newCostingId = jobsheet.costingid;
       this.formModel.unitCost = jobsheet.unitcost;
@@ -979,7 +983,7 @@ export default {
           rolldirection: this.formModel.direction,
           entry_person: this.username,
           customer: this.formModel.customerName,
-          toprintquantity: this.formModel.toPrintQuantity,
+          deliverydate: this.formModel.deliveryDate,
           ordernumber: this.formModel.orderNumber,
           jobtype: this.formModel.jobType,
           costingid: this.newCostingId,

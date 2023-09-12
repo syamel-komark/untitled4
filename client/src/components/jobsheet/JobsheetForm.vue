@@ -7,20 +7,19 @@
     <div class="print" id="myPrintableContent">
       <div class="company-header">
         <img src="output (5).png" alt="Komark" width="150" height="60" @click="toggleCalculator" />
-        <label>Komark HQ ONC2.0 Costing Sheet</label>
+        <label>Komark HQ ONC2.0 Job Sheet</label>
         <div class="company-header-content">
-          <label>Costing Number:{{this.calculated.costingId}}</label>
           <label>Jobsheet Number:{{this.jobsheetNumber}}</label>
           <label>Date:{{formattedDate}}</label>
+          <label>Status:{{approval}}</label>
         </div>
       </div>
       <div class="costing-header">
+        <header>Label Info</header>
         <div class="header-content">
           <div class ="header-item">
             <label>Label Name:</label>
             <input for="header" v-model="this.costingData.labelName">
-            <label>Material Name:</label>
-            <input for="header" v-model="this.costingData.facestock">
             <div class = "header-item-sub">
               <div class="sub-item">
                 <label type="sub">Pitch (mm):</label>
@@ -35,9 +34,10 @@
                 <input for="sub" v-model="this.costingData.across">
               </div>
               <div class="sub-item">
-                <label type="sub">Gear:</label>
+                <label v-if="this.machineSpec.machineName==='HP'" type="sub">Repeat(mm):</label>
+                <label v-else type="sub">Gear(mm):</label>
                 <input for="sub" v-model="this.costingData.gear">
-                <label type="sub">Gap:</label>
+                <label type="sub">Gap(mm):</label>
                 <input for="sub" v-model="this.calculated.gap">
               </div>
               <div class="sub-item">
@@ -46,8 +46,6 @@
                 <label type="sub">No of Color:</label>
                 <input for="sub" v-model="this.costingData.color">
               </div>
-
-
             </div>
           </div>
           <div class ="header-item">
@@ -55,260 +53,127 @@
             <input for="header" v-model="this.costingData.mastercard">
             <label>Machine:</label>
             <input for="header" v-model="this.machineSpec.machineName">
-            <label>Finishing:</label>
-            <input for="header" v-model="this.costingData.finishing">
-            <label>Process:</label>
-            <input for="header" v-model="this.formModel.process">
-            <label>Quantity:</label>
+            <label>Quantity (PCS):</label>
             <input for="header" v-model="this.costingData.orderQuantity">
           </div>
         </div>
       </div>
-      <div class="quantity-field">
-        <div class = "quantity-group">
-          <div class = "quantity-label-column">
-            <div class = "quantity-label">
-              <label>SUMMARY</label>
+      <div class="costing-header-order">
+        <header>Material Info</header>
+        <div class="header-content-order">
+          <div class ="header-item-order">
+            <label>Material Name:</label>
+            <input for="header" v-model="this.costingData.facestock">
+            <div class="sub-item">
+              <label>Varnish:</label>
+              <input for="header" v-model="this.jobsheet.varnish">
+              <label>Laminate:</label>
+              <input for="header" v-model="this.jobsheet.laminate">
             </div>
           </div>
-          <div class = "quantity-column">
-            <div class ="quantity-head">
-              <label>MOQ (PCS)</label>
+          <div class ="header-item-order">
+            <label>Color Name:</label>
+            <input for="header" v-model="this.jobsheet.colorCode">
+            <div class="sub-item">
+              <label>Color:</label>
+              <input for="header" v-model="this.jobsheet.ink">
+              <label>Foil:</label>
+              <input for="header" v-model="this.jobsheet.foil">
             </div>
-            <div class ="quantity-table">
-              <div class = "quantity-item">
-                <label>Total Pieces</label>
-                <div v-for="(quantity, index) in formModel.orderQuantity" :key="index" class="quantity">
-                  <label>{{ quantity }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Print Length (m)</label>
-                <div v-for="(length, index) in calculated.printingLength" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Wastage Length (m)</label>
-                <div v-for="(length, index) in calculated.wastageLength" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Setting Length (m)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.settingLength }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Total Length (m)</label>
-                <div v-for="(length, index) in calculated.totalLength" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
 
-
-            </div>
           </div>
         </div>
-        <div class = "quantity-group">
-          <div class = "quantity-label-column">
-            <div class = "quantity-label">
-              <label>MATERIAL COST</label>
-            </div>
-          </div>
-          <div class = "quantity-column">
-            <div class ="quantity-table">
-              <div class = "quantity-item">
-                <label>Paper Cost(RM)</label>
-                <div v-for="(length, index) in calculated.paperCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Ink Cost (RM)</label>
-                <div v-for="(length, index) in calculated.inkCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Varnish Cost (RM)</label>
-                <div v-for="(length, index) in calculated.varnishCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Laminate Cost(RM)</label>
-                <div v-for="(length, index) in calculated.laminateCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Foil Cost(RM)</label>
-                <div v-for="(length, index) in calculated.foilCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Total Material Cost(RM)</label>
-                <div v-for="(length, index) in calculated.totalMaterialCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class = "quantity-group">
-          <div class = "quantity-label-column">
-            <div class = "quantity-label">
-              <label>FIXED COST</label>
-            </div>
-          </div>
-          <div class = "quantity-column">
-            <div class ="quantity-table">
-              <div class = "quantity-item">
-                <label>Fixed Cost(RM)</label>
-                <div v-for="(length, index) in calculated.fixedCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class = "quantity-group-fixed">
-          <div class = "quantity-label-column-fixed">
-            <div class = "quantity-label">
-              <label>TOOLING COST</label>
-            </div>
-          </div>
-          <div class = "quantity-column-fixed">
-            <div class ="quantity-table-fixed">
-              <div class = "quantity-item-fixed">
-                <label>Diecut Cost(RM)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.dieCutCost }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Plate Cost (RM)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.plateCost }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Total Tooling Cost(RM)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.totalToolingCost }}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class = "quantity-group">
-          <div class = "quantity-label-column">
-            <div class = "quantity-label">
-              <label>COSTING SUMMARY</label>
-            </div>
-          </div>
-          <div class = "quantity-column">
-            <div class ="quantity-table">
-              <div class = "quantity-item">
-                <label>Total Cost(RM)</label>
-                <div v-for="(length, index) in calculated.totalCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Unit Cost(RM/PCS)</label>
-                <div v-for="(length, index) in calculated.unitCost" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Current selling Price(RM/PCS)</label>
-                <div v-for="(length, index) in formModel.sellingPrice" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>Current Margin(%)</label>
-                <div v-for="(length, index) in calculated.currentMargin" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item">
-                <label>RSP 20%(RM/PCS)</label>
-                <div v-for="(length, index) in calculated.RSP" :key="index" class="quantity">
-                  <label>{{ length }}</label>
-                </div>
-              </div>
-
-
-            </div>
-          </div>
-        </div>
-        <div class = "quantity-group-fixed">
-          <div class = "quantity-label-column-fixed">
-            <div class = "quantity-label">
-              <label>TIME COST</label>
-            </div>
-          </div>
-          <div class = "quantity-column-fixed">
-            <div class ="quantity-table-fixed">
-              <div class = "quantity-item-fixed">
-                <label>Printing Time (Hours)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.printingDuration }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Setting Time (minute)</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.settingDuration }}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class = "quantity-group-fixed">
-          <div class = "quantity-label-column-fixed">
-            <div class = "quantity-label">
-              <label>MATERIAL USE</label>
-            </div>
-          </div>
-          <div class = "quantity-column-fixed">
-            <div class ="quantity-table-fixed">
-              <div class = "quantity-item-fixed">
-                <label>Ink Use</label>
-                <div class="quantity-fixed">
-                  <label>{{ calculated.inkUse }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Varnish Use</label>
-                <div class="quantity-fixed">
-                  <label>{{ this.calculated.varnishUse }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Foil Use(m)</label>
-                <div class="quantity-fixed">
-                  <label>{{ this.calculated.foilUse }}</label>
-                </div>
-              </div>
-              <div class = "quantity-item-fixed">
-                <label>Laminate Use(m)</label>
-                <div class="quantity-fixed">
-                  <label>{{ this.calculated.laminateUse }}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
       </div>
+      <div class="costing-header-order">
+        <header>Process Info</header>
+        <div class="header-content-order">
+          <div class ="header-item-order">
+            <label>Process:</label>
+            <input for="header" v-model="this.formModel.process">
+            <label>Finishing:</label>
+            <input for="header" v-model="this.costingData.finishing">
+          </div>
+        </div>
+      </div>
+      <div class="costing-header-order">
+        <header>Printing Info</header>
+        <div class="header-content-order">
+          <div class ="header-item-order">
+            <div class="sub-item">
+              <label>Printing Length(m):</label>
+              <input for="header" v-model="this.printLength">
+              <label>Setting Length(m):</label>
+              <input for="header" v-model="this.calculated.settingLength">
+              <label>Wastage Length(m):</label>
+              <input for="header" v-model="this.calculated.wastageLength">
+              <label>Total Length(m):</label>
+              <input for="header" v-model="this.calculated.totalLength">
+            </div>
+            <div class="sub-item">
+              <label v-if="this.machineSpec.machineName==='HP'" type="sub">Clicks:</label>
+              <label v-else type="sub">Ink(kg):</label>
+              <input for="header" v-model="this.calculated.inkUse">
+              <label>Varnish(kg):</label>
+              <input for="header" v-model="this.calculated.varnishUse">
+            </div>
+          </div>
+          <div class ="header-item-order">
+            <div class="sub-item">
+              <label>Printing Duration(hours):</label>
+              <input for="header" v-model="this.calculated.printingDuration">
+              <label>Setting Duration(hours):</label>
+              <input for="header" v-model="this.calculated.settingDuration">
+            </div>
+            <div class="sub-item">
+              <label>Laminate Length(m):</label>
+              <input for="header" v-model="this.calculated.laminateUse">
+              <label>Foil Length(m):</label>
+              <input for="header" v-model="this.calculated.foilUse">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="costing-header-order">
+        <header>Packing Info</header>
+        <div class="header-content-order">
+          <div class ="header-item-order">
+            <label>Roll Pattern:</label>
+            <input for="header" v-model="this.jobsheet.direction">
+          </div>
+          <div class ="header-item-order">
+            <label>Quantity Per Roll:</label>
+            <input for="header" v-model="this.jobsheet.quantityPerRoll">
+          </div>
+        </div>
+      </div>
+      <div class="costing-header-order">
+        <header>Order Info</header>
+        <div class="header-content-order">
+          <div class ="header-item-order">
+            <label>Sales Person:</label>
+            <input for="header" v-model="this.jobsheet.salesPerson">
+            <label>Order Number:</label>
+            <input for="header" v-model="this.jobsheet.orderNumber">
+          </div>
+          <div class ="header-item-order">
+            <label>Customer Name:</label>
+            <input for="header" v-model="this.jobsheet.customerName">
+            <div class = "sub-item">
+              <label>Job Type:</label>
+              <input for="header" v-model="this.jobsheet.jobType">
+              <label>Delivery Date:</label>
+              <input for="header" v-model="extractedDate">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
     </div>
 
   </div>
@@ -318,7 +183,6 @@
              @machine = "getMachine"
              v-show="showCalculator"
   ></component>
-  <button @click="sendValueToChild">Send Value to Child</button>
   <div class="success-modal" v-if="successUpdatePricing">
     <div class="table-container">
       <div class="success-content">
@@ -354,6 +218,34 @@ export default {
 
   data() {
     return {
+      jobsheetInfo:[],
+      jobsheet:{
+        mastercard: '',
+        labelname: '',
+        facestock: '',
+        width: '',
+        pitch: '',
+        color: '',
+        across: '',
+        around: '',
+        gear: '',
+        foil: '',
+        laminate: '',
+        ink: '',
+        varnish: '',
+        dieCutType: '',
+        quantityOrder: '',
+        colorCode: '',
+        jobType: '',
+        quantityPerRoll: '',
+        direction: '',
+        salesPerson: '',
+        customerName: '',
+        deliveryDate: '',
+        orderNumber: '',
+        unitCost: '',
+        sellingPrice: ''
+      },
       jobsheetNumber:'',
       machineType:'',
       successUpdatePricing:false,
@@ -380,6 +272,21 @@ export default {
   },
 
   computed: {
+
+    printLength(){
+      const total = this.calculated.totalLength;
+      const setting = this.calculated.settingLength;
+      const wastage = this.calculated.wastageLength;
+      const print = total-setting-wastage;
+      return print;
+    },
+
+    extractedDate() {
+      //if (!this.jobsheet.deliveryDate) return ''; // Handle empty date
+     // return this.jobsheet.deliveryDate.substring(0, 10);
+      return this.jobsheet.deliveryDate;
+    },
+
 
     jobsheetType() {
       const machine = this.machineType;
@@ -439,12 +346,28 @@ export default {
       return [];
     },
 
+    approval(){
+        if(this.calculated.currentMargin<0){
+          return 'Rejected: Below 0';
+        }
+        if(this.calculated.currentMargin>0.19){
+          return 'Approved';
+        }
+        else{
+          return 'Check costing';
+        }
+    },
+
+
+
 
 
 
   },
 
   created() {
+
+    this.fetchJobsheet();
 
     this.getProcess();
 
@@ -474,6 +397,51 @@ export default {
   },
 
   methods: {
+
+    async fetchJobsheet() {
+      this.jobsheetNumber = sessionStorage.getItem('jobsheetnumber');
+      console.log(this.jobsheetNumber);
+      try {
+        const response = await axios.get('/api/getjobsheet', {
+          params: {
+            id: parseInt(this.jobsheetNumber) // Pass the costing ID as a query parameter
+          }
+        });
+
+        const alljobsheet = response.data;
+        this.jobsheetInfo = response.data;
+
+        this.jobsheet.mastercard = alljobsheet[0].mastercard; // Set the selected material
+        this.jobsheet.labelName = alljobsheet[0].labelname; // Set the selected material
+        this.jobsheet.facestock = alljobsheet[0].material; // Set the selected material
+        this.jobsheet.width = alljobsheet[0].width; // Set the selected material
+        this.jobsheet.pitch = alljobsheet[0].pitch; // Set the selected material
+        this.jobsheet.color = alljobsheet[0].color; // Set the selected material
+        this.jobsheet.across = alljobsheet[0].across; // Set the selected material
+        this.jobsheet.around = alljobsheet[0].around; // Set the selected material
+        this.jobsheet.gear = alljobsheet[0].gear; // Set the selected material
+        this.jobsheet.foil = alljobsheet[0].foil; // Set the selected material
+        this.jobsheet.laminate = alljobsheet[0].laminate; // Set the selected material
+        this.jobsheet.ink = alljobsheet[0].ink; // Set the selected material
+        this.jobsheet.varnish = alljobsheet[0].varnish; // Set the selected material
+        this.jobsheet.dieCutType = alljobsheet[0].diecut;
+        this.jobsheet.quantityOrder = alljobsheet[0].quantity;
+        this.jobsheet.colorCode = alljobsheet[0].colorcode;
+        this.jobsheet.jobType = alljobsheet[0].jobtype;
+        this.jobsheet.quantityPerRoll = alljobsheet[0].quantityperroll;
+        this.jobsheet.direction = alljobsheet[0].rolldirection;
+        this.jobsheet.salesPerson = alljobsheet[0].salesperson
+        this.jobsheet.customerName =  alljobsheet[0].customer;
+        this.jobsheet.deliveryDate = alljobsheet[0].deliverydate;
+        this.jobsheet.orderNumber = alljobsheet[0].ordernumber;
+        this.jobsheet.unitCost = alljobsheet[0].unitcost;
+        this.jobsheet.sellingPrice = alljobsheet[0].sellingprice;
+
+        console.log(this.jobsheetInfo);
+      } catch (error) {
+        console.error('Error fetching mastercard:', error);
+      }
+    },
 
     sendValueToChild() {
       // Get a reference to the child component
@@ -565,157 +533,14 @@ export default {
 
 <style scoped>
 
-.quantity-label-column-fixed {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  padding: 2px;
-  margin: 2px;
-}
-
-.quantity-table-fixed {
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-content: end;
-  flex-grow:1;
-
-
-}
-
-.quantity-column-fixed {
-  display: flex;
-  flex-direction: row;
-  flex-grow:1;
-  justify-content: flex-end;
-  border: 1px solid #ccc;
-  padding: 2px;
-  margin: 2px;
-}
-
-.quantity-fixed {
-  display: inline;
-  flex-direction: row;
-  flex-grow:1;
-  justify-content: end;
-  align-content: end;
-  border: 1px solid #ccc;
-  width: 80px;
-  height: 15px;
-  padding: 2px;
-  margin: 2px;
-}
-
-.quantity-item-fixed {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: baseline;
-
-}
-
-.quantity-group-fixed {
-  display: flex;
-  flex-wrap: wrap;
-  flex-grow:1;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-content: center;
-  border: 1px solid #ccc;
-  margin: 2px;
-}
-
-.quantity-group {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: end;
-  align-content: end;
-  border: 1px solid #ccc;
-  margin: 2px;
-}
-
-.quantity-field {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: end;
-  align-content: end;
-  border: 1px solid #ccc;
-  margin: 2px;
-}
-
-.quantity-head {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-
-}
-
-.quantity-label {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-
-}
-
-.quantity-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: baseline;
-
-}
-
-.quantity-table {
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-content: end;
-
-}
-
-.quantity-label-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  padding: 2px;
-  margin: 2px;
-}
-
-.quantity {
-  display: inline;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-content: end;
-  border: 1px solid #ccc;
-  width: 80px;
-  height: 15px;
-  padding: 2px;
-  margin: 2px;
-}
-
-
-.quantity-column {
-  display: inline;
-  flex-direction: row;
-  justify-content: end;
-  border: 1px solid #ccc;
-  padding: 2px;
-  margin: 2px;
-}
 
 .company-header-content{
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: end;
+  align-items: end;
   width: 100%;
-  margin-left: 20px;
-  margin-right: 20px;
+
 }
 
 .sub-item{
@@ -744,17 +569,31 @@ export default {
 }
 
 .header-item{
-  width:50%;
+  width:100%;
   margin:2px;
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
+  flex-grow: 1;
 }
 
+.header-item-order{
+  width: 100%;
+  margin:2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+
+
+}
+
+
 .header-content{
+  width: 100%;
   margin: 2px;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: start;
@@ -762,7 +601,31 @@ export default {
   border-radius: 10px;
 }
 
+.header-content-order{
+  margin: 2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: start;
+  border: 2px solid gray;
+  border-radius: 10px;
+  width: 100%;
+
+}
+
+.costing-header-order{
+  width: 100%;
+  margin : 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: start;
+
+}
+
 .costing-header{
+  width: 100%;
+
   margin : 2px;
   display: flex;
   flex-direction: column;
