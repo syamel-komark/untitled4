@@ -43,7 +43,7 @@ import JobsheetPage from "@/components/jobsheet/JobsheetPage";
 import NewJobsheet from "@/components/jobsheet/NewJobsheet";
 import JobsheetForm from "@/components/jobsheet/JobsheetForm";
 import ColorPicker from "@/components/ColorPicker";
-
+import NewSchedule from "@/components/jobsheet/Schedule/SchedulePage";
 
 
 const routes = [
@@ -88,6 +88,7 @@ const routes = [
   { path: '/newjob', component: NewJobsheet},
   {path: '/jobsheetform', component: JobsheetForm},
   {path: '/colorpicker', component: ColorPicker},
+  {path: '/schedulejob', component: NewSchedule},
 
 
 

@@ -451,7 +451,7 @@ export default {
         salesPerson:'',
         customerName:'',
         direction:'',
-        deliveryDate:'',
+        deliveryDate: '',
         quantityPerRoll:'',
         jobType:'',
         colorCode:[],
