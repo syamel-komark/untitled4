@@ -1,8 +1,7 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <h2>New Label</h2>
-    <button @click="redirectTo('/graphicsearch')">Graphic Search</button>
+    <h2>Graphic Search</h2>
     <form @submit.prevent="registerNewMastercard" novalidate>
       <div>
         <label for="Mastercard">Mastercard Number: <button @click="redirectTo('/mastercardsearch')">Search</button>
@@ -16,6 +15,14 @@
       <div>
         <label for="Material">Material: <button @click="openMaterialSearch">Search Material</button></label>
         <input type="text" id="material" v-model="material" required />
+      </div>
+      <!-- PDF Preview -->
+      <div>
+        <!-- Your other content here -->
+
+        <!-- Display a PDF -->
+        <button @click="setMaterialPath(material)">Show PDF Preview</button>
+        <VuePDF :pdf="pdf" :page="1" />
       </div>
       <div>
         <label for="width">Width:</label>
@@ -36,8 +43,9 @@
         <p>{{ successMessageMastercard }}</p>
         <button @click="successRegisterMastercard=false">Close</button>
       </div>
+    </div>
   </div>
-  </div>
+
   <div class="success-modal" v-if="searchMaterial">
     <div class="table-container">
       <h2>User List</h2>
@@ -57,9 +65,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="material in filteredMaterials" :key="material.materialid">
-          <td>{{ material.materialname }}</td>
-          <td>{{ material.materialsupplier }}</td>
+        <tr v-for="material in filteredMaterials" :key="material.id">
+          <td>{{ material.filename }}</td>
+          <td>{{ material.path }}</td>
           <td>
             <button @click="pickMaterial(material)">Use</button>
           </td>
@@ -73,14 +81,18 @@
 <script>
 import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
+import {usePDF, VuePDF} from 'VuePDF'
 export default {
 
   components: {
-    HeaderBar,
+    HeaderBar, VuePDF,
   },
+
+
 
   data() {
     return {
+      pdfUrl: 'file:///V:/Staff%20Raden/Raden%20Artwork/Mizah/G18882%20-%20Eeya%20Graf%20Print%20(White%20Lab%20Label)/G18882%20-%20White%20Lab%20(Hot%20Stamping).pdf',
       username: null,
       currentTime: null,
       masterCard: '',
@@ -103,7 +115,7 @@ export default {
       } else {
         const query = this.searchQuery.toLowerCase();
         return this.materialPick.filter(material => {
-          return material.materialname.toLowerCase().includes(query);
+          return material.filename.toLowerCase().includes(query);
         });
       }
     },
@@ -112,7 +124,7 @@ export default {
 
   created() {
 
-    this.fetchMaterials();
+    this.fetchGraphics();
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
@@ -132,6 +144,16 @@ export default {
   },
 
   methods: {
+
+    async setMaterialPath(path) {
+      // Replace double backslashes with forward slashes
+      const normalizedPath = path.replace(/\\\\/g, '/');
+
+      // Encode the path to create a file URL
+      const fileUrl = `file:///${encodeURI(normalizedPath)}`;
+
+      this.material = fileUrl;
+    },
 
     async registerNewMastercard() {
       try {
@@ -161,13 +183,13 @@ export default {
 
 
     pickMaterial(selectedMaterial) {
-      this.material = selectedMaterial.materialname; // Set the selected material
+      this.material = selectedMaterial.path; // Set the selected material
       this.searchMaterial = false;
     },
 
-    async fetchMaterials() {
+    async fetchGraphics() {
       try {
-        const response = await axios.get('/api/getfacestock');
+        const response = await axios.get('/api/getgraphics');
         this.materialPick = response.data;
         console.log(this.materialPick);
       } catch (error) {

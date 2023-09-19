@@ -284,7 +284,6 @@ db.connect(err => {
 }
 ////////////////////////////////////////////////////
 
-
 /////////////////////HPCLICK//////////////////
 {
   app.get('/api/gethpclick', (req, res) => {
@@ -511,6 +510,143 @@ db.connect(err => {
 }
 //////////////////////////////////////////////////
 
+///////////////////////////////////GRAPHIC/////////////////////////////////////////////////////////
+{
+  // User registration
+  app.post('/api/register', (req, res) => {
+    const { username, password, level } = req.body;
+    const query = 'INSERT INTO users (username, password, level) VALUES (?, ?, ?)';
+
+    db.query(query, [username, password, level], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering user' });
+      } else {
+        res.status(200).json({ message: 'User registered successfully' });
+      }
+    });
+  });
+
+// User login
+  app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
+
+    //console.log(`Received login request for username: ${username}`);
+
+    db.query(query, [username, password], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error logging in' });
+      } else {
+        if (result.length === 1) {
+          req.session.user = result[0];
+          const userLevel = result[0].level;
+          res.status(200).json({ message: 'Login successful', level: userLevel });
+          //console.log(`userlevel:  ${userLevel}`);
+        } else {
+          res.status(401).json({ error: 'Invalid credentials' });
+        }
+      }
+    });
+
+
+  });
+
+//User delete
+  app.delete('/api/deleteuser', (req, res) => {
+    const { username } = req.body;
+    const query = 'DELETE FROM users WHERE username = ?';
+
+    db.query(query, [username], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error deleting user');
+      } else {
+        res.status(200).send('User deleted');
+      }
+    });
+  });
+
+//get user
+  app.get('/api/getgraphics', (req, res) => {
+    const query = 'SELECT * FROM graphic';
+
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching messages');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////SCHEDULE//////////////////////////
+{
+  app.post('/api/registerschedule', (req, res) => {
+    const { jobsheet, mastercard, labelname, material, process, finishing, machine, diecut, quantity, jobtype, customer, deliverydate, ordernumber, totallength, printingduration, settingduration, entrydate, salesperson} = req.body;
+    const query = 'INSERT INTO schedule (jobsheet, mastercard, labelname, material, process, finishing, machine, diecut, quantity, jobtype, customer, deliverydate, ordernumber, totallength, printingduration, settingduration,entrydate, salesperson) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+
+    db.query(query, [jobsheet, mastercard, labelname, material, process, finishing, machine, diecut, quantity, jobtype, customer, deliverydate, ordernumber, totallength, printingduration, settingduration,entrydate, salesperson], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error registering schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule registered successfully' });
+      }
+    });
+  });
+
+  app.get('/api/getschedule', (req, res) => {
+    const query = 'SELECT * FROM schedule ORDER BY id DESC';
+
+    db.query(query, (err, result) => {
+
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error fetching schedule');
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  });
+
+  app.put('/api/updateschedule', (req, res) => {
+    const { jobsheet, mastercard, labelname, material, process, finishing, machine, diecut, quantity, jobtype, customer, deliverydate, ordernumber, totallength, printingduration, settingduration, entrydate, salesperson, id} = req.body;
+    const query = 'UPDATE schedule SET jobsheet=?, mastercard=?, labelname=?, material=?, process=?, finishing=?, machine=?, diecut=?, quantity=?, jobtype=?, customer=?, deliverydate=?, ordernumber=?, totallength=?, printingduration=?, settingduration=?, entrydate=?, salesperson=?,  WHERE id = ?';
+
+    db.query(query, [jobsheet, mastercard, labelname, material, process, finishing, machine, diecut, quantity, jobtype, customer, deliverydate, ordernumber, totallength, printingduration, settingduration, entrydate, salesperson, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule updated successfully' });
+      }
+    });
+  });
+
+  app.delete('/api/deleteschedule', (req, res) => {
+    const { id } = req.body;
+    const query = 'DELETE FROM schedule WHERE id = ?';
+
+    db.query(query, [id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error deleting schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule deleted' });
+      }
+    });
+  });
+}
+//////////////////////////////////////////////////
+
 /////////////////////////COSTING//////////////////////////////
 {
   app.post('/api/registercosting', (req, res) => {
@@ -621,6 +757,21 @@ db.connect(err => {
     });
   });
 
+  app.put('/api/updatejobsheetinfo', (req, res) => {
+    const { printinglength, totallength, settinglength, wastagelength, inkuse, varnishuse, laminateuse, foiluse, printingduration, settingduration, approval,id} = req.body;
+    const query = 'UPDATE jobsheet SET printinglength=?, totallength=?, settinglength=?, wastagelength=?, inkuse=?, varnishuse=?, laminateuse=?, foiluse=?, printingduration=?, settingduration=?, approval=? WHERE id = ?';
+
+    db.query(query, [printinglength, totallength, settinglength, wastagelength, inkuse, varnishuse, laminateuse, foiluse, printingduration, settingduration, approval,id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating jobsheet' });
+      } else {
+        res.status(200).json({ message: 'jobsheet updated successfully' });
+      }
+    });
+  });
+
+
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -699,10 +850,10 @@ db.connect(err => {
   });
 
   app.post('/api/registerfixedcost', (req, res) => {
-    const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage} = req.body;
-    const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage) VALUES (?, ?,?, ?,?,?,?,?,?)';
+    const {process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,department, maxcapacity, shift} = req.body;
+    const query = 'INSERT INTO fixedcost (process,speed, costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,department, maxcapacity, shift) VALUES (?, ?, ?, ?, ?,?, ?,?,?,?,?,?)';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage], (err) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,department, maxcapacity, shift], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering fixedcost' });
@@ -713,10 +864,10 @@ db.connect(err => {
   });
 
   app.put('/api/updatefixedcost', (req, res) => {
-    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,id} = req.body;
-    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=?, settingwastage=? WHERE id = ?';
+    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,department, maxcapacity, shift, id} = req.body;
+    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=?, settingwastage=?,department=?, maxcapacity=?, shift=? WHERE id = ?';
 
-    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage, id], (err) => {
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,settingwastage,department, maxcapacity, shift, id], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating fixedcost' });
@@ -725,6 +876,21 @@ db.connect(err => {
       }
     });
   });
+
+  app.put('/api/updatefixedcostrecalculate', (req, res) => {
+    const {process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm,id} = req.body;
+    const query = 'UPDATE fixedcost SET process = ?,speed=?, costallocation = ?, currentutilization = ?,ratio=?,fixedcostmonth=?,fixedcostday=?,fixedcostm=? WHERE id = ?';
+
+    db.query(query, [process,speed,costallocation,currentutilization,ratio,fixedcostmonth,fixedcostday,fixedcostm, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating fixedcost' });
+      } else {
+        res.status(200).json({ message: 'fixedcost updated successfully' });
+      }
+    });
+  });
+
 
   app.delete('/api/deletefixedcost', (req, res) => {
     const { id } = req.body;

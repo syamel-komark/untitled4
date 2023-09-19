@@ -1,8 +1,8 @@
 <template>
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
-    <button v-print="'#myPrintableContent'">Print Costing</button>
-    <button @click="updatePricing">Save Pricing</button>
+    <button v-print="'#myPrintableContent'">Print Jobsheet</button>
+    <button @click="saveJobsheet">Save Jobsheet</button>
 
     <div class="print" id="myPrintableContent">
       <div class="company-header">
@@ -11,7 +11,7 @@
         <div class="company-header-content">
           <label>Jobsheet Number:{{this.jobsheetNumber}}</label>
           <label>Date:{{formattedDate}}</label>
-          <label>Status:{{approval}}</label>
+          <label>Costing Number: {{this.calculated.costingId}}</label>
         </div>
       </div>
       <div class="costing-header">
@@ -53,8 +53,12 @@
             <input for="header" v-model="this.costingData.mastercard">
             <label>Machine:</label>
             <input for="header" v-model="this.machineSpec.machineName">
-            <label>Quantity (PCS):</label>
-            <input for="header" v-model="this.costingData.orderQuantity">
+            <label>Job Type:</label>
+            <input for="header" v-model="this.jobsheet.jobType">
+            <label>Costing:</label>
+            <input for="header" v-model="this.approval">
+
+
           </div>
         </div>
       </div>
@@ -102,13 +106,17 @@
             <div class="sub-item">
               <label>Printing Length(m):</label>
               <input for="header" v-model="this.printLength">
+              <label>Total Length(m):</label>
+              <input for="header" v-model="this.calculated.totalLength">
+            </div>
+            <div class="sub-item">
               <label>Setting Length(m):</label>
               <input for="header" v-model="this.calculated.settingLength">
               <label>Wastage Length(m):</label>
               <input for="header" v-model="this.calculated.wastageLength">
-              <label>Total Length(m):</label>
-              <input for="header" v-model="this.calculated.totalLength">
+
             </div>
+
             <div class="sub-item">
               <label v-if="this.machineSpec.machineName==='HP'" type="sub">Clicks:</label>
               <label v-else type="sub">Ink(kg):</label>
@@ -130,6 +138,13 @@
               <label>Foil Length(m):</label>
               <input for="header" v-model="this.calculated.foilUse">
             </div>
+            <div class="sub-item">
+              <label>Quantity (PCS):</label>
+              <input for="header" v-model="this.costingData.orderQuantity">
+              <label>Diecut:</label>
+              <input for="header" v-model="this.costingData.dieCutType">
+            </div>
+
           </div>
         </div>
       </div>
@@ -150,24 +165,54 @@
         <header>Order Info</header>
         <div class="header-content-order">
           <div class ="header-item-order">
-            <label>Sales Person:</label>
-            <input for="header" v-model="this.jobsheet.salesPerson">
-            <label>Order Number:</label>
-            <input for="header" v-model="this.jobsheet.orderNumber">
+            <div class="sub-item">
+              <label>Sales Person:</label>
+              <input for="header" v-model="this.jobsheet.salesPerson">
+              <label>Order Number:</label>
+              <input for="header" v-model="this.jobsheet.orderNumber">
+            </div>
           </div>
           <div class ="header-item-order">
-            <label>Customer Name:</label>
-            <input for="header" v-model="this.jobsheet.customerName">
-            <div class = "sub-item">
-              <label>Job Type:</label>
-              <input for="header" v-model="this.jobsheet.jobType">
+            <div class="sub-item">
+              <label>Customer Name:</label>
+              <input for="header" v-model="this.jobsheet.customerName">
               <label>Delivery Date:</label>
               <input for="header" v-model="extractedDate">
             </div>
 
           </div>
+
         </div>
       </div>
+      <div class="costing-header-order">
+        <header>Approvals</header>
+        <div class="header-content-order">
+          <div class ="approvals-main">
+            <div class ="approval-area">
+              <div class="approval-box"></div>
+              <approval>Customer Service</approval>
+            </div>
+            <div class ="approval-area">
+              <div class="approval-box"></div>
+              <approval>Sales Person</approval>
+            </div>
+            <div class ="approval-area">
+              <div class="approval-box"></div>
+
+              <approval>Quality Manager</approval>
+            </div>
+            <div class ="approval-area">
+              <div class="approval-box"></div>
+              <approval>Production Manager</approval>
+            </div>
+            <div class ="approval-area">
+              <div class="approval-box"></div>
+              <approval>General Manager</approval>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
 
 
@@ -188,7 +233,7 @@
       <div class="success-content">
         <p>{{ successMessageLabel }}</p>
         <button @click="this.successUpdatePricing=false">Close</button>
-        <button @click="createQuotation">Create Quotation</button>
+        <button @click="createSchedule">Create Schedule</button>
       </div>
     </div>
   </div>
@@ -218,6 +263,7 @@ export default {
 
   data() {
     return {
+      printingLength:'',
       jobsheetInfo:[],
       jobsheet:{
         mastercard: '',
@@ -348,7 +394,7 @@ export default {
 
     approval(){
         if(this.calculated.currentMargin<0){
-          return 'Rejected: Below 0';
+          return 'Rejected < 0';
         }
         if(this.calculated.currentMargin>0.19){
           return 'Approved';
@@ -397,6 +443,45 @@ export default {
   },
 
   methods: {
+
+    async saveJobsheet(){
+      try {
+        this.printingLength = this.printLength;
+        const response = await axios.put('/api/updatejobsheetinfo', {
+          id: this.jobsheetNumber,
+          printinglength: this.printingLength,
+          totallength: this.calculated.totalLength,
+          settinglength: this.calculated.settingLength,
+          wastagelength: this.calculated.wastageLength,
+          inkuse: this.calculated.inkUse,
+          varnishuse: this.calculated.varnishUse,
+          laminateuse: this.calculated.laminateUse,
+          foiluse: this.calculated.foilUse,
+          printingduration: this.calculated.printingDuration,
+          settingduration: this.calculated.settingDuration,
+          approval:this.approval
+
+
+
+
+
+
+
+        });
+        if (response.status === 200) {
+          this.successUpdatePricing = true;
+          this.successMessageLabel = 'jobsheet have been successfully updated';
+          console.log('update successful');
+        } else {
+          this.successMessageLabel = 'pricing update failed.';
+          console.error('update failed');
+        }
+      } catch (error) {
+        console.error('Error during update:', error);
+      }
+
+    },
+
 
     async fetchJobsheet() {
       this.jobsheetNumber = sessionStorage.getItem('jobsheetnumber');
@@ -453,9 +538,9 @@ export default {
       }
     },
 
-    createQuotation(){
-      sessionStorage.setItem('quotationId',this.calculated.costingId);
-      this.$router.push('/newquotation');
+    createSchedule(){
+      sessionStorage.setItem('jobsheet',this.jobsheetNumber);
+      this.$router.push('/schedulejob');
     },
 
     async updatePricing() {
@@ -532,6 +617,36 @@ export default {
 </script>
 
 <style scoped>
+
+approval{
+  font-size: 14px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.approval-box{
+  display: flex;
+  height:60px;
+}
+
+.approval-area{
+  flex-direction: column;
+  display: flex;
+  border: 1px solid gray;
+  align-items: baseline;
+  justify-items: baseline;
+  margin-left: 10px;
+  margin-right: 10px;
+
+
+}
+
+.approvals-main {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  justify-content: center;
+}
 
 
 .company-header-content{

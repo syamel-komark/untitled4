@@ -14,6 +14,7 @@
       <table>
         <thead>
         <tr>
+          <th>Action</th>
           <th>Process id</th>
           <th>Process Name</th>
           <th>Speed</th>
@@ -23,12 +24,14 @@
           <th>Fixed Cost/month</th>
           <th>Fixed Cost/day</th>
           <th>Fixed Cost/m</th>
-          <th>Action</th>
 
         </tr>
         </thead>
         <tbody>
         <tr v-for="fixedcost in filterProcess" :key="fixedcost.id">
+          <td>
+            <button @click="pickFixedCost(fixedcost)">Use</button>
+          </td>
           <td>{{ fixedcost.id }}</td>
           <td>{{ fixedcost.process }}</td>
           <td>{{ fixedcost.speed }}</td>
@@ -38,9 +41,6 @@
           <td>{{ fixedcost.fixedcostmonth }}</td>
           <td>{{ fixedcost.fixedcostday }}</td>
           <td>{{ fixedcost.fixedcostm }}</td>
-          <td>
-            <button @click="pickFixedCost(fixedcost)">Use</button>
-          </td>
         </tr>
         </tbody>
       </table>
@@ -94,7 +94,22 @@
           <input type="text" id="labelName" v-model="formModel.fixedcostm" required />
         </div>
       </div>
+      <div class="form-group">
+        <div>
+          <label for="labelName">Department:</label>
+          <input type="text" id="labelName" v-model="formModel.department" required />
+        </div>
+        <div>
+          <label for="labelName">Max Capacity(m/day):</label>
+          <input type="text" id="labelName" v-model="formModel.maxCapacity" required />
+        </div>
+        <div>
+          <label for="labelName">Shift:</label>
+          <input type="text" id="labelName" v-model="formModel.shift" required />
+        </div>
       </div>
+
+    </div>
     <div>
       <button @click="deleteFixedCost">Delete</button>
       <button @click="clearField">Clear</button>
@@ -131,6 +146,14 @@ export default {
 
   computed:{
 
+    maxcap(){
+      let speed = this.formModel.speed;
+      let workinghour = 4;
+      let shift = this.formModel.shift
+      let maxcapacity = speed * 60 * workinghour / shift;
+      return maxcapacity;
+    },
+
     filterProcess(){
       if (this.fixedcostSearchQuery === '') {
         return this.fixedcost;
@@ -150,6 +173,9 @@ export default {
       successMessageLabel:'',
       success:false,
       formModel:{
+        shift:'',
+        department:'',
+        maxCapacity:'',
         id:'',
         process:'',
         speed:'',
@@ -228,6 +254,9 @@ export default {
           fixedcostday: this.formModel.fixedcostday,
           fixedcostm: this.formModel.fixedcostm,
           settingwastage: this.formModel.settingWastage,
+          department: this.formModel.department,
+          maxcapacity: this.formModel.maxCapacity,
+          shift: this.formModel.shift,
           id:this.formModel.id,
         });
         if (response.status === 200) {
@@ -256,6 +285,9 @@ export default {
           fixedcostday: this.formModel.fixedcostday,
           fixedcostm: this.formModel.fixedcostm,
           settingwastage: this.formModel.settingWastage,
+          department: this.formModel.department,
+          maxcapacity: this.formModel.maxCapacity,
+          shift: this.formModel.shift,
         });
         if (response.status === 200) {
           this.success = true;
@@ -284,6 +316,9 @@ export default {
       this.formModel.fixedcostday = '';
       this.formModel.fixedcostm = '';
       this.formModel.settingWastage='';
+      this.formModel.department='';
+      this.formModel.maxCapacity='';
+      this.formModel.shift='';
     },
 
     pickFixedCost(fixedcost) {
@@ -297,6 +332,9 @@ export default {
       this.formModel.fixedcostday = fixedcost.fixedcostday;
       this.formModel.fixedcostm = fixedcost.fixedcostm;
       this.formModel.settingWastage = fixedcost.settingwastage;
+      this.formModel.department=fixedcost.department;
+      this.formModel.maxCapacity=fixedcost.maxcapacity;
+      this.formModel.shift=fixedcost.shift;
     },
 
 

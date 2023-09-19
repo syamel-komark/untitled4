@@ -2,115 +2,128 @@
   <div class="dashboard">
     <HeaderBar :username="username" :currentTime="currentTime" @logout="logout" />
     <h2>Schedule Dashboard</h2>
+
+    <button @click="searchJobsheet" >Retrieve Jobsheet</button>
+    <div class="scheduleboard">
+      <header>JOB ON HAND</header>
+      <table>
+        <thead>
+        <tr>
+          <th>Jobsheet</th>
+          <th>Mastercard</th>
+          <th>Label</th>
+          <th>Machine</th>
+          <th>Length(m)</th>
+          <th>Quantity(PCS)</th>
+          <th>Process</th>
+          <th>Delivery</th>
+          <th>Action</th>
+
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="schedule in scheduleInfo" :key="schedule.id">
+          <td>{{ schedule.jobsheet }}</td>
+          <td>{{ schedule.mastercard }}</td>
+          <td>{{ schedule.labelname }}</td>
+          <td>{{ schedule.machine }}</td>
+          <td>{{ schedule.totallength }}</td>
+          <td>{{ schedule.quantity }}</td>
+          <td>{{ schedule.process }}</td>
+          <td>{{ schedule.deliverydate }}</td>
+          <td><button @click="deleteSchedule(schedule.id)">Delete</button></td>
+
+
+
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
     <div class="machine-select">
-      <div class="machine-group">
-        <button v-if="!label" @click="showLabel">LABEL</button>
-        <button v-if="label" :style="{ backgroundColor: '#1e7ff7' }" @click="showLabel">LABEL</button>
-        <button v-if="!flexible" @click="showFlexible">FLEXIBLE</button>
-        <button v-if="flexible" :style="{ backgroundColor: '#1e7ff7' }" @click="showFlexible">FLEXIBLE</button>
-        <button v-if="!digital" @click="showDigital">DIGITAL</button>
-        <button v-if="digital" :style="{ backgroundColor: '#1e7ff7' }" @click="showDigital">DIGITAL</button>
-        <div v-if="label" class="machine">
-          <button @click="showECS">ECS340</button>
-          <button @click="showEM2801">EM280-1</button>
-          <button @click="showEM2802">EM280-2</button>
-          <button @click="showKP13">KP13</button>
-          <button @click="showKP8">KP8</button>
-          <button @click="showIWASAKI">IWASAKI</button>
-          <button @click="showSONATA">SONATA</button>
-        </div>
-        <div v-if="digital" class="machine">
-          <button @click="showDIGITAL1">DIGITAL-1</button>
-          <button @click="showDIGITAL2">DIGITAL-2</button>
-          <button @click="showRHYGUAN">RHYGUAN</button>
-          <button @click="showGALLUS4">GALLUS4</button>
-        </div>
-        <div v-if="flexible" class="machine">
-          <button @click="showUTECO">UTECO</button>
-          <button @click="showGRAVURE">GRAVURE</button>
-          <button @click="showLAMINATE">LAMINATE</button>
-          <button @click="showFLEXO">FLEXO</button>
-          <button @click="showBAGMAKING1">BAGMAKING-1</button>
-          <button @click="showBAGMAKING2">BAGMAKING-2</button>
-          <button @click="showSLITTING1">SLITTING-1</button>
-          <button @click="showSLITTING2">SLITTING-2</button>
-          <button @click="showSLITTIN3">SLITTING-3</button>
+      <div>
+        <button
+            v-for="(department, index) in uniqueDepartments"
+            :key="index"
+            @click="handleDepartmentButtonClick(department)"
+            :class="{ 'selected-button': department === selectedDepartment }"
+
+        >
+          {{ department }}
+        </button>
+        <div>
+          <button
+              v-for="(process, index) in filteredProcesses"
+              :key="index"
+              @click="handleSelectedProcessButtonClick(process.process)"
+          >
+            {{ process.process }}
+          </button>
         </div>
       </div>
     </div>
     <div class="schedule-container">
       <div class="schedule-board">
-        <div v-if="isECS" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isEM1" class="ecs-schedule">
-          <button @click="getEM1Jobsheet">Get EM1 Jobsheet</button>
-        </div>
-        <div v-if="isEM2" class="ecs-schedule">
-          <button @click="getEM2Jobsheet">Get EM2 Jobsheet</button>
-        </div>
-        <div v-if="isKP13" class="ecs-schedule">
-          <button @click="getKP13Jobsheet">Get KP13 Jobsheet</button>
-        </div>
-        <div v-if="isKP8" class="ecs-schedule">
-          <button @click="getKP8Jobsheet">Get KP8 Jobsheet</button>
-        </div>
-        <div v-if="isIWA" class="ecs-schedule">
-          <button @click="getIWAJobsheet">Get IWASAKI Jobsheet</button>
-        </div>
-        <div v-if="isSON" class="ecs-schedule">
-          <button @click="getSONJobsheet">Get SONATA Jobsheet</button>
-        </div>
-        <div v-if="isUTE" class="ecs-schedule">
-          <button @click="getUTEJobsheet">Get UTECO Jobsheet</button>
-        </div>
-        <div v-if="isGRA" class="ecs-schedule">
-          <button @click="getGRAJobsheet">Get GRAVURE Jobsheet</button>
-        </div>
-        <div v-if="isLAM" class="ecs-schedule">
-          <button @click="getLAMJobsheet">Get LAMINATION Jobsheet</button>
-        </div>
-        <div v-if="isDG1" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isDG2" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isRHY" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isGL4" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isFLX" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isSL1" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isSL2" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isSL3" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isBM1" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-        <div v-if="isBM2" class="ecs-schedule">
-          <button @click="getECSJobsheet">Get ECS Jobsheet</button>
-        </div>
-
 
       </div>
     </div>
   </div>
+  <div class="success-modal" v-if="isSearchJobsheet">
+    <div class="table-container">
+      <h2>Jobsheet List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="searchJobsheetQuery"
+            @input="filterCosting"
+            placeholder="Search by Mastercard"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Action</th>
+          <th>Jobsheet Number</th>
+          <th>Mastercard</th>
+          <th>Label name</th>
+          <th>Machine</th>
+          <th>Pitch</th>
+          <th>Width</th>
+          <th>Material</th>
+          <th>Quantity</th>
+
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="jobsheet in filteredJobsheet" :key="jobsheet.id">
+          <td>
+            <button @click="pickJobsheet(jobsheet)">Use</button>
+          </td>
+          <td>{{ jobsheet.id }}</td>
+          <td>{{ jobsheet.mastercard }}</td>
+          <td>{{ jobsheet.labelname }}</td>
+          <td>{{ jobsheet.machine }}</td>
+          <td>{{ jobsheet.pitch }}</td>
+          <td>{{ jobsheet.width }}</td>
+          <td>{{ jobsheet.material }}</td>
+          <td>{{ jobsheet.quantity }}</td>
+
+
+        </tr>
+        </tbody>
+      </table>
+    </div><button @click=searchJobsheet>Close</button>
+  </div>
+
 
 </template>
 
 <script>
 //import axios from "axios";
 import HeaderBar from "@/components/AppHeader.vue";
+import axios from "axios";
 export default {
 
   components: {
@@ -119,6 +132,34 @@ export default {
 
   data() {
     return {
+      formModel:{
+        mastercard:'',
+        labelName:'',
+        facestock:'',
+        process:'',
+        finishing:'',
+        dieCutType:'',
+        quantityOrder:'',
+        jobType:'',
+        salesPerson:'',
+        customerName:'',
+        deliveryDate:'',
+        orderNumber:'',
+        totalLength:'',
+        printingDuration:'',
+        settingDuration:'',
+        jobsheetNumber:'',
+        machine:'',
+        entryDate:'',
+      },
+      scheduleInfo:[],
+      searchJobsheetQuery:'',
+      jobsheetInfo:[],
+      isSearchJobsheet: false,
+      selectedProcess: null,
+      processList:[],
+      selectedDepartment:null,
+      departmentList:[],
       isECS:false,
       label:false,
       flexible:false,
@@ -131,9 +172,16 @@ export default {
 
   created() {
 
+    this.fetchJobsheet();
+    this.fetchSchedule()
+    this.getDepartment();
+    this.getProcess();
 
     // Retrieve username from session storage
     this.username = sessionStorage.getItem('username') || '';
+   // this.searchJobsheetQuery = sessionStorage.getItem('jobsheet') || '';
+
+
 
     // Get current time
     const now = new Date();
@@ -149,27 +197,197 @@ export default {
     clearInterval(this.currentTimeInterval);
   },
 
+  computed: {
+
+    filteredJobsheet() {
+      if (this.searchJobsheetQuery === '') {
+        return this.jobsheetInfo;
+      } else {
+        const query = this.searchJobsheetQuery;
+        return this.jobsheetInfo.filter(jobsheet => {
+          return jobsheet.id.includes(query);
+        });
+      }
+    },
+
+    filteredProcesses() {
+      if (!this.selectedDepartment) {
+        // If no department is selected, return an empty array
+        return [];
+      }
+      // Filter the processList based on the selected department
+      return this.processList.filter(process => process.department === this.selectedDepartment);
+    },
+
+    uniqueDepartments() {
+      const uniqueSet = new Set(); // Create a Set to store unique department names
+
+      // Iterate through this.departmentList and add department names to the Set
+      this.departmentList.forEach((machineData) => {
+        uniqueSet.add(machineData.department);
+      });
+
+      // Convert the Set back to an array to get unique department names
+      return Array.from(uniqueSet);
+    }
+  },
+
+
   methods: {
-    showECS(){
-      this.isECS=!this.isECS;
+
+    async deleteSchedule(id) {
+      try {
+        const response = await axios.delete('/api/deleteschedule', {
+          data: {
+            id: id,
+          },
+        });
+        if (response.status === 200) {
+          console.log('schedule deleted successfully');
+          // Update the users list after deletion
+          this.fetchSchedule();
+        } else {
+          console.error('schedule deletion failed');
+        }
+      } catch (error) {
+        console.error('Error deleting schedule:', error);
+      }
     },
 
-    showDigital(){
-      this.digital=!this.digital;
-      this.label = false;
-      this.flexible = false;
+
+    async registerSchedule() {
+      try {
+            const response = await axios.post('/api/registerschedule', {
+              mastercard: this.formModel.mastercard,
+              labelname: this.formModel.labelName,
+              material: this.formModel.facestock,
+              process: this.formModel.process,
+              finishing: this.formModel.finishing,
+              machine: this.formModel.machine,
+              diecut :this.formModel.dieCutType,
+              quantity :this.formModel.quantityOrder,
+              salesperson: this.formModel.salesPerson,
+              customer: this.formModel.customerName,
+              deliverydate: this.formModel.deliveryDate,
+              ordernumber: this.formModel.orderNumber,
+              jobtype: this.formModel.jobType,
+              entrydate: this.formModel.entryDate,
+              totallength: this.formModel.totalLength,
+              printingduration: this.formModel.printingDuration,
+              settingduration: this.formModel.settingDuration,
+              jobsheet: this.formModel.jobsheetNumber,
+
+        });
+
+        if (response.status === 200) {
+          await this.fetchSchedule();
+          this.successRegisterLabel = true;
+          this.successMessageLabel = 'label has been successfully updated.';
+          console.log('Registration successful');
+        } else {
+          this.successMessageLabel = 'Label registration failed.';
+          console.error('Registration failed');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
     },
 
-    showFlexible(){
-      this.flexible=!this.flexible;
-      this.label = false;
-      this.digital = false;
+
+    async pickJobsheet(jobsheet) {
+      this.formModel.mastercard = jobsheet.mastercard; // Set the selected material
+      this.formModel.labelName = jobsheet.labelname; // Set the selected material
+      this.formModel.facestock = jobsheet.material; // Set the selected material
+      this.formModel.process = jobsheet.process; // Set the selected material
+      this.formModel.finishing = jobsheet.finishing; // Set the selected material
+      this.formModel.dieCutType = jobsheet.diecut;
+      this.formModel.quantityOrder = jobsheet.quantity;
+      this.formModel.jobType = jobsheet.jobtype;
+      this.formModel.salesPerson = jobsheet.salesperson
+      this.formModel.customerName =  jobsheet.customer;
+      this.formModel.totalLength = jobsheet.totallength;
+      this.formModel.printingDuration = jobsheet.printingduration;
+      this.formModel.settingDuration = jobsheet.settingduration;
+      this.formModel.jobsheetNumber = jobsheet.id;
+      this.formModel.machine = jobsheet.machine;
+      this.formModel.orderNumber = jobsheet.ordernumber;
+      this.formModel.deliveryDate = jobsheet.deliverydate;
+      this.formModel.entryDate = jobsheet.entry_datetime;
+      await this.registerSchedule()
     },
 
-    showLabel(){
-      this.label=!this.label;
-      this.flexible = false;
-      this.digital = false;
+
+    async fetchSchedule() {
+      try {
+        const response = await axios.get('/api/getschedule');
+        this.scheduleInfo = response.data;
+        console.log(this.scheduleInfo);
+      } catch (error) {
+        console.error('Error fetching mastercard:', error);
+      }
+    },
+
+    async fetchJobsheet() {
+      try {
+        const response = await axios.get('/api/getjobsheet');
+        this.jobsheetInfo = response.data;
+        console.log(this.jobsheetInfo);
+      } catch (error) {
+        console.error('Error fetching mastercard:', error);
+      }
+    },
+
+    searchJobsheet(){
+      this.isSearchJobsheet = !this.isSearchJobsheet;
+    },
+
+    handleSelectedProcessButtonClick(process) {
+      this.selectedProcess = process; // Set the selected department
+      console.log(this.selectedProcess);
+      // You can add any other logic here based on the selected department
+    },
+
+    async getProcess() {
+      try {
+        const response = await axios.get('/api/getfixedcost');
+        this.processList = response.data.map((machineData) => {
+          return {
+            department: machineData.department,
+            process: machineData.process,
+
+            // Add other properties here as needed
+          };
+        });
+        console.log(this.processList);
+      } catch (error) {
+        console.error('Error fetching fixedcost:', error);
+      }
+    },
+
+    handleDepartmentButtonClick(department) {
+      if (this.selectedDepartment === department) {
+        // If the clicked department is already selected, clear the selection
+        this.selectedDepartment = null;
+      } else {
+        // Otherwise, set the selected department
+        this.selectedDepartment = department;
+      }
+      console.log(this.selectedDepartment);
+      // You can add any other logic here based on the selected department
+    },
+    async getDepartment() {
+      try {
+        const response = await axios.get('/api/getfixedcost');
+        this.departmentList = response.data.map((machineData) => {
+          return {
+            department: machineData.department,
+            // Add other properties here as needed
+          };
+        });
+        console.log(this.departmentList);
+      } catch (error) {
+        console.error('Error fetching fixedcost:', error);
+      }
     },
 
     updateCurrentTime() {
@@ -186,12 +404,37 @@ export default {
 
 <style scoped>
 
-.dashboard {
-  padding: 20px;
+.scheduleboard {
+  padding: 5px;
+  border: 3px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  align-content: space-evenly;
+}
+
+.machine-select {
+  padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f0f0f0;
+  align-content: space-evenly;
+}
+
+.selected-button {
+  background-color: #0600ff; /* Set the background color for the selected button */
+  /* Add any other styling you want for selected buttons */
+}
+
+.dashboard {
+  margin: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button{
+  margin:1px;
 }
 
 </style>

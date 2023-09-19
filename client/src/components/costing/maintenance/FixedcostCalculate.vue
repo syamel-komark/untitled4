@@ -126,62 +126,86 @@ export default {
   computed:{
 
     calculatefixedcostpermeter() {
+      // Get the workhour and initialize the costpermeter array
       let workhour = this.workhour;
       let costpermeter = [];
+
+      // Loop through the arrays and calculate the cost per meter
       for (let i = 0; i < this.calculatefixedcostperday.length; i++) {
-        costpermeter.push(this.calculatefixedcostperday[i] /( this.fixedcost[i].speed * 60 * workhour));
+        // Perform the calculation and round the result to two decimal places
+        let calculatedCost = this.calculatefixedcostperday[i] / (this.fixedcost[i].speed * 60 * workhour);
+        let roundedCost = parseFloat(calculatedCost.toFixed(4)); // Round to two decimal places
+
+        // Push the rounded cost to the costpermeter array
+        costpermeter.push(roundedCost);
       }
+
+      // Return the array of cost per meter values
       return costpermeter;
     },
+
 
 
     calculatefixedcostperday(){
       let costpermonth = this.calculatefixedcostpermonth;
       let costperday = [];
       for (let i = 0; i < costpermonth.length; i++) {
-        costperday.push(costpermonth[i] / this.workday);
+        let costday = costpermonth[i] / this.workday;
+        let roundedcostday = parseFloat(costday.toFixed(4));
+        costperday.push(roundedcostday);
       }
       return costperday;
 
 
     },
 
-    calculatefixedcostpermonth(){
+    calculatefixedcostpermonth() {
       let total = this.update.totalFixedCost;
       let allocation = this.calculatecostallocation;
-      let fixedcostpermonth=[];
+      let fixedcostpermonth = [];
+
       for (let i = 0; i < allocation.length; i++) {
-        fixedcostpermonth.push(allocation[i] * total);
+        let costmonth = allocation[i] * total;
+        let roundedcostmonth = parseFloat(costmonth.toFixed(4)); // Apply parseFloat after toFixed
+        fixedcostpermonth.push(roundedcostmonth);
       }
+
       return fixedcostpermonth;
-
-
     },
+
 
     calculatecostallocation(){
       let total = this.calculatetotalratio;
       let costallocation = [];
       for (let i = 0; i < this.calculateratio.length; i++) {
-        costallocation.push(this.calculateratio[i] / total);
+        let costalloc = this.calculateratio[i] / total;
+        let roundedcostalloc = parseFloat(costalloc.toFixed(4));
+        costallocation.push(roundedcostalloc);
       }
       return costallocation;
     },
 
-    calculatetotalratio(){
-      let ratio = this.calculateratio
+    calculatetotalratio() {
+      let ratio = this.calculateratio;
       let total = 0;
+
       for (let i = 0; i < ratio.length; i++) {
         total += ratio[i];
       }
-      return total;
+
+      // Round the result to four decimal places
+      return parseFloat(total.toFixed(4));
     },
+
 
 
 
     calculateratio(){
       let ratio = []
       for (let i = 0; i < this.fixedcost.length; i++) {
-        ratio.push((this.fixedcost[i].speed / this.calculateTotalSpeed)*this.fixedcost[i].currentutilization);
+        let costratio = (this.fixedcost[i].speed / this.calculateTotalSpeed)*this.fixedcost[i].currentutilization;
+        let roundedcostratio = parseFloat(costratio.toFixed(4));
+        ratio.push(roundedcostratio);
       }
       return ratio;
     },
@@ -191,7 +215,7 @@ export default {
       for (let i = 0; i < this.fixedcost.length; i++) {
         total += this.fixedcost[i].speed;
       }
-      return total;
+      return parseFloat(total.toFixed(4));
     },
 
     calculateTotalFixedCost() {
@@ -199,7 +223,7 @@ export default {
       for (let i = 0; i < this.fixedcost.length; i++) {
         total += this.fixedcost[i].fixedcostmonth;
       }
-      return total;
+      return parseFloat(total.toFixed(4));
     },
 
 
@@ -257,7 +281,7 @@ export default {
     async recalculateFixedCost() {
       try {
         for (let i = 0; i < this.fixedcost.length; i++) {
-          const response = await axios.put('/api/updatefixedcost', {
+          const response = await axios.put('/api/updatefixedcostrecalculate', {
             process: this.fixedcost[i].process,
             speed: this.fixedcost[i].speed,
             costallocation: this.calculatecostallocation[i],

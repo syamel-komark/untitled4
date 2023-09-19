@@ -938,6 +938,8 @@ export default {
       this.selectedProcesses = this.splitProcess;
       this.machineType = jobsheet.machine;
       this.selectJobsheet =true;
+      this.selectCosting =false;
+
     },
 
     async registerJobsheet() {
@@ -1094,6 +1096,8 @@ export default {
       this.selectedProcessWastage = this.splitProcessWastage;
       this.machineType = costing.machine;
       this.selectCosting =true;
+      this.selectJobsheet=false;
+
     },
 
     async fetchCostinginfo() {
@@ -1124,6 +1128,7 @@ export default {
 
     openSearchJobsheet(){
       this.searchJobsheet=true;
+      this.searchCosting=false;
     },
 
     async runAsyncFunctions() {
