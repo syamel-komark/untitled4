@@ -57,6 +57,8 @@
               v-for="(process, index) in filteredProcesses"
               :key="index"
               @click="handleSelectedProcessButtonClick(process.process)"
+              :class="{ 'selected-button': process.process === selectedProcess }"
+
           >
             {{ process.process }}
           </button>
@@ -64,7 +66,49 @@
       </div>
     </div>
     <div class="schedule-container">
-      <div class="schedule-board">
+      <div v-if="this.selectedProcess" class="scheduleboard">
+        <div class="scheduleboard-header">
+          <header>{{this.selectedProcess}} CURRENT JOB</header>
+          <header>CURRENT CAPACITY: {{filteredRowsCapacity}}m</header>
+          <header>MAX CAPACITY: {{filteredCapacity}}m/day</header>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <h3>Draggable table</h3>
+
+            <table class="table table-striped">
+              <thead class="thead-dark">
+              <tr>
+                <th>Jobsheet</th>
+                <th>Mastercard</th>
+                <th>Label</th>
+                <th>Machine</th>
+                <th>Length(m)</th>
+                <th>Quantity(PCS)</th>
+                <th>Process</th>
+                <th>Delivery</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <draggable v-model="selectedSchedule" tag="tbody" item-key="id">
+                <template #item="{ element }">
+                  <tr>
+                    <td>{{ element.jobsheet }}</td>
+                    <td>{{ element.mastercard }}</td>
+                    <td>{{ element.labelname }}</td>
+                    <td>{{ element.machine }}</td>
+                    <td>{{ element.totallength }}</td>
+                    <td>{{ element.quantity }}</td>
+                    <td>{{ element.process }}</td>
+                    <td>{{ element.deliverydate }}</td>
+                  </tr>
+                </template>
+              </draggable>
+            </table>
+          </div>
+
+          <rawDisplayer class="col-3" :value="list" title="List" />
+        </div>
 
       </div>
     </div>
@@ -116,22 +160,22 @@
       </table>
     </div><button @click=searchJobsheet>Close</button>
   </div>
-
-
 </template>
 
 <script>
-//import axios from "axios";
+import draggable from 'vuedraggable'
 import HeaderBar from "@/components/AppHeader.vue";
 import axios from "axios";
 export default {
 
   components: {
-    HeaderBar,
+    HeaderBar,draggable,
   },
 
   data() {
     return {
+      selectedSchedule:[],
+      selectedLabel: '',
       formModel:{
         mastercard:'',
         labelName:'',
@@ -159,6 +203,7 @@ export default {
       selectedProcess: null,
       processList:[],
       selectedDepartment:null,
+      maxCapacity:null,
       departmentList:[],
       isECS:false,
       label:false,
@@ -172,8 +217,8 @@ export default {
 
   created() {
 
+    this.fetchSchedule();
     this.fetchJobsheet();
-    this.fetchSchedule()
     this.getDepartment();
     this.getProcess();
 
@@ -198,6 +243,46 @@ export default {
   },
 
   computed: {
+
+    filteredRowsCapacity() {
+      const filteredRows = this.filteredRows;
+
+      if (filteredRows.length === 0) {
+        return 0; // or an appropriate default value
+      } else {
+        return filteredRows.reduce((total, row) => {
+          const lengthAsNumber = parseFloat(row.totallength);
+          return total + (isNaN(lengthAsNumber) ? 0 : lengthAsNumber);
+        }, 0);
+      }
+    },
+
+    filteredCapacity() {
+      if (this.selectedProcess === '') {
+        return null; // or an appropriate default value
+      } else {
+        const query = this.selectedProcess;
+        const matchingProcess = this.processList.find(process => {
+          return process.process === query;
+        });
+
+        return matchingProcess ? matchingProcess.maxcapacity : null; // or an appropriate default value
+      }
+    },
+
+
+
+    filteredRows() {
+      if (this.selectedProcess === '') {
+        return this.scheduleInfo;
+      } else {
+        const query = this.selectedProcess;
+        return this.scheduleInfo.filter(schedule => {
+          return schedule.process.includes(query);
+        });
+      }
+    },
+
 
     filteredJobsheet() {
       if (this.searchJobsheetQuery === '') {
@@ -234,6 +319,37 @@ export default {
 
 
   methods: {
+
+    handleRowReorder(newOrder) {
+      // Update the order of rows in your data based on the newOrder array
+      this.selectedSchedule = newOrder;
+    },
+
+    createProcessSchedule(){
+      this.selectedSchedule = this.filteredRows
+      console.log(this.scheduleInfo[0].process)
+      console.log(this.filteredRows)
+      console.log(this.selectedSchedule)
+    },
+
+    async deleteRow(index) {
+      try {
+        const response = await axios.delete('/api/deleteschedule', {
+          data: {
+            id: index,
+          },
+        });
+        if (response.status === 200) {
+          console.log('schedule deleted successfully');
+          // Update the users list after deletion
+          this.fetchSchedule();
+        } else {
+          console.error('schedule deletion failed');
+        }
+      } catch (error) {
+        console.error('Error deleting schedule:', error);
+      }
+    },
 
     async deleteSchedule(id) {
       try {
@@ -342,7 +458,17 @@ export default {
     },
 
     handleSelectedProcessButtonClick(process) {
-      this.selectedProcess = process; // Set the selected department
+
+      console.log(this.selectedProcess);
+      // You can add any other logic here based on the selected department
+      if (this.selectedProcess === process) {
+        // If the clicked department is already selected, clear the selection
+        this.selectedProcess = null;
+      } else {
+        // Otherwise, set the selected department
+        this.selectedProcess = process; // Set the selected department
+        this.createProcessSchedule();
+      }
       console.log(this.selectedProcess);
       // You can add any other logic here based on the selected department
     },
@@ -354,6 +480,7 @@ export default {
           return {
             department: machineData.department,
             process: machineData.process,
+            maxcapacity:machineData.maxcapacity,
 
             // Add other properties here as needed
           };
@@ -403,6 +530,13 @@ export default {
 </script>
 
 <style scoped>
+
+.scheduleboard-header {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: space-evenly;
+}
 
 .scheduleboard {
   padding: 5px;
