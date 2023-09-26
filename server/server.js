@@ -644,6 +644,21 @@ db.connect(err => {
       }
     });
   });
+
+  app.put('/api/updateprocessschedule', (req, res) => {
+    const { scheduleid, id} = req.body;
+    const query = 'UPDATE schedule SET scheduleid=?  WHERE id = ?';
+
+    db.query(query, [scheduleid, id], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating process schedule' });
+      } else {
+        res.status(200).json({ message: 'Process schedule updated successfully' });
+      }
+    });
+  });
+
 }
 //////////////////////////////////////////////////
 

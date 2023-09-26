@@ -6,39 +6,41 @@
     <button @click="searchJobsheet" >Retrieve Jobsheet</button>
     <div class="scheduleboard">
       <header>JOB ON HAND</header>
-      <table>
-        <thead>
-        <tr>
-          <th>Jobsheet</th>
-          <th>Mastercard</th>
-          <th>Label</th>
-          <th>Machine</th>
-          <th>Length(m)</th>
-          <th>Quantity(PCS)</th>
-          <th>Process</th>
-          <th>Delivery</th>
-          <th>Action</th>
+      <div class = "table-container-schedule">
+        <table>
+          <thead>
+          <tr>
+            <th>Jobsheet</th>
+            <th>Mastercard</th>
+            <th>Label</th>
+            <th>Machine</th>
+            <th>Length(m)</th>
+            <th>Quantity(PCS)</th>
+            <th>Process</th>
+            <th>Delivery</th>
+            <th>Action</th>
 
 
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="schedule in scheduleInfo" :key="schedule.id">
-          <td>{{ schedule.jobsheet }}</td>
-          <td>{{ schedule.mastercard }}</td>
-          <td>{{ schedule.labelname }}</td>
-          <td>{{ schedule.machine }}</td>
-          <td>{{ schedule.totallength }}</td>
-          <td>{{ schedule.quantity }}</td>
-          <td>{{ schedule.process }}</td>
-          <td>{{ schedule.deliverydate }}</td>
-          <td><button @click="deleteSchedule(schedule.id)">Delete</button></td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="schedule in scheduleInfo" :key="schedule.id">
+            <td>{{ schedule.jobsheet }}</td>
+            <td>{{ schedule.mastercard }}</td>
+            <td>{{ schedule.labelname }}</td>
+            <td>{{ schedule.machine }}</td>
+            <td>{{ schedule.totallength }}</td>
+            <td>{{ schedule.quantity }}</td>
+            <td>{{ schedule.process }}</td>
+            <td>{{ schedule.deliverydate }}</td>
+            <td><button @click="deleteSchedule(schedule.id)">Delete</button></td>
 
 
 
-        </tr>
-        </tbody>
-      </table>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
     </div>
     <div class="machine-select">
@@ -90,9 +92,9 @@
                 <th>Action</th>
               </tr>
               </thead>
-              <draggable v-model="selectedSchedule" tag="tbody" item-key="id">
+              <draggable v-model="selectedSchedule" tag="tbody" item-key="id" @change="handleRowReorder">
                 <template #item="{ element }">
-                  <tr>
+                  <tr class="draggable-item">
                     <td>{{ element.jobsheet }}</td>
                     <td>{{ element.mastercard }}</td>
                     <td>{{ element.labelname }}</td>
@@ -121,7 +123,7 @@
             type="text"
             v-model="searchJobsheetQuery"
             @input="filterCosting"
-            placeholder="Search by Mastercard"
+            placeholder="Search Jobsheet"
         />
       </div>
       <table>
@@ -131,10 +133,9 @@
           <th>Jobsheet Number</th>
           <th>Mastercard</th>
           <th>Label name</th>
-          <th>Machine</th>
-          <th>Pitch</th>
-          <th>Width</th>
-          <th>Material</th>
+          <th>Order Number</th>
+          <th>Process</th>
+          <th>Total Length</th>
           <th>Quantity</th>
 
 
@@ -148,18 +149,36 @@
           <td>{{ jobsheet.id }}</td>
           <td>{{ jobsheet.mastercard }}</td>
           <td>{{ jobsheet.labelname }}</td>
-          <td>{{ jobsheet.machine }}</td>
-          <td>{{ jobsheet.pitch }}</td>
-          <td>{{ jobsheet.width }}</td>
-          <td>{{ jobsheet.material }}</td>
+          <td>{{ jobsheet.ordernumber}}</td>
+          <td>{{ jobsheet.process }}</td>
+          <td>{{ jobsheet.totallength}}</td>
           <td>{{ jobsheet.quantity }}</td>
 
 
         </tr>
         </tbody>
       </table>
-    </div><button @click=searchJobsheet>Close</button>
+    </div>
+    <button @click=searchJobsheet>Close</button>
   </div>
+  <div class="success-modal" v-if="showSuccessModal">
+    <div class="success-content">
+      <p>{{ Message }}</p>
+      <button @click="showSuccessModal=false">Close</button>
+    </div>
+  </div>
+  <div class="success-modal" v-if="machineModal">
+    <div class="success-content">
+      <p>Assign Machine</p>
+      <select v-model="selectedMachine">
+        <option value="">Select a Machine</option>
+        <option v-for="machineData in processList" :key="machineData.process" :value="machineData.process">{{ machineData.process }}</option>
+      </select>
+      <button @click="assignMachine">Assign</button>
+      <button @click="machineModal=false">Close</button>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -174,6 +193,11 @@ export default {
 
   data() {
     return {
+      selectedMachine: null,
+      machineModal: false,
+      Message:'',
+      showSuccessModal:false,
+      processSchedule:[],
       selectedSchedule:[],
       selectedLabel: '',
       formModel:{
@@ -277,12 +301,34 @@ export default {
         return this.scheduleInfo;
       } else {
         const query = this.selectedProcess;
-        return this.scheduleInfo.filter(schedule => {
+        const filteredData = this.scheduleInfo.filter(schedule => {
           return schedule.process.includes(query);
         });
+
+        // Sort the filtered data by tableid in ascending order
+        filteredData.sort((a, b) => a.scheduleid - b.scheduleid);
+
+        let maxScheduleId = 0;
+        for (let i = 0; i < filteredData.length; i++) {
+          if (filteredData[i].scheduleid !== null && filteredData[i].scheduleid > maxScheduleId) {
+            maxScheduleId = filteredData[i].scheduleid;
+          }
+        }
+
+        // Assign scheduleid values to null entries starting from the largest + 1
+        let nextScheduleId = maxScheduleId + 1;
+        for (let i = 0; i < filteredData.length; i++) {
+          if (filteredData[i].scheduleid === null) {
+            filteredData[i].scheduleid = nextScheduleId;
+            nextScheduleId++;
+          }
+        }
+
+        filteredData.sort((a, b) => a.scheduleid - b.scheduleid);
+
+        return filteredData;
       }
     },
-
 
     filteredJobsheet() {
       if (this.searchJobsheetQuery === '') {
@@ -290,7 +336,7 @@ export default {
       } else {
         const query = this.searchJobsheetQuery;
         return this.jobsheetInfo.filter(jobsheet => {
-          return jobsheet.id.includes(query);
+          return jobsheet.id.toString().includes(query);
         });
       }
     },
@@ -320,35 +366,30 @@ export default {
 
   methods: {
 
-    handleRowReorder(newOrder) {
-      // Update the order of rows in your data based on the newOrder array
-      this.selectedSchedule = newOrder;
+    async assignMachine(){
+      await this.registerSchedule()
+      this.isSearchJobsheet = !this.isSearchJobsheet;
+      this.machineModal=false;
+    },
+
+    async handleRowReorder() {
+      this.processSchedule = this.selectedSchedule;
+      console.log(this.processSchedule);
+      for(let i = 0; i < this.processSchedule.length; i++){
+        const id =  this.processSchedule[i].id;
+        await axios.put("/api/updateprocessschedule", {
+          scheduleid: i + 1, // Set the new scheduleid based on the new index
+          id,
+        });
+      }
+
     },
 
     createProcessSchedule(){
       this.selectedSchedule = this.filteredRows
       console.log(this.scheduleInfo[0].process)
       console.log(this.filteredRows)
-      console.log(this.selectedSchedule)
-    },
-
-    async deleteRow(index) {
-      try {
-        const response = await axios.delete('/api/deleteschedule', {
-          data: {
-            id: index,
-          },
-        });
-        if (response.status === 200) {
-          console.log('schedule deleted successfully');
-          // Update the users list after deletion
-          this.fetchSchedule();
-        } else {
-          console.error('schedule deletion failed');
-        }
-      } catch (error) {
-        console.error('Error deleting schedule:', error);
-      }
+      console.log(this.selectedSchedule[0].scheduleid)
     },
 
     async deleteSchedule(id) {
@@ -377,11 +418,11 @@ export default {
               mastercard: this.formModel.mastercard,
               labelname: this.formModel.labelName,
               material: this.formModel.facestock,
-              process: this.formModel.process,
+              process: this.selectedMachine,
               finishing: this.formModel.finishing,
-              machine: this.formModel.machine,
               diecut :this.formModel.dieCutType,
               quantity :this.formModel.quantityOrder,
+              machine: this.formModel.machine,
               salesperson: this.formModel.salesPerson,
               customer: this.formModel.customerName,
               deliverydate: this.formModel.deliveryDate,
@@ -409,8 +450,24 @@ export default {
       }
     },
 
+    isJobSheetDuplicate(jobSheetIdentifier) {
+      return this.scheduleInfo.some(item => item.jobsheet === jobSheetIdentifier);
+    },
 
     async pickJobsheet(jobsheet) {
+      const jobSheetIdentifier = jobsheet.id; // Change this to the actual identifier property
+      console.log('picked jobsheet', jobSheetIdentifier)
+      console.log(this.isJobSheetDuplicate(jobSheetIdentifier))
+
+      // Check if it's a duplicate
+      if (this.isJobSheetDuplicate(jobSheetIdentifier)) {
+        // Handle the case where it's a duplicate, e.g., show an error message
+        this.Message = 'Duplicate Jobsheet Picked';
+        this.showSuccessModal = true;
+
+        return;
+      }
+      this.machineModal= true;
       this.formModel.mastercard = jobsheet.mastercard; // Set the selected material
       this.formModel.labelName = jobsheet.labelname; // Set the selected material
       this.formModel.facestock = jobsheet.material; // Set the selected material
@@ -429,7 +486,6 @@ export default {
       this.formModel.orderNumber = jobsheet.ordernumber;
       this.formModel.deliveryDate = jobsheet.deliverydate;
       this.formModel.entryDate = jobsheet.entry_datetime;
-      await this.registerSchedule()
     },
 
 
@@ -531,6 +587,35 @@ export default {
 
 <style scoped>
 
+.success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column ;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.draggable-item {
+  cursor: move; /* Change cursor to a 4-pointed arrow when hovering */
+}
+
+
+
+.table-container-schedule {
+  height: 400px; /* Set the desired maximum height */
+  width: 95%;
+  overflow-y: auto; /* Add vertical scroll if necessary */
+  background-color: white;
+  justify-self: center;
+  display: inline-flex;
+}
+
 .scheduleboard-header {
   display: flex;
   flex-direction: row;
@@ -565,6 +650,23 @@ export default {
   border-radius: 4px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.searchmaterial-menu {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  width: 80%;
+  overflow-y: auto; /* Add vertical scroll if necessary */
+  background-color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 button{
