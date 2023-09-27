@@ -8,6 +8,15 @@
       <div class="company-header">
         <img src="output (5).png" alt="Komark" width="150" height="60" @click="toggleCalculator" />
         <label>Komark HQ ONC2.0 Job Sheet</label>
+        <div>
+
+          <QRCodeVue3
+              :value= "url +'?jobsheetNumber='+ jobsheetNumber"
+              width="74"
+              height="74"
+          />
+
+        </div>
         <div class="company-header-content">
           <label>Jobsheet Number:{{this.jobsheetNumber}}</label>
           <label>Date:{{formattedDate}}</label>
@@ -94,6 +103,8 @@
           <div class ="header-item-order">
             <label>Process:</label>
             <input for="header" v-model="this.formModel.process">
+          </div>
+          <div class ="header-item-order">
             <label>Finishing:</label>
             <input for="header" v-model="this.costingData.finishing">
           </div>
@@ -152,8 +163,12 @@
         <header>Packing Info</header>
         <div class="header-content-order">
           <div class ="header-item-order">
-            <label>Roll Pattern:</label>
-            <input for="header" v-model="this.jobsheet.direction">
+            <div class="sub-item">
+              <label>Roll Pattern:</label>
+              <input for="header" v-model="this.jobsheet.direction">
+              <label>Core Diameter(mm):</label>
+              <input for="header" v-model="this.jobsheet.core">
+            </div>
           </div>
           <div class ="header-item-order">
             <label>Quantity Per Roll:</label>
@@ -212,12 +227,12 @@
           </div>
         </div>
       </div>
-
-
-
-
-
-
+      <div class="costing-header-order">
+        <div class="header-content-order">
+          <label>Remarks</label>
+          <input for="header" v-model="this.jobsheet.remark">
+        </div>
+      </div>
 
     </div>
 
@@ -242,17 +257,19 @@
 </template>
 
 <script>
-//import axios from "axios";
+import QRCodeVue3 from "qrcode-vue3";
 import HeaderBar from "@/components/AppHeader.vue";
 import ECSCalculator from "@/components/costing/ecs/ECSCalculator";
 import HPCalculator from "@/components/costing/hp/HPCalculator";
 import EMCalculator from "@/components/costing/em/EMCalculator";
 import KPCalculator from "@/components/costing/kopack/KPCalculator";
 import LECalculator from "@/components/costing/lowend/LECalculator";
-
 import axios from "axios";
 export default {
+  name: 'QRCodeVue3Example',
+
   components: {
+    QRCodeVue3,
     ECSCalculator,
     HeaderBar,
     HPCalculator,
@@ -263,6 +280,7 @@ export default {
 
   data() {
     return {
+      url: 'http://192.168.20.11:8080/qrpage', // Data to be encoded in the QR code
       printingLength:'',
       jobsheetInfo:[],
       jobsheet:{
@@ -427,7 +445,6 @@ export default {
     console.log(this.jobsheetType);
 
 
-
     // Get current time
     const now = new Date();
     this.currentTime = now.toLocaleTimeString()
@@ -443,6 +460,7 @@ export default {
   },
 
   methods: {
+
 
     async saveJobsheet(){
       try {
@@ -521,6 +539,9 @@ export default {
         this.jobsheet.orderNumber = alljobsheet[0].ordernumber;
         this.jobsheet.unitCost = alljobsheet[0].unitcost;
         this.jobsheet.sellingPrice = alljobsheet[0].sellingprice;
+        this.jobsheet.remark = alljobsheet[0].remark;
+        this.jobsheet.core = alljobsheet[0].core;
+
 
         console.log(this.jobsheetInfo);
       } catch (error) {
@@ -750,7 +771,7 @@ approval{
 .company-header{
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-evenly;
   align-items: center;
 }
 

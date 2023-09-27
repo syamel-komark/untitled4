@@ -659,6 +659,20 @@ db.connect(err => {
     });
   });
 
+  app.put('/api/updatecurrent', (req, res) => {
+    const { process,jobsheet} = req.body;
+    const query = 'UPDATE schedule SET process=? WHERE jobsheet = ?';
+
+    db.query(query, [process,jobsheet], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule updated successfully' });
+      }
+    });
+  });
+
 }
 //////////////////////////////////////////////////
 
@@ -722,11 +736,11 @@ db.connect(err => {
 /////////////////////////JOBSHEET//////////////////////////////
 {
   app.post('/api/registerjobsheet', (req, res) => {
-    const { mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice} = req.body;
-    const query = 'INSERT INTO jobsheet (mastercard, labelname, material, pitch, width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink, varnish, diecut, quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    const { mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice, core, remark} = req.body;
+    const query = 'INSERT INTO jobsheet (mastercard, labelname, material, pitch, width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink, varnish, diecut, quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice, core, remark) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
     db.query(query, [
-      mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice], (err, result) => {
+      mastercard, labelname,material,pitch,width, color, across, around, gear, colorcode, process, finishing, machine, foil, laminate, ink,varnish, diecut,quantity, quantityperroll, salesperson, rolldirection, entry_person, customer, deliverydate, ordernumber, jobtype, costingid, unitcost, sellingprice, core, remark], (err, result) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error registering jobsheet' });
@@ -759,10 +773,10 @@ db.connect(err => {
   });
 
   app.put('/api/updatejobsheet', (req, res) => {
-    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection,colorcode, mastercard,id} = req.body;
-    const query = 'UPDATE jobsheet SET labelname=?, material=?, pitch=?, width=?, color=?, across=?, around=?, gear=?, process=?, finishing=?, machine=?,foil=?,laminate=?,ink=?,varnish=?,diecut=?,quantity=?,jobtype=?,quantityperroll=?,salesperson=?,rolldirection=?,colorcode=?, mastercard=? WHERE id = ?';
+    const { labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection,colorcode, mastercard, core, remark,id} = req.body;
+    const query = 'UPDATE jobsheet SET labelname=?, material=?, pitch=?, width=?, color=?, across=?, around=?, gear=?, process=?, finishing=?, machine=?,foil=?,laminate=?,ink=?,varnish=?,diecut=?,quantity=?,jobtype=?,quantityperroll=?,salesperson=?,rolldirection=?,colorcode=?, mastercard=?, core=?, remark=? WHERE id = ?';
 
-    db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection, mastercard,colorcode,id], (err) => {
+    db.query(query, [labelname, material, pitch, width, color, across, around, gear, process, finishing, machine,foil,laminate,ink,varnish,diecut,quantity,jobtype,quantityperroll,salesperson,rolldirection, mastercard,colorcode,core,remark,id], (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Error updating jobsheet' });

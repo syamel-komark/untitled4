@@ -294,16 +294,19 @@ export default {
       }
     },
 
-
-
     filteredRows() {
-      if (this.selectedProcess === '') {
+      if (this.selectedProcess === null) {
         return this.scheduleInfo;
       } else {
         const query = this.selectedProcess;
         const filteredData = this.scheduleInfo.filter(schedule => {
           return schedule.process.includes(query);
         });
+
+        if (filteredData.length === 0) {
+          // Return an empty array if no items are found in the filtered data
+          return [];
+        }
 
         // Sort the filtered data by tableid in ascending order
         filteredData.sort((a, b) => a.scheduleid - b.scheduleid);
@@ -323,8 +326,6 @@ export default {
             nextScheduleId++;
           }
         }
-
-        filteredData.sort((a, b) => a.scheduleid - b.scheduleid);
 
         return filteredData;
       }
@@ -373,23 +374,27 @@ export default {
     },
 
     async handleRowReorder() {
+      if (this.scheduleInfo.length === 0) {
+        // Do nothing if there are no items in scheduleInfo
+        return;
+      }
+
       this.processSchedule = this.selectedSchedule;
       console.log(this.processSchedule);
-      for(let i = 0; i < this.processSchedule.length; i++){
-        const id =  this.processSchedule[i].id;
+
+      for (let i = 0; i < this.processSchedule.length; i++) {
+        const id = this.processSchedule[i].id;
         await axios.put("/api/updateprocessschedule", {
           scheduleid: i + 1, // Set the new scheduleid based on the new index
           id,
         });
       }
-
     },
 
     createProcessSchedule(){
       this.selectedSchedule = this.filteredRows
       console.log(this.scheduleInfo[0].process)
       console.log(this.filteredRows)
-      console.log(this.selectedSchedule[0].scheduleid)
     },
 
     async deleteSchedule(id) {

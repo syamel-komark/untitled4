@@ -90,15 +90,27 @@
                 <select id="printing-type" v-model="this.formModel.jobType" required>
                   <option value="NEW">NEW</option>
                   <option value="SAMPLE">SAMPLE</option>
+                  <option value="REPEAT">REPEAT</option>
                   <option value="REPRINT">REPRINT</option>
                   <option value="INTERNAL">INTERNAL</option>
 
                 </select>
               </div>
               <div>
-                <label for="number">Quantity Order (pcs):</label>
-                <input type="text" id="process" v-model="this.formModel.quantityOrder" required />
+                <label for="printing-type">Roll Direction:</label>
+                <select id="printing-type" v-model="this.formModel.direction" required>
+                  <option value="ROA">ROA</option>
+                  <option value="ROB">ROB</option>
+                  <option value="ROC">ROC</option>
+                  <option value="ROD">ROD</option>
+
+                </select>
               </div>
+              <div>
+                <label for="labelName">Core Diameter(mm):</label>
+                <input type="text" id="core" v-model="this.formModel.core" required />
+              </div>
+
             </div>
 
 
@@ -165,14 +177,8 @@
                 <input type="text" id="Material" v-model="formModel.quantityPerRoll" required />
               </div>
               <div>
-                <label for="printing-type">Roll Direction:</label>
-                <select id="printing-type" v-model="this.formModel.direction" required>
-                  <option value="ROA">ROA</option>
-                  <option value="ROB">ROB</option>
-                  <option value="ROC">ROC</option>
-                  <option value="ROD">ROD</option>
-
-                </select>
+                <label for="number">Quantity Order (pcs):</label>
+                <input type="text" id="process" v-model="this.formModel.quantityOrder" required />
               </div>
             </div>
             <div class="form-group">
@@ -189,8 +195,18 @@
 
           </div>
         </div>
-
       </div>
+      <div class="group-container">
+        <div>
+          <h2>Remarks:</h2>
+          <div class="form-group">
+            <div>
+              <textarea id="Remark" v-model="formModel.remark" required></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
     </div>
   </div>
@@ -929,6 +945,8 @@ export default {
       this.newCostingId = jobsheet.costingid;
       this.formModel.unitCost = jobsheet.unitcost;
       this.formModel.sellingPrice = jobsheet.sellingprice;
+      this.formModel.core = jobsheet.core;
+      this.formModel.remark = jobsheet.remark;
 
 
 
@@ -988,6 +1006,8 @@ export default {
           deliverydate: this.formModel.deliveryDate,
           ordernumber: this.formModel.orderNumber,
           jobtype: this.formModel.jobType,
+          core: this.formModel.core,
+          remark: this.formModel.remark,
           costingid: this.newCostingId,
 
 
@@ -1537,6 +1557,15 @@ input[type=text], input[type=number], textarea {
   padding: 5px;
   box-sizing: border-box;
   font-size: 18px;
+}
+
+input[type=remark],textarea {
+  display: flex;
+  padding: 5px;
+  width: 300px;
+  height: 80px;
+  box-sizing: border-box;
+  font-size: 12px;
 }
 
 select{
