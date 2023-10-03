@@ -6,7 +6,7 @@
       <div class="dashboard-item">
         <button @click="this.$router.push('/newjob')">New Job</button>
         <button @click="this.$router.push('/schedulejob')">Schedule Job</button>
-        <button @click="this.$router.push('/reportjob')">Report Job</button>
+        <button @click="this.$router.push('/jobreport')">Report Job</button>
 
       </div>
     </div>

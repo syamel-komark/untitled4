@@ -17,10 +17,43 @@
       </div>
       <div class="costing-header">
         <div class="header-content-start">
-          <div class ="header-item-start">
-            <label>Customer: {{this.quotationInfo.customerName}}</label>
-            <label>Address: {{this.quotationInfo.customerAddress}}</label>
+          <div class ="header-item-start-content">
+            <div class ="header-item-start-label">
+              <div class="label">
+                <label class="header-label">Customer: </label>
+              </div>
+            </div>
+            <div class ="header-item-start-data">
+              <div class="label">
+                <label class="customer-label">{{this.quotationInfo.customerName}}</label>
+              </div>
+            </div>
           </div>
+          <div class ="header-item-start-content">
+            <div class ="header-item-start-label">
+              <div class="label">
+                <label class="header-label">Address: </label>
+              </div>
+            </div>
+            <div class ="header-item-start-data">
+              <div class="label">
+                <label class="address-label">{{this.quotationInfo.customerAddress}}</label>
+              </div>
+            </div>
+          </div>
+          <div class ="header-item-start-content">
+            <div class ="header-item-start-label">
+              <div class="label">
+                <label class="header-label">Email:: </label>
+              </div>
+            </div>
+            <div class ="header-item-start-data">
+              <div class="label">
+                <input class="address-label"/>
+              </div>
+            </div>
+          </div>
+
         </div>
         <div class="header-content-end">
           <div class ="header-item-end">
@@ -591,11 +624,30 @@ export default {
   justify-content: end;
 }
 
-.header-item-start{
+.header-item-start-label{
   margin:2px;
   display: flex;
   flex-direction: column;
   justify-content: start;
+}
+
+.header-item-start-content{
+  margin:1px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+}
+
+.header-item-start{
+  margin:2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+}
+
+.label{
+  display: flex;
+  flex-direction: column;
 }
 
 .header-content-end{
@@ -609,7 +661,7 @@ export default {
 .header-content-start{
   margin: 2px;
   display: inline-flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: start;
   align-items: start;
 }
@@ -658,7 +710,7 @@ export default {
 .company-header{
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -735,5 +787,12 @@ input[for=sub]{
   box-sizing: border-box;
   font-size: 13px;
 }
+
+.address-label {
+  width: 300px;
+  word-wrap: break-word;
+}
+
+
 
 </style>

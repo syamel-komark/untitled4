@@ -673,6 +673,36 @@ db.connect(err => {
     });
   });
 
+  app.put('/api/updatestatus', (req, res) => {
+    const { status,jobsheet} = req.body;
+    const query = 'UPDATE schedule SET status=? WHERE jobsheet = ?';
+
+    db.query(query, [status,jobsheet], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule updated successfully' });
+      }
+    });
+  });
+
+  app.put('/api/updateremark', (req, res) => {
+    const { remark,jobsheet} = req.body;
+    const query = 'UPDATE schedule SET remark=? WHERE jobsheet = ?';
+
+    db.query(query, [remark,jobsheet], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating schedule' });
+      } else {
+        res.status(200).json({ message: 'schedule updated successfully' });
+      }
+    });
+  });
+
+
+
 }
 //////////////////////////////////////////////////
 

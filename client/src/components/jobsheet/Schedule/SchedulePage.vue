@@ -24,7 +24,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="schedule in scheduleInfo" :key="schedule.id">
+          <tr v-for="schedule in activeSchedule" :key="schedule.id">
             <td>{{ schedule.jobsheet }}</td>
             <td>{{ schedule.mastercard }}</td>
             <td>{{ schedule.labelname }}</td>
@@ -33,14 +33,17 @@
             <td>{{ schedule.quantity }}</td>
             <td>{{ schedule.process }}</td>
             <td>{{ schedule.deliverydate }}</td>
-            <td><button @click="deleteSchedule(schedule.id)">Delete</button></td>
+            <td><button @click="archiveSchedule(schedule.id,schedule.jobsheet)">Archive</button></td>
 
 
 
           </tr>
           </tbody>
         </table>
+
       </div>
+      <button @click="showArchivedJobsheet=true">Archived Jobsheet</button>
+
 
     </div>
     <div class="machine-select">
@@ -84,25 +87,26 @@
                 <th>Jobsheet</th>
                 <th>Mastercard</th>
                 <th>Label</th>
-                <th>Machine</th>
                 <th>Length(m)</th>
                 <th>Quantity(PCS)</th>
                 <th>Process</th>
                 <th>Delivery</th>
+                <th>Remark</th>
                 <th>Action</th>
               </tr>
               </thead>
               <draggable v-model="selectedSchedule" tag="tbody" item-key="id" @change="handleRowReorder">
                 <template #item="{ element }">
-                  <tr class="draggable-item">
+                  <tr :class="element.rowClass" class="draggable-item">
                     <td>{{ element.jobsheet }}</td>
                     <td>{{ element.mastercard }}</td>
                     <td>{{ element.labelname }}</td>
-                    <td>{{ element.machine }}</td>
                     <td>{{ element.totallength }}</td>
                     <td>{{ element.quantity }}</td>
                     <td>{{ element.process }}</td>
                     <td>{{ element.deliverydate }}</td>
+                    <td>{{ element.remark }}</td>
+                    <td><button @click="showRemark(element.jobsheet)">Update</button></td>
                   </tr>
                 </template>
               </draggable>
@@ -178,6 +182,100 @@
       <button @click="machineModal=false">Close</button>
     </div>
   </div>
+  <div class="success-modal" v-if="statusModal">
+    <div class="success-content">
+      <p>Update Status </p>
+      <select v-model="formModel.status">
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+        <option value="Deleted">Deleted</option>
+      </select>
+      <button @click="updateStatus">Archive</button>
+      <button style="background-color: #a80e37; color: white;" @click="deleteSchedule">Delete</button>
+    </div>
+    <button @click="this.statusModal=false">Close</button>
+
+  </div>
+  <div class="success-modal" v-if="remarkModal">
+    <div class="success-content">
+      <div>
+        <p>Update Remark </p>
+        <input v-model="this.formModel.remark">
+        <button @click="updateRemark">Update</button>
+      </div>
+      <div>
+        <p>Update Process </p>
+        <select v-model="formModel.process">
+          <option value="">Select a Process</option>
+          <option v-for="machineData in processList" :key="machineData.process" :value="machineData.process">{{ machineData.process }}</option>
+        </select>
+        <button @click="updateProcess">Update</button>
+      </div>
+      <div>
+        <p>Update Status </p>
+        <select v-model="formModel.status">
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Deleted">Deleted</option>
+        </select>
+        <button @click="updateStatus">Archive</button>
+      </div>
+    </div>
+    <button @click="this.remarkModal=false">Close</button>
+
+  </div>
+  <div class="success-modal" v-if="showArchivedJobsheet">
+    <div class="table-container">
+      <h2>Archived Jobsheet List</h2>
+      <div class="searchmaterial-menu">
+        <input
+            type="text"
+            v-model="searchScheduleQuery"
+            placeholder="Search Jobsheet"
+        />
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Action</th>
+          <th>Jobsheet</th>
+          <th>Mastercard</th>
+          <th>Label</th>
+          <th>Machine</th>
+          <th>Length(m)</th>
+          <th>Quantity(PCS)</th>
+          <th>Process</th>
+          <th>Delivery</th>
+          <th>Status</th>
+          <th>Remark</th>
+
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="schedule in archivedSchedule" :key="schedule.id">
+          <td><button @click="unarchive(schedule.jobsheet)">Unarchive</button></td>
+          <td>{{ schedule.jobsheet }}</td>
+          <td>{{ schedule.mastercard }}</td>
+          <td>{{ schedule.labelname }}</td>
+          <td>{{ schedule.machine }}</td>
+          <td>{{ schedule.totallength }}</td>
+          <td>{{ schedule.quantity }}</td>
+          <td>{{ schedule.process }}</td>
+          <td>{{ schedule.deliverydate }}</td>
+          <td>{{ schedule.status }}</td>
+          <td>{{ schedule.remark }}</td>
+
+
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <button @click="this.showArchivedJobsheet=false">Close</button>
+  </div>
+
+
 
 </template>
 
@@ -185,6 +283,8 @@
 import draggable from 'vuedraggable'
 import HeaderBar from "@/components/AppHeader.vue";
 import axios from "axios";
+import { differenceInDays } from 'date-fns';
+
 export default {
 
   components: {
@@ -193,6 +293,10 @@ export default {
 
   data() {
     return {
+      remarkModal:false,
+      showArchivedJobsheet:false,
+      searchScheduleQuery:'',
+      statusModal:false,
       selectedMachine: null,
       machineModal: false,
       Message:'',
@@ -201,6 +305,8 @@ export default {
       selectedSchedule:[],
       selectedLabel: '',
       formModel:{
+        jobsheet:'',
+        status:'',
         mastercard:'',
         labelName:'',
         facestock:'',
@@ -268,6 +374,60 @@ export default {
 
   computed: {
 
+    archivedSchedule() {
+      const data = this.scheduleInfo;
+      const filteredData = data.filter((schedule) => schedule.status !== null);
+
+      if (this.searchScheduleQuery === '') {
+        return filteredData;
+      } else {
+        const query = this.searchScheduleQuery;
+        return filteredData.filter(schedule => {
+          return schedule.jobsheet.toString().includes(query);
+        });
+      }
+    },
+    activeSchedule() {
+      const data = this.scheduleInfo;
+
+      if (data.length === 0) {
+        return []; // or an appropriate default value
+      } else {
+        return data.filter((schedule) => schedule.status !== 'Cancelled' && schedule.status !== 'Completed' && schedule.status !== 'Deleted');
+      }
+    },
+
+
+    highlightedRows() {
+      const currentDate = new Date();
+      return this.selectedSchedule.map((row) => {
+        // Convert the "deliverydate" from text to a Date object
+        const deliveryDate = new Date(row.deliverydate);
+        const daysRemaining = differenceInDays(deliveryDate, currentDate);
+
+        console.log(`Delivery Date: ${deliveryDate}`);
+        console.log(`Current Date: ${currentDate}`);
+        console.log(`Days Remaining: ${daysRemaining}`);
+
+        // Apply classes based on your criteria
+        if (daysRemaining > 10) {
+          row.rowClass = '';
+        } else if (daysRemaining <= 10 && daysRemaining >= 8) {
+          row.rowClass = 'light-green';
+        } else if (daysRemaining < 8 && daysRemaining >= 5) {
+          row.rowClass = 'green';
+        } else if (daysRemaining < 5 && daysRemaining >= 2) {
+          row.rowClass = 'yellow';
+        } else if (daysRemaining < 2 && daysRemaining >= -5) {
+          row.rowClass = 'orange';
+        } else {
+          row.rowClass = 'red';
+        }
+
+        return row;
+      });
+    },
+
     filteredRowsCapacity() {
       const filteredRows = this.filteredRows;
 
@@ -299,7 +459,7 @@ export default {
         return this.scheduleInfo;
       } else {
         const query = this.selectedProcess;
-        const filteredData = this.scheduleInfo.filter(schedule => {
+        const filteredData = this.activeSchedule.filter(schedule => {
           return schedule.process.includes(query);
         });
 
@@ -367,6 +527,115 @@ export default {
 
   methods: {
 
+    async unarchive(jobsheet) {
+      try {
+        const response = await axios.put('/api/updatestatus', {
+          status: null,
+          jobsheet: jobsheet,
+        });
+
+        if (response.status === 200) {
+          console.log('Schedule updated successfully.');
+          this.statusModal=false;
+          await this.fetchSchedule()
+          this.createProcessSchedule()
+          this.remarkModal=false;
+          this.showArchivedJobsheet=false;
+          // Optionally, you can update your local data or perform other actions here.
+        } else {
+          console.error('Error updating schedule:', response.data.error);
+          // Handle the error, e.g., display an error message to the user.
+        }
+      } catch (error) {
+        console.error('Error updating schedule:', error);
+        // Handle the error, e.g., display an error message to the user.
+      }
+    },
+
+
+    async updateProcess() {
+      try {
+        const response = await axios.put('/api/updatecurrent', {
+          process: this.formModel.process,
+          jobsheet: this.formModel.jobsheet,
+        });
+
+        if (response.status === 200) {
+          console.log('Schedule updated successfully.');
+          await this.fetchSchedule()
+          this.createProcessSchedule()
+          this.remarkModal=false;
+          // Optionally, you can update your local data or perform other actions here.
+        } else {
+          console.error('Error updating schedule:', response.data.error);
+          // Handle the error, e.g., display an error message to the user.
+        }
+      } catch (error) {
+        console.error('Error updating schedule:', error);
+        // Handle the error, e.g., display an error message to the user.
+      }
+    },
+
+
+    async showRemark(jobsheet) {
+      this.formModel.jobsheet=jobsheet;
+      this.remarkModal = true;
+    },
+
+    async updateRemark() {
+      try {
+        const response = await axios.put('/api/updateremark', {
+          remark: this.formModel.remark,
+          jobsheet: this.formModel.jobsheet,
+        });
+
+        if (response.status === 200) {
+          console.log('Schedule updated successfully.');
+          await this.fetchSchedule()
+          this.createProcessSchedule()
+          this.remarkModal=false;
+          // Optionally, you can update your local data or perform other actions here.
+        } else {
+          console.error('Error updating schedule:', response.data.error);
+          // Handle the error, e.g., display an error message to the user.
+        }
+      } catch (error) {
+        console.error('Error updating schedule:', error);
+        // Handle the error, e.g., display an error message to the user.
+      }
+    },
+
+    async updateStatus() {
+      try {
+        const response = await axios.put('/api/updatestatus', {
+          status: this.formModel.status,
+          jobsheet: this.formModel.jobsheet,
+        });
+
+        if (response.status === 200) {
+          console.log('Schedule updated successfully.');
+          this.statusModal=false;
+          await this.fetchSchedule()
+          this.createProcessSchedule()
+          this.remarkModal=false;
+          // Optionally, you can update your local data or perform other actions here.
+        } else {
+          console.error('Error updating schedule:', response.data.error);
+          // Handle the error, e.g., display an error message to the user.
+        }
+      } catch (error) {
+        console.error('Error updating schedule:', error);
+        // Handle the error, e.g., display an error message to the user.
+      }
+    },
+
+    archiveSchedule(id,jobsheet){
+      this.formModel.id = id
+      this.formModel.jobsheet = jobsheet;
+      this.statusModal = true;
+
+    },
+
     async assignMachine(){
       await this.registerSchedule()
       this.isSearchJobsheet = !this.isSearchJobsheet;
@@ -393,20 +662,22 @@ export default {
 
     createProcessSchedule(){
       this.selectedSchedule = this.filteredRows
+      this.highlightedRows
       console.log(this.scheduleInfo[0].process)
       console.log(this.filteredRows)
     },
 
-    async deleteSchedule(id) {
+    async deleteSchedule() {
       try {
         const response = await axios.delete('/api/deleteschedule', {
           data: {
-            id: id,
+            id: this.formModel.id,
           },
         });
         if (response.status === 200) {
           console.log('schedule deleted successfully');
           // Update the users list after deletion
+          this.statusModal=false;
           this.fetchSchedule();
         } else {
           console.error('schedule deletion failed');
@@ -556,9 +827,12 @@ export default {
       if (this.selectedDepartment === department) {
         // If the clicked department is already selected, clear the selection
         this.selectedDepartment = null;
+        this.selectedProcess = null;
       } else {
         // Otherwise, set the selected department
         this.selectedDepartment = department;
+        this.selectedProcess = null;
+
       }
       console.log(this.selectedDepartment);
       // You can add any other logic here based on the selected department
@@ -673,6 +947,37 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
+/* Light Green */
+.light-green {
+  background-color: lightgreen;
+}
+
+/* Green */
+.green {
+  background-color: green;
+}
+
+/* Yellow */
+.yellow {
+  background-color: yellow;
+}
+
+/* Orange */
+.orange {
+  background-color: orange;
+}
+
+/* Red */
+.red {
+  background-color: red;
+}
+
+/* Dark Red */
+.dark-red {
+  background-color: darkred;
+}
+
 
 button{
   margin:1px;

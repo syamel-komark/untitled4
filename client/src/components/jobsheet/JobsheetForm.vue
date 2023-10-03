@@ -228,9 +228,11 @@
         </div>
       </div>
       <div class="costing-header-order">
-        <div class="header-content-order">
+        <div class ="header-content-order">
           <label>Remarks</label>
-          <input for="header" v-model="this.jobsheet.remark">
+          <div class="header-content-order-remark">
+            <textarea v-model="this.jobsheet.remark"></textarea>
+          </div>
         </div>
       </div>
 
@@ -265,10 +267,13 @@ import EMCalculator from "@/components/costing/em/EMCalculator";
 import KPCalculator from "@/components/costing/kopack/KPCalculator";
 import LECalculator from "@/components/costing/lowend/LECalculator";
 import axios from "axios";
+import TextareaAutosize from 'vue-textarea-autosize'
+
 export default {
   name: 'QRCodeVue3Example',
 
   components: {
+    TextareaAutosize,
     QRCodeVue3,
     ECSCalculator,
     HeaderBar,
@@ -280,7 +285,7 @@ export default {
 
   data() {
     return {
-      url: 'http://192.168.20.11:8080/qrpage', // Data to be encoded in the QR code
+      url:'', // Data to be encoded in the QR code
       printingLength:'',
       jobsheetInfo:[],
       jobsheet:{
@@ -448,6 +453,8 @@ export default {
     // Get current time
     const now = new Date();
     this.currentTime = now.toLocaleTimeString()
+
+    this.url = `http://${window.location.hostname}:${process.env.PORT || 8080}/qrpage`;
 
     // Update current time every second
     this.currentTimeInterval = setInterval(this.updateCurrentTime, 1000);
@@ -749,6 +756,17 @@ approval{
 
 }
 
+.header-content-order-remark{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  resize: vertical; /* This property allows vertical resizing */
+
+
+}
+
 .costing-header-order{
   width: 100%;
   margin : 2px;
@@ -756,6 +774,8 @@ approval{
   flex-direction: column;
   justify-content: space-evenly;
   align-items: start;
+  resize: vertical; /* This property allows vertical resizing */
+
 
 }
 
@@ -834,6 +854,12 @@ input[for=sub]{
   padding: 3px;
   box-sizing: border-box;
   font-size: 13px;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 12px;
 }
 
 </style>

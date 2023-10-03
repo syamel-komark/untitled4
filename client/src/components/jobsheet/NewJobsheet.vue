@@ -1155,6 +1155,7 @@ export default {
       try {
         await this.registerJobsheet();
         sessionStorage.setItem('costingnumber', this.newCostingId);
+        sessionStorage.setItem('remark', this.formModel.remark);
         sessionStorage.setItem('machine', this.machineType);
         sessionStorage.setItem('jobsheetnumber', this.newJobsheetId);
 

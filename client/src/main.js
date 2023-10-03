@@ -44,7 +44,8 @@ import NewJobsheet from "@/components/jobsheet/NewJobsheet";
 import JobsheetForm from "@/components/jobsheet/JobsheetForm";
 import ColorPicker from "@/components/ColorPicker";
 import NewSchedule from "@/components/jobsheet/Schedule/SchedulePage";
-import QrPage from "@/components/QrPage";
+import QrPage from "@/components/jobsheet/Report/QrPage";
+import JobReport from "@/components/jobsheet/Report/JobReport";
 
 const routes = [
   { path: '/', component: LoginForm },
@@ -89,7 +90,8 @@ const routes = [
   {path: '/jobsheetform', component: JobsheetForm},
   {path: '/colorpicker', component: ColorPicker},
   {path: '/schedulejob', component: NewSchedule},
-  {path: '/qrpage', component: QrPage}
+  {path: '/qrpage', component: QrPage},
+  {path: '/jobreport', component: JobReport}
 
 
 
